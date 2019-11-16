@@ -4,7 +4,8 @@ import torch
 import torch.nn as nn
 from src.cnn  import CnnModel
 from src.volume import get_volume
-from src.mapIO import get_target, grid2vec, write_map 
+from src.mapIO import get_target, grid2vec, write_map
+from src.util import grid2vec
 import torch.optim as optim
 import pyvista as pv
 
