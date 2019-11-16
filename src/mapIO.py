@@ -1,5 +1,5 @@
+from __future__ import print_function
 import numpy as np
-#from __future__ import print_function
 
 
 def read_map(file_path):
@@ -118,18 +118,18 @@ def write_map(vec, out_path, out_name, ori, res, n):
     spacing = res      
     
     with open(fname,'w') as fp:
-        
+
         fp.write("GRID_PARAMETER_FILE\n") 
         fp.write("GRID_DATA_FILE\n") 
         fp.write("MACROMOLECULE\n") 
-        fp.write("SPACING\n") 
-        fp.write("NELEMENTS\n")#, nx, ny, nz) 
-        fp.write("CENTER\n")#, 1.0, 1.0, 1.0)
+        fp.write("SPACING %5.3f\n" % res)
+        fp.write("NELEMENTS "+str(nx-1)+" "+str(ny-1)+ " "+str(nz-1)+"\n") 
+        fp.write("CENTER "+str(ori[0])+" "+str(ori[1])+" "+str(ori[2])+"\n")
 
         for i in range(nx*ny*nz):
-            fp.write("  %12.5E\n" % vec[i])
+            fp.write("%10.3f\n" % vec[i])
 
-    
+            
 if __name__=='__main__':
 
     import pyvista as pv
@@ -152,8 +152,8 @@ if __name__=='__main__':
     p = pv.Plotter(point_smoothing = True)
     p.add_volume(np.abs(channel), cmap = "viridis", opacity = "linear")
     text = frag_names[chan_id]
-    #p.add_text(text, position='upper_left', font_size=18)
-    #p.show()      
+    p.add_text(text, position = 'upper_left', font_size = 18)
+    p.show()      
     
     ######------------- Test padding ----------------#######
     pad_dens = pad_map(dens)
@@ -167,12 +167,11 @@ if __name__=='__main__':
 
 
     ######------------- Testing write map ----------------#######
-
     out_path = "./"
     out_name = "test"
-    ori = [1.0,1.0,1.0]
-    res = 1.0
+    ori = [40.250, -8.472, 20.406]
+    res = 1.000
     n = 10
-    vec = np.random.rand(n*n*n)
+    vec = 4*np.random.rand(n*n*n) - 2.0
     write_map(vec, out_path, out_name, ori, res, n)
     
