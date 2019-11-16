@@ -1,10 +1,10 @@
 import numpy as np
+#from __future__ import print_function
 
 
 def read_map(file_path):
     
     path = file_path
-    
     with open(path) as file:
         i = 0
         dens = []
@@ -16,7 +16,6 @@ def read_map(file_path):
             elif i == 5:
                 center = [float(x) for x in line.split()[1:]]
 
-            #print(i, line.split())
             if i > 5:  
                 lines = line.split()
                 dens.append(float(lines[0]))
@@ -45,9 +44,20 @@ def vec2grid(n, vec):
     grid = np.zeros(shape = (nz,ny,nx), dtype = float)
     grid = vec.reshape(nz,ny,nx) #order musb be inverted because
                                  #that is how map file is done :/
-                                  
-
     return grid
+
+
+def grid2vec(n, grid):
+    """
+    This function transforms 3D grid.(nx,ny,nz) into
+    vector (nx*ny*nz) 
+    """
+    nx = n[0]; ny = n[1]; nz = n[2] 
+    vec = np.zeros((nx*ny*nz), dtype = float)
+    vec = grid.reshape(nx*ny*nz)
+
+    return vec
+
 
 
 def pad_map(dens):
@@ -78,7 +88,9 @@ def pad_map(dens):
     
 def get_target(map_path, map_names, pdb_id, batch, dim):
     """
-
+    This function invokes necessary frag maps, pads them
+    and returns them with required tensor dimension.
+    
     """
     map_tail = ".gfe.map"
     map_path_list = [map_path+pdb_id+"."+name+map_tail for name in map_names]
@@ -95,7 +107,28 @@ def get_target(map_path, map_names, pdb_id, batch, dim):
         
     return map_tensor
 
-   
+
+def write_map(vec, out_path, out_name, ori, res, n):
+    """
+    
+    """
+
+    fname = out_path + out_name + ".gfe.map"
+    nx = n; ny = n; nz = n
+    spacing = res      
+    
+    with open(fname,'w') as fp:
+        
+        fp.write("GRID_PARAMETER_FILE\n") 
+        fp.write("GRID_DATA_FILE\n") 
+        fp.write("MACROMOLECULE\n") 
+        fp.write("SPACING\n") 
+        fp.write("NELEMENTS\n")#, nx, ny, nz) 
+        fp.write("CENTER\n")#, 1.0, 1.0, 1.0)
+
+        for i in range(nx*ny*nz):
+            fp.write("  %12.5E\n" % vec[i])
+
     
 if __name__=='__main__':
 
@@ -106,7 +139,7 @@ if __name__=='__main__':
                  "../data/maps/1ycr.prpc.gfe.map",
                  "../data/maps/1ycr.hbacc.gfe.map",
                  "../data/maps/1ycr.hbdon.gfe.map"]
-    chan_id = 3 # range 0-3
+    chan_id = 2 # range 0-3
 
     ######------------- Test the read_map -----------------#######
     res, n_cells, dens = read_map(path_list[chan_id])
@@ -119,10 +152,9 @@ if __name__=='__main__':
     p = pv.Plotter(point_smoothing = True)
     p.add_volume(np.abs(channel), cmap = "viridis", opacity = "linear")
     text = frag_names[chan_id]
-    p.add_text(text, position='upper_left', font_size=18)
-    p.show()      
+    #p.add_text(text, position='upper_left', font_size=18)
+    #p.show()      
     
-
     ######------------- Test padding ----------------#######
     pad_dens = pad_map(dens)
     if np.abs(pad_dens.sum() - dens.sum()) > 0.000001:
@@ -133,5 +165,14 @@ if __name__=='__main__':
     else:
         print("Padding test passed!")
 
-    
 
+    ######------------- Testing write map ----------------#######
+
+    out_path = "./"
+    out_name = "test"
+    ori = [1.0,1.0,1.0]
+    res = 1.0
+    n = 10
+    vec = np.random.rand(n*n*n)
+    write_map(vec, out_path, out_name, ori, res, n)
+    

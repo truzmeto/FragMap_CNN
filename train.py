@@ -12,7 +12,7 @@ import pyvista as pv
 lrt = 0.001
 lrd = 0.0001
 wd = 0.0
-max_epoch = 200
+max_epoch = 2000
 
 torch.cuda.set_device(0)
 
@@ -30,7 +30,7 @@ print(data.shape)
 map_path = "data/maps/"
 map_names_list = ["benc","prpc", "hbacc", "hbdon"]
 dim = int(box_size/resolution)
-target = get_target(map_path, map_names_list, pdb_id, batch=1, dim=dim)
+target = get_target(map_path, map_names_list, pdb_id, batch=1, dim = dim)
 target = torch.from_numpy(target).float().cuda()
 print(target.shape)
 
@@ -47,12 +47,13 @@ for epoch in range(max_epoch):
     loss = criterion(output, target)
     loss.backward()
     optimizer.step()
-    
-    print('Epoch {}, loss {}'.format(epoch, loss.item()))
+
+    if epoch % 50 == 0:
+        print('Epoch {}, loss {}'.format(epoch, loss.item()))
 	
 
 #plot output density map
-chan_id = 0 # can be 0,1,2,3
+chan_id = 2 # can be 0,1,2,3
 channel = output[0,chan_id,:,:,:].cpu().detach().numpy()
 p = pv.Plotter(point_smoothing=True)
 p.add_volume(channel, cmap="viridis", opacity="linear")

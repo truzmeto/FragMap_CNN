@@ -35,7 +35,6 @@ def get_volume(path_list, box_size, resolution):
     new_center = torch.tensor([[pos, pos, pos]], dtype=torch.double)
     coords_ce = translate(coords, new_center, num_atoms)
 
-    #print(coords)		
 
     coords, num_atoms_of_type, offsets = assignTypes(coords_ce.to(dtype=torch.float32),
                                                      resnames,
@@ -55,15 +54,23 @@ if __name__=='__main__':
     
     #A simple unit test!
     path_list = ["../data/1ycr.pdb"]
-    box_size = 58  # prog complains if box_size is float !!!!!!!!! 
+    box_size = 58  # prog complains if box_size is float !!!!!! 
     resolution = 1.0
     volume = get_volume(path_list, box_size, resolution)
     print(volume.shape)
 
-
-    chan_id = 0 # Also, an atomic group id, range 0-10
+    Agroup_names = ["Sulfur/Selenium", "Nitrogen Amide",
+                    "Nitrogen Aromatic", "Nitrogen Guanidinium",
+                    "Nitrogen Ammonium", "Oxygen Carbonyl",
+                    "Oxygen Hydroxyl", "Oxygen Carboxyl",
+                    "Carbon sp2","Carbon Aromatic",
+                    "Carbon sp3"]
+    
+    chan_id = 10 # Atomic group ids, range 0-10
     channel = volume[0,chan_id,:,:,:].cpu().numpy()
     p = pv.Plotter(point_smoothing = True)
+    text = Agroup_names[chan_id]
+    p.add_text(text, position='upper_left', font_size=18)
     p.add_volume(channel, cmap = "viridis", opacity = "linear")
     p.show()
 
