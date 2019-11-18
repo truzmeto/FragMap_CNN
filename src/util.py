@@ -18,7 +18,7 @@ def grid2vec(n, grid):
     vector (nx*ny*nz) 
     """
     nx = n[0]; ny = n[1]; nz = n[2] 
-    vec = np.zeros(shape =(nx*ny*nz), dtype = float)
+    vec = np.zeros(shape = (nx*ny*nz), dtype = float)
     vec = grid.reshape(nx*ny*nz)
 
     return vec
@@ -52,7 +52,7 @@ def pad_map(dens):
 
 def unpad_map(dens, xpad, ypad, zpad):
     """
-    This function unpadds the volume by
+    This function unpads the volume by
     slicing out the original part
 
     """
@@ -72,12 +72,13 @@ if __name__=='__main__':
                  "../data/maps/1ycr.prpc.gfe.map",
                  "../data/maps/1ycr.hbacc.gfe.map",
                  "../data/maps/1ycr.hbdon.gfe.map"]
-    chan_id = 1 # range 0-3
+    chan_id = 0 # range 0-3
     _, _, dens = read_map(path_list[chan_id])
     
     
     ######------------- Test padding ----------------#######
     pad_dens, xpad, ypad, zpad = pad_map(dens)
+
     if np.abs(pad_dens.sum() - dens.sum()) > 0.000001:
         print("Error! Zero padding should not affect the sum")
         print("Padded sum = ", pad_dens.sum())
@@ -89,14 +90,27 @@ if __name__=='__main__':
 
     ######------------- Test unpadding ----------------#######
     ori_dim = dens.shape
-    dens = unpad_map(pad_dens, xpad, ypad, zpad)
-    unpad_dim = dens.shape
-    i = 0; s=0
+    up_dens = unpad_map(pad_dens, xpad, ypad, zpad)
+    unpad_dim = up_dens.shape
+    i = 0; dp = 0
     for item in ori_dim:
-        s = s + item - unpad_dim[i]
+        dp = item - unpad_dim[i]
         i+=1
+        if dp != 0:
+            print("Original dim is not same as padded dim!")
+            break
+    
+        
+    #compare original and unpadded map volumes by visialization
+    p = pv.Plotter(point_smoothing = True, shape=(1, 2))
+    fs = 16
+    text = frag_names[chan_id]+" original " + "dim = "+ str(ori_dim)
+    p.add_text(text, position='upper_left', font_size = fs)
+    p.add_volume(np.abs(dens), cmap = "viridis", opacity = "linear")
 
-    if s != 0:
-        print("Unpadding test failed!")
-    else:
-        print("Unpadding test passed!")
+    p.subplot(0, 1)
+    text = frag_names[chan_id]+"un-padded" + "dim = "+ str(unpad_dim)
+    p.add_text(text, position="upper_left", font_size = fs)
+    p.add_volume(np.abs(up_dens), cmap = "viridis", opacity = "linear")
+
+    p.show()

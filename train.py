@@ -12,8 +12,8 @@ import pyvista as pv
 
 lrt = 0.001
 #lrd = 0.0001
-#wd = 0.0
-max_epoch = 100
+wd = 0.00001
+max_epoch = 1600
 
 torch.cuda.set_device(0)
 
@@ -47,8 +47,8 @@ target = torch.from_numpy(target).float().cuda()
 model = CnnModel().cuda()
 criterion = nn.MSELoss()
 #criterion = nn.L1Loss()
-#optimizer = optim.Adam(model.parameters(), lr=lrt)
-optimizer = optim.SGD(model.parameters(), lr=lrt, momentum=0.9)
+optimizer = optim.Adam(model.parameters(), lr=lrt, weight_decay = wd )
+#optimizer = optim.SGD(model.parameters(), lr=lrt, momentum=0.9)
 
 
 for epoch in range(max_epoch):
