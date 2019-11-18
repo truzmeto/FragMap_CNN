@@ -7,8 +7,8 @@ def vec2grid(n, vec):
     """
     nx = n[0]; ny = n[1]; nz = n[2] 
     grid = np.zeros(shape = (nz,ny,nx), dtype = float)
-    grid = vec.reshape(nz,ny,nx) #order must be inverted because
-                                 #that is how map file is done :/
+    grid = np.reshape(vec, newshape = (nx,ny,nz), order = "F") #order must be inverted because
+                                                           #that is how map file is done :/
     return grid
 
 
@@ -19,7 +19,7 @@ def grid2vec(n, grid):
     """
     nx = n[0]; ny = n[1]; nz = n[2] 
     vec = np.zeros(shape = (nx*ny*nz), dtype = float)
-    vec = grid.reshape(nx*ny*nz)
+    vec = np.reshape(grid, newshape = nx*ny*nz, order = "F")
 
     return vec
 
@@ -45,9 +45,9 @@ def pad_map(dens):
     
         #pad right hand side only
         dens = np.pad(dens,
-                       pad_width = ((0,xpad),(0,ypad),(0,zpad)),
-                       mode = 'constant') #zero padding by default
-    
+                      pad_width = ((0,xpad), (0,ypad), (0,zpad)),
+                      mode = 'constant') #zero padding by default
+        
     return dens, xpad, ypad, zpad    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 def unpad_map(dens, xpad, ypad, zpad):
@@ -74,6 +74,7 @@ if __name__=='__main__':
                  "../data/maps/1ycr.hbdon.gfe.map"]
     chan_id = 0 # range 0-3
     _, _, dens = read_map(path_list[chan_id])
+
     
     
     ######------------- Test padding ----------------#######

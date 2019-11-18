@@ -13,7 +13,7 @@ import pyvista as pv
 lrt = 0.001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 1600
+max_epoch = 1000
 
 torch.cuda.set_device(0)
 
@@ -25,7 +25,7 @@ pdb_path_list = [path1]
 box_size = 57  # prog complains if box_size is float !!!!!!!!! 
 resolution = 1.000
 data = get_volume(pdb_path_list, box_size, resolution)
-print(data.size())
+#print(data.size())
 
 #get target
 map_path = "data/maps/"
@@ -38,8 +38,8 @@ target, pad, dmin, dsize = get_target(map_path,
                             pdb_id,
                             batch = 1,
                             dim = dim,
-                            cutoff=False)
-print(target.shape)
+                            cutoff = False)
+#print(target.shape)
 
 target = torch.from_numpy(target).float().cuda()
 
@@ -77,7 +77,7 @@ for i in range(len(map_names_list)):
 
     out_name = pdb_id+"."+ map_names_list[i]
     grid = output[0,i,:,:,:].cpu().detach().numpy()
-    #grid = unpad_map(grid, xpad=pad[0], ypad=pad[1], zpad=pad[2])
+    grid = unpad_map(grid, xpad=pad[0], ypad=pad[1], zpad=pad[2])
 
     #un-normalize predicted densities
     vol = grid*dsize[i] + dmin[i]

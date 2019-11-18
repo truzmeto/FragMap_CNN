@@ -1,7 +1,8 @@
-from __future__ import print_function
+#from __future__ import print_function
 import numpy as np
 import sys
 import os
+
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.util import pad_map, vec2grid
 
@@ -43,6 +44,7 @@ def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False):
     and returns them with required tensor dimension.
     
     """
+    
     map_tail = ".gfe.map"
     map_path_list = [map_path+pdb_id+"."+name+map_tail for name in map_names]
 
@@ -55,14 +57,13 @@ def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False):
     dsize = []
 
     for i in range(len(map_path_list)):
-        _, _, dens = read_map(map_path_list[i])      #f-call
+        _, _, dens = read_map(map_path_list[i])      #in-f-call
 
 
         #apply min_max norm
         dmin.append(dens.min())
         dsize.append(dens.max() - dens.min())
         dens = (dens - dmin[i]) / (dsize[i])
-        
         
         #apply cutoff
         #if cutoff == True:
@@ -100,6 +101,7 @@ def write_map(vec, out_path, out_name, ori, res, n):
         for i in range(nx*ny*nz):
             fp.write("%10.3f\n" % vec[i])
 
+
             
 if __name__=='__main__':
 
@@ -120,11 +122,11 @@ if __name__=='__main__':
     #plot map density
     dens[dens > 0] = 0.0 #cutoff at zero!
     channel = dens
-    p = pv.Plotter(point_smoothing = True)
-    p.add_volume(np.abs(channel), cmap = "viridis", opacity = "linear")
-    text = frag_names[chan_id]
-    p.add_text(text, position = 'upper_left', font_size = 18)
-    p.show()      
+    #p = pv.Plotter(point_smoothing = True)
+    #p.add_volume(np.abs(channel), cmap = "viridis", opacity = "linear")
+    #text = frag_names[chan_id]
+    #p.add_text(text, position = 'upper_left', font_size = 18)
+    #p.show()      
     
 
     ######------------- Testing write map ----------------#######
@@ -133,6 +135,6 @@ if __name__=='__main__':
     ori = [40.250, -8.472, 20.406]
     res = 1.000
     n = [10,10,10]
-    vec = 4*np.random.rand(n*n*n) - 2.0
-    write_map(vec, out_path, out_name, ori, res, n)
+    vec = 4*np.random.rand(n[0],n[1],n[2]) - 2.0
+    #write_map(vec, out_path, out_name, ori, res, n)
     
