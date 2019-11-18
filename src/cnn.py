@@ -59,28 +59,6 @@ class CnnModel(nn.Module):
     
 
 if __name__=='__main__':
-
-    import pyvista as pv
-    torch.manual_seed(3000)
-
-    ########---------- Simple test with 1 forward pass -----------########
-    c, d, h, w = 11, 20, 20, 20
-    data = torch.randn(1, c, d, h, w)
-    
-    #invoke the model
-    model = CnnModel()
-    output = model(data)
-
-    #compare input and output shapes
-    print("First volume channel has the following dimentions")
-    print(output[0,0,:,:,:].shape)
-
-    #plot output density map
-    chan_id = 0 # can be 0,1,2,3
-    channel = output[0,chan_id,:,:,:].detach().numpy()
-    p = pv.Plotter(point_smoothing=True)
-    p.add_volume(channel, cmap="viridis", opacity="linear")
-    p.show()
-
+    print("Enjoy life!")
     
     
