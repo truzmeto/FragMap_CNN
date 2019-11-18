@@ -6,6 +6,10 @@ import torch
 import numpy as np
     
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
 class CnnModel(nn.Module):
     def __init__(self, num_input_channels = 11):
         super(CnnModel, self).__init__()
@@ -35,6 +39,7 @@ class CnnModel(nn.Module):
                       kernel_size = k_size,
                       padding = pad),
             nn.ReLU()
+            #nn.LeakyReLU()
         )
         
         #self.fc = nn.Sequential(

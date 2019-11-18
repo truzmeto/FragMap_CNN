@@ -1,5 +1,9 @@
 from __future__ import print_function
 import numpy as np
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+from src.util import pad_map, vec2grid
 
 def read_map(file_path):
     
@@ -29,11 +33,11 @@ def read_map(file_path):
     dens = np.array(dens)
 
     #convert from 1D array to 3D array(tensor)
-    dens = vec2grid(n_cells, dens)
+    dens = vec2grid(n_cells, dens) #ex-f-call
   
     return res, n_cells, dens
   
-def get_target(map_path, map_names, pdb_id, batch, dim):
+def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False):
     """
     This function invokes necessary frag maps, pads them
     and returns them with required tensor dimension.
@@ -46,12 +50,32 @@ def get_target(map_path, map_names, pdb_id, batch, dim):
     n_batch = batch
     n_FM = 4
     map_tensor = np.zeros(shape = (n_batch, n_FM, dim, dim, dim))
+
+    dmin = []
+    dsize = []
+
     for i in range(len(map_path_list)):
-        _, _, dens = read_map(map_path_list[i])
-        pad_dens, xpad, ypad, zpad = pad_map(dens)
-        map_tensor[n_batch-1, i,:,:,:] = pad_dens
+        _, _, dens = read_map(map_path_list[i])      #f-call
+
+
+        #apply min_max norm
+        dmin.append(dens.min())
+        dsize.append(dens.max() - dens.min())
+        dens = (dens - dmin[i]) / (dsize[i])
         
-    return map_tensor
+        
+        #apply cutoff
+        #if cutoff == True:
+        #    dens[dens > 0] = 0.0 
+            
+        #dens = np.abs(dens) # check!!!!!!!!!!!!!!!!!!!!!!
+            
+        pad_dens, xpad, ypad, zpad = pad_map(dens)   #ex-f-call
+        map_tensor[n_batch-1, i,:,:,:] = pad_dens
+       
+    pad = [xpad,ypad,zpad]
+
+    return map_tensor, pad, np.array(dmin), np.array(dsize)
 
 
 def write_map(vec, out_path, out_name, ori, res, n):
@@ -61,7 +85,7 @@ def write_map(vec, out_path, out_name, ori, res, n):
     """
 
     fname = out_path + out_name + ".gfe.map"
-    nx = n; ny = n; nz = n
+    nx = n[0]; ny = n[1]; nz = n[2]
     spacing = res      
     
     with open(fname,'w') as fp:
@@ -80,7 +104,6 @@ def write_map(vec, out_path, out_name, ori, res, n):
 if __name__=='__main__':
 
     import pyvista as pv
-    from util import pad_map, vec2grid
 
     frag_names = ["Benzene", "Propane", "H-bond Donor", "H-bond Acceptor"]
     path_list = ["../data/maps/1ycr.benc.gfe.map",
@@ -109,7 +132,7 @@ if __name__=='__main__':
     out_name = "test"
     ori = [40.250, -8.472, 20.406]
     res = 1.000
-    n = 10
+    n = [10,10,10]
     vec = 4*np.random.rand(n*n*n) - 2.0
     write_map(vec, out_path, out_name, ori, res, n)
     

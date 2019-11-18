@@ -7,7 +7,7 @@ def vec2grid(n, vec):
     """
     nx = n[0]; ny = n[1]; nz = n[2] 
     grid = np.zeros(shape = (nz,ny,nx), dtype = float)
-    grid = vec.reshape(nz,ny,nx) #order musb be inverted because
+    grid = vec.reshape(nz,ny,nx) #order must be inverted because
                                  #that is how map file is done :/
     return grid
 
@@ -48,7 +48,7 @@ def pad_map(dens):
                        pad_width = ((0,xpad),(0,ypad),(0,zpad)),
                        mode = 'constant') #zero padding by default
     
-    return dens, xpad, ypad, zpad
+    return dens, xpad, ypad, zpad    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 def unpad_map(dens, xpad, ypad, zpad):
     """
