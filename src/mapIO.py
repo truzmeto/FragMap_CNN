@@ -36,7 +36,9 @@ def read_map(file_path):
     dens = vec2grid(n_cells, dens) #ex-f-call
   
     return res, n_cells, dens
-  
+
+
+
 def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False):
     """
     This function invokes necessary frag maps, pads them
@@ -47,7 +49,7 @@ def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False):
     map_tail = ".gfe.map"
     map_path_list = [map_path+pdb_id+"."+name+map_tail for name in map_names]
 
-
+    
     n_batch = batch
     n_FM = 4
     map_tensor = np.zeros(shape = (n_batch, n_FM, dim, dim, dim))
@@ -58,24 +60,26 @@ def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False):
     for i in range(len(map_path_list)):
         _, _, dens = read_map(map_path_list[i])      #in-f-call
 
-
-        #apply min_max norm
-        dmin.append(dens.min())
-        dsize.append(dens.max() - dens.min())
-        dens = (dens - dmin[i]) / (dsize[i])
         
         #apply cutoff
-        #if cutoff == True:
-        #    dens[dens > 0] = 0.0 
+        if cutoff == True:
+            dens[dens > 0] = 0.0 
+        
+        #apply min_max norm
+        #dmin.append(dens.min())
+        #dsize.append(dens.max() - dens.min())
+        #dens = (dens - dmin[i]) / (dsize[i])
             
-        #dens = np.abs(dens) # check!!!!!!!!!!!!!!!!!!!!!!
+        #convert to density
+        #kBT=0.6 #
+        #dens = np.exp(-dens/kBT) 
             
         pad_dens, xpad, ypad, zpad = pad_map(dens)   #ex-f-call
         map_tensor[n_batch-1, i,:,:,:] = pad_dens
        
     pad = [xpad,ypad,zpad]
 
-    return map_tensor, pad, np.array(dmin), np.array(dsize)
+    return map_tensor, pad #, np.array(dmin), np.array(dsize)
 
 
 def write_map(vec, out_path, out_name, ori, res, n):

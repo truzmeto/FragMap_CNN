@@ -12,7 +12,7 @@ from src.volume import get_volume
 
 #A simple unit test!
 path_list = ["../data/1ycr.pdb"]
-box_size = 58  # prog complains if box_size is float !!!!!! 
+box_size = 120  # prog complains if box_size is float !!!!!! 
 resolution = 1.0
 volume = get_volume(path_list, box_size, resolution)
 print(volume.shape)
@@ -28,14 +28,14 @@ Agroup_names = ["Sulfur/Selenium", "Nitrogen Amide",
 p = pv.Plotter(point_smoothing = True, shape=(1, 2))
 fs = 15
 
-chan_id = 1 # Atomic group ids, range 0-10
+chan_id = 0 # Atomic group ids, range 0-10
 channel = volume[0,chan_id,:,:,:].cpu().numpy()
 text = Agroup_names[chan_id]
 p.subplot(0, 0)
 p.add_text(text, position='upper_left', font_size=fs)
 p.add_volume(channel, cmap = "viridis_r", opacity = "linear")
 
-chan_id = 10 
+chan_id = 1 
 channel = volume[0,chan_id,:,:,:].cpu().numpy()
 text = Agroup_names[chan_id]
 p.subplot(0, 1)

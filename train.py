@@ -8,12 +8,12 @@ from src.mapIO import get_target, write_map
 from src.util import grid2vec, unpad_map
 import torch.optim as optim
 import pyvista as pv
-
+import numpy as np
 
 lrt = 0.001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 1000
+max_epoch = 2000
 
 torch.cuda.set_device(0)
 
@@ -33,13 +33,14 @@ map_names_list = ["benc","prpc", "hbacc", "hbdon"]
 dim = int(box_size/resolution)
 
 #get padded target fragmap volumes
-target, pad, dmin, dsize = get_target(map_path,
-                            map_names_list,
-                            pdb_id,
-                            batch = 1,
-                            dim = dim,
-                            cutoff = False)
-#print(target.shape)
+#target, pad, dmin, dsize = get_target(map_path,
+target, pad = get_target(map_path,
+                           map_names_list,
+                           pdb_id,
+                           batch = 1,
+                           dim = dim,
+                           cutoff = True)
+
 
 target = torch.from_numpy(target).float().cuda()
 
@@ -48,7 +49,7 @@ model = CnnModel().cuda()
 criterion = nn.MSELoss()
 #criterion = nn.L1Loss()
 optimizer = optim.Adam(model.parameters(), lr=lrt, weight_decay = wd )
-#optimizer = optim.SGD(model.parameters(), lr=lrt, momentum=0.9)
+#optimizer = optim.SGD(model.parameters(), lr = lrt, momentum = 0.9)
 
 
 for epoch in range(max_epoch):
@@ -77,10 +78,10 @@ for i in range(len(map_names_list)):
 
     out_name = pdb_id+"."+ map_names_list[i]
     grid = output[0,i,:,:,:].cpu().detach().numpy()
-    grid = unpad_map(grid, xpad=pad[0], ypad=pad[1], zpad=pad[2])
+    grid = unpad_map(grid, xpad = pad[0], ypad = pad[1], zpad = pad[2])
 
     #un-normalize predicted densities
-    vol = grid*dsize[i] + dmin[i]
+    vol = grid#*dsize[i] + dmin[i]
     
     nx, ny, nz = grid.shape
  

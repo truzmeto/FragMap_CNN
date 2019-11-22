@@ -6,9 +6,9 @@ def vec2grid(n, vec):
     tensor (nx,ny,nz) data structure
     """
     nx = n[0]; ny = n[1]; nz = n[2] 
-    grid = np.zeros(shape = (nz,ny,nx), dtype = float)
-    grid = np.reshape(vec, newshape = (nx,ny,nz), order = "F") #order must be inverted because
-                                                           #that is how map file is done :/
+    #grid = np.zeros(shape = (nz,ny,nx), dtype = float)
+    grid = np.reshape(vec, newshape = (nx,ny,nz), order = "F")
+    
     return grid
 
 
@@ -18,7 +18,7 @@ def grid2vec(n, grid):
     vector (nx*ny*nz) 
     """
     nx = n[0]; ny = n[1]; nz = n[2] 
-    vec = np.zeros(shape = (nx*ny*nz), dtype = float)
+    #vec = np.zeros(shape = (nx*ny*nz), dtype = float)
     vec = np.reshape(grid, newshape = nx*ny*nz, order = "F")
 
     return vec
@@ -32,6 +32,7 @@ def pad_map(dens):
     where n is max dimention(max emong (nx,ny,nz))
     
     """
+    
     dim = dens.shape # tuple
     dimx, dimy, dimz = dim # unpack tuple
 
@@ -48,7 +49,8 @@ def pad_map(dens):
                       pad_width = ((0,xpad), (0,ypad), (0,zpad)),
                       mode = 'constant') #zero padding by default
         
-    return dens, xpad, ypad, zpad    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    return dens, xpad, ypad, zpad 
+
 
 def unpad_map(dens, xpad, ypad, zpad):
     """
@@ -56,62 +58,12 @@ def unpad_map(dens, xpad, ypad, zpad):
     slicing out the original part
 
     """
-    #unpad the padded parts
+    #unpad, remove padded parts
     n = dens.shape[0]
     dens = dens[0:n-xpad, 0:n-ypad, 0:n-zpad].copy()
    
     return dens
 
+
 if __name__=='__main__':
-
-    import pyvista as pv
-    from mapIO import read_map 
-
-    frag_names = ["Benzene", "Propane", "H-bond Donor", "H-bond Acceptor"]
-    path_list = ["../data/maps/1ycr.benc.gfe.map",
-                 "../data/maps/1ycr.prpc.gfe.map",
-                 "../data/maps/1ycr.hbacc.gfe.map",
-                 "../data/maps/1ycr.hbdon.gfe.map"]
-    chan_id = 0 # range 0-3
-    _, _, dens = read_map(path_list[chan_id])
-
-    
-    
-    ######------------- Test padding ----------------#######
-    pad_dens, xpad, ypad, zpad = pad_map(dens)
-
-    if np.abs(pad_dens.sum() - dens.sum()) > 0.000001:
-        print("Error! Zero padding should not affect the sum")
-        print("Padded sum = ", pad_dens.sum())
-        print("Map sum = ", dens.sum())
-        
-    else:
-        print("Padding test passed!")
-        
-
-    ######------------- Test unpadding ----------------#######
-    ori_dim = dens.shape
-    up_dens = unpad_map(pad_dens, xpad, ypad, zpad)
-    unpad_dim = up_dens.shape
-    i = 0; dp = 0
-    for item in ori_dim:
-        dp = item - unpad_dim[i]
-        i+=1
-        if dp != 0:
-            print("Original dim is not same as padded dim!")
-            break
-    
-        
-    #compare original and unpadded map volumes by visialization
-    p = pv.Plotter(point_smoothing = True, shape=(1, 2))
-    fs = 16
-    text = frag_names[chan_id]+" original " + "dim = "+ str(ori_dim)
-    p.add_text(text, position='upper_left', font_size = fs)
-    p.add_volume(np.abs(dens), cmap = "viridis", opacity = "linear")
-
-    p.subplot(0, 1)
-    text = frag_names[chan_id]+"un-padded" + "dim = "+ str(unpad_dim)
-    p.add_text(text, position="upper_left", font_size = fs)
-    p.add_volume(np.abs(up_dens), cmap = "viridis", opacity = "linear")
-
-    p.show()
+    print("Share knowledge!")
