@@ -58,21 +58,17 @@ def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False):
     dsize = []
 
     for i in range(len(map_path_list)):
-        _, _, dens = read_map(map_path_list[i])      #in-f-call
+        _, _, FrE = read_map(map_path_list[i])      #in-f-call
 
         
         #apply cutoff
         if cutoff == True:
-            dens[dens > 0] = 0.0 
+            FrE[FrE > 0] = 0.0 
         
-        #apply min_max norm
-        #dmin.append(dens.min())
-        #dsize.append(dens.max() - dens.min())
-        #dens = (dens - dmin[i]) / (dsize[i])
             
         #convert to density
-        #kBT=0.6 #
-        #dens = np.exp(-dens/kBT) 
+        kBT = 0.6 #
+        dens = np.exp(-FrE/kBT) 
             
         pad_dens, xpad, ypad, zpad = pad_map(dens)   #ex-f-call
         map_tensor[n_batch-1, i,:,:,:] = pad_dens
@@ -81,6 +77,11 @@ def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False):
 
     return map_tensor, pad #, np.array(dmin), np.array(dsize)
 
+
+#apply min_max norm
+#dmin.append(dens.min())
+#dsize.append(dens.max() - dens.min())
+#dens = (dens - dmin[i]) / (dsize[i])
 
 def write_map(vec, out_path, out_name, ori, res, n):
     """

@@ -29,6 +29,9 @@ class CnnModel(nn.Module):
                       padding = pad),
 	    #nn.ReLU(),
             nn.LeakyReLU(),
+            nn.MaxPool3d(kernel_size = k_size,
+                         stride = (1,1,1),
+                         padding = pad),
 
             #conv layer 2
 	    nn.Conv3d(in_channels = 16,
@@ -37,25 +40,19 @@ class CnnModel(nn.Module):
                       padding = pad),
             #nn.ReLU(),
             nn.LeakyReLU(),
-
+            nn.MaxPool3d(kernel_size = k_size,
+                         stride = (1,1,1),
+                         padding = pad),
+            
             #conv layer 3
             nn.Conv3d(in_channels = 8,
                       out_channels = 4,
                       kernel_size = k_size,
                       padding = pad),
             #nn.ReLU()
-            nn.LeakyReLU()
+            nn.LeakyReLU() 
         )
         
-        #self.fc = nn.Sequential(
-	#    nn.Linear(512, 256),
-	#    nn.ReLU(),
-	#    nn.Linear(256, 128),
-	#    nn.ReLU(),
-	#    nn.Linear(128, 1)
-        #)
-
-        #self.apply(weight_init)
         
     def forward(self, input):
         #batch_size = input.size(0)
@@ -64,6 +61,5 @@ class CnnModel(nn.Module):
     
 
 if __name__=='__main__':
-    print("Enjoy life!")
-    
+    print("Enjoy life!") 
     

@@ -66,4 +66,4 @@ def unpad_map(dens, xpad, ypad, zpad):
 
 
 if __name__=='__main__':
-    print("Share knowledge!")
+    print("Universal knowledge must be stored somewhere!")

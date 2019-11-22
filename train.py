@@ -33,13 +33,12 @@ map_names_list = ["benc","prpc", "hbacc", "hbdon"]
 dim = int(box_size/resolution)
 
 #get padded target fragmap volumes
-#target, pad, dmin, dsize = get_target(map_path,
 target, pad = get_target(map_path,
-                           map_names_list,
-                           pdb_id,
-                           batch = 1,
-                           dim = dim,
-                           cutoff = True)
+                         map_names_list,
+                         pdb_id,
+                         batch = 1,
+                         dim = dim,
+                         cutoff = True)
 
 
 target = torch.from_numpy(target).float().cuda()
@@ -80,8 +79,10 @@ for i in range(len(map_names_list)):
     grid = output[0,i,:,:,:].cpu().detach().numpy()
     grid = unpad_map(grid, xpad = pad[0], ypad = pad[1], zpad = pad[2])
 
-    #un-normalize predicted densities
-    vol = grid#*dsize[i] + dmin[i]
+    #convert from Free-E to density 
+    grid[grid <= 0.000] = 0.0001
+    kBT = 0.6
+    vol = -kBT *np.log(grid)  
     
     nx, ny, nz = grid.shape
  

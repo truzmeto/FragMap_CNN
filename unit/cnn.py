@@ -27,6 +27,7 @@ print("Output dimension -->",output.size())
 #plot output density map
 chan_id = 0 # can be 0,1,2,3
 channel = output[0,chan_id,:,:,:].detach().numpy()
+#channel = -0.6*np.log(channel+0.01)
 p = pv.Plotter(point_smoothing = True)
 p.add_volume(channel, cmap = "viridis", opacity = "linear")
 p.show()
