@@ -54,9 +54,6 @@ def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False):
     n_FM = 4
     map_tensor = np.zeros(shape = (n_batch, n_FM, dim, dim, dim))
 
-    dmin = []
-    dsize = []
-
     for i in range(len(map_path_list)):
         _, _, FrE = read_map(map_path_list[i])      #in-f-call
 
@@ -77,11 +74,6 @@ def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False):
 
     return map_tensor, pad #, np.array(dmin), np.array(dsize)
 
-
-#apply min_max norm
-#dmin.append(dens.min())
-#dsize.append(dens.max() - dens.min())
-#dens = (dens - dmin[i]) / (dsize[i])
 
 def write_map(vec, out_path, out_name, ori, res, n):
     """
@@ -104,7 +96,6 @@ def write_map(vec, out_path, out_name, ori, res, n):
 
         for i in range(nx*ny*nz):
             fp.write("%10.3f\n" % vec[i])
-
 
             
 if __name__=='__main__':
