@@ -5,14 +5,16 @@ import pyvista as pv
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.mapIO import read_map 
 from src.util import pad_map, unpad_map 
+import matplotlib.pyplot as plt
 
 frag_names = ["Benzene", "Propane", "H-bond Donor", "H-bond Acceptor"]
-path_list = ["../data/maps/1ycr.benc.gfe.map",
-             "../data/maps/1ycr.prpc.gfe.map",
-             "../data/maps/1ycr.hbacc.gfe.map",
-             "../data/maps/1ycr.hbdon.gfe.map"]
+frag_names_short = ["benc", "prpc", "hbacc", "hbdon"]
+path = "../data/maps/"
+pdb_id = "1ycr"
+tail = ".gfe.map"
+path_list = [path+pdb_id+"."+name+tail for name in frag_names_short]
 
-chan_id = 0 # range 0-3
+chan_id = 1 # range 0-3
 _, _, dens = read_map(path_list[chan_id])
 
 
@@ -41,18 +43,24 @@ for item in ori_dim:
     
     
 #compare original and unpadded map volumes by visialization
-p = pv.Plotter(point_smoothing = True, shape=(1, 2))
-fs = 16
+#p = pv.Plotter(point_smoothing = True, shape=(1, 2))
+#fs = 16
+#p.subplot(0, 0)
+#text = frag_names[chan_id]+" original " + "dim = "+ str(ori_dim)
+#p.add_text(text, position = 'upper_left', font_size = fs)
+#p.add_volume(np.abs(dens), cmap = "viridis", opacity = "linear")
 
-p.subplot(0, 0)
-text = frag_names[chan_id]+" original " + "dim = "+ str(ori_dim)
-p.add_text(text, position = 'upper_left', font_size = fs)
-p.add_volume(np.abs(dens), cmap = "viridis", opacity = "linear")
+#p.subplot(0, 1)
+#text = frag_names[chan_id]+"un-padded" + "dim = "+ str(unpad_dim)
+#p.add_text(text, position = "upper_left", font_size = fs)
+#p.add_volume(np.abs(up_dens), cmap = "viridis", opacity = "linear")
+#p.show()
 
-p.subplot(0, 1)
-text = frag_names[chan_id]+"un-padded" + "dim = "+ str(unpad_dim)
-p.add_text(text, position = "upper_left", font_size = fs)
-p.add_volume(np.abs(up_dens), cmap = "viridis", opacity = "linear")
+new_shape = dens.shape[0]*dens.shape[1]*dens.shape[2]
 
+for i in range(len(path_list)):
+    _, _, dens = read_map(path_list[i])
 
-p.show()
+    plt.hist(np.reshape(dens,new_shape), bins = 50, alpha=0.5)
+
+plt.show()

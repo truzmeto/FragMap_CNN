@@ -18,13 +18,13 @@ class CnnModel(nn.Module):
         #to keep volume dims same
         s = 3
         p = (s-1)//2
-        k_size = (s,s,s)
-        pad = (p,p,p)
+        k_size = s #(s,s,s)
+        pad = p #(p,p,p)
         
         self.conv = nn.Sequential(
             #conv layer 1
             nn.Conv3d(in_channels = num_input_channels,
-                      out_channels = 16, #n convlolutions
+                      out_channels = 48, #n convlolutions
                       kernel_size = k_size,
                       padding = pad),
 	    #nn.ReLU(),
@@ -34,8 +34,8 @@ class CnnModel(nn.Module):
                          padding = pad),
 
             #conv layer 2
-	    nn.Conv3d(in_channels = 16,
-                      out_channels = 8,
+	    nn.Conv3d(in_channels = 48,
+                      out_channels = 24,
                       kernel_size = k_size,
                       padding = pad),
             #nn.ReLU(),
@@ -45,12 +45,23 @@ class CnnModel(nn.Module):
                          padding = pad),
             
             #conv layer 3
-            nn.Conv3d(in_channels = 8,
-                      out_channels = 4,
+            nn.Conv3d(in_channels = 24,
+                      out_channels = 12,
                       kernel_size = k_size,
                       padding = pad),
             #nn.ReLU()
-            nn.LeakyReLU() 
+            nn.LeakyReLU(),
+            nn.MaxPool3d(kernel_size = k_size,
+                         stride = (1,1,1),
+                         padding = pad),
+
+            #conv layer 4
+            nn.Conv3d(in_channels = 12,
+                      out_channels = 6,
+                      kernel_size = k_size,
+                      padding = pad),
+            #nn.ReLU()
+            nn.LeakyReLU()
         )
         
         

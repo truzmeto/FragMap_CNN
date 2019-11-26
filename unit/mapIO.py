@@ -25,7 +25,6 @@ print("Specified dimension in the file header --> ", n_cells)
 dens[dens > 0] = 0.0 #cutoff at zero!
 channel = dens
 p = pv.Plotter(point_smoothing = True)
-
 p.add_volume(np.abs(channel), cmap = "viridis", opacity = "linear")
 text = frag_names[chan_id]
 p.add_text(text, position = 'upper_left', font_size = 16)

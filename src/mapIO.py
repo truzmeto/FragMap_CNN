@@ -46,42 +46,44 @@ def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False):
     
     """
     
-    map_tail = ".gfe.map"
-    map_path_list = [map_path+pdb_id+"."+name+map_tail for name in map_names]
+    map_path_list = []
+    for name in map_names:
 
+        if name == "excl":
+            map_tail = ".map"
+        else:
+            map_tail = ".gfe.map"
+
+        map_path_list.append(map_path + pdb_id + "." + name + map_tail)
+
+        
     
     n_batch = batch
-    n_FM = 4
+    n_FM = len(map_names)
     map_tensor = np.zeros(shape = (n_batch, n_FM, dim, dim, dim))
+    kBT = 0.592
 
-    dmin = []
-    dsize = []
-
-    for i in range(len(map_path_list)):
+    for i in range(n_FM):
         _, _, FrE = read_map(map_path_list[i])      #in-f-call
 
         
-        #apply cutoff
+        #apply cutoff to Frag Free Energy
         if cutoff == True:
             FrE[FrE > 0] = 0.0 
         
-            
         #convert to density
-        kBT = 0.6 #
         dens = np.exp(-FrE/kBT) 
-            
+
+        #apply padding
         pad_dens, xpad, ypad, zpad = pad_map(dens)   #ex-f-call
+        
+        #convert to tensor
         map_tensor[n_batch-1, i,:,:,:] = pad_dens
        
     pad = [xpad,ypad,zpad]
 
-    return map_tensor, pad #, np.array(dmin), np.array(dsize)
+    return map_tensor, pad 
 
-
-#apply min_max norm
-#dmin.append(dens.min())
-#dsize.append(dens.max() - dens.min())
-#dens = (dens - dmin[i]) / (dsize[i])
 
 def write_map(vec, out_path, out_name, ori, res, n):
     """
