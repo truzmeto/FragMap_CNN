@@ -21,30 +21,72 @@ class CnnModel(nn.Module):
         k_size = (s,s,s)
         pad = (p,p,p)
         
-        self.conv = nn.Sequential(
-            #conv layer 1
-            nn.Conv3d(in_channels = num_input_channels,
-                      out_channels = 16, #n convlolutions
-                      kernel_size = k_size,
-                      padding = pad),
-	    #nn.ReLU(),
-            nn.LeakyReLU(),
-            nn.MaxPool3d(kernel_size = k_size,
-                         stride = (1,1,1),
-                         padding = pad),
+      #   self.conv = nn.Sequential(
+      #       #conv layer 1
+      #       nn.Conv3d(in_channels = num_input_channels,
+      #                 out_channels = 16, #n convlolutions
+      #                 kernel_size = k_size,
+      #                 padding = pad),
+      # #nn.ReLU(),
+      #       nn.LeakyReLU(),
+      #       nn.MaxPool3d(kernel_size = k_size,
+      #                    stride = (1,1,1),
+      #                    padding = pad),
 
-            #conv layer 2
-	    nn.Conv3d(in_channels = 16,
-                      out_channels = 8,
+      #       #conv layer 2
+      # nn.Conv3d(in_channels = 16,
+      #                 out_channels = 8,
+      #                 kernel_size = k_size,
+      #                 padding = pad),
+      #       #nn.ReLU(),
+      #       nn.LeakyReLU(),
+      #       nn.MaxPool3d(kernel_size = k_size,
+      #                    stride = (1,1,1),
+      #                    padding = pad),
+            
+      #       #conv layer 3
+      #       nn.Conv3d(in_channels = 8,
+      #                 out_channels = 4,
+      #                 kernel_size = k_size,
+      #                 padding = pad),
+      #       #nn.ReLU()
+      #       nn.LeakyReLU() 
+      #   )
+        self.conv = nn.Sequential(
+            # conv layer 1
+            nn.Conv3d(in_channels = num_input_channels,
+                      out_channels = 32, #n convlolutions
                       kernel_size = k_size,
                       padding = pad),
-            #nn.ReLU(),
+            nn.BatchNorm3d(32),
             nn.LeakyReLU(),
             nn.MaxPool3d(kernel_size = k_size,
                          stride = (1,1,1),
                          padding = pad),
             
+            # conv layer 2
+            nn.Conv3d(in_channels = 32,
+                      out_channels = 16, #n convlolutions
+                      kernel_size = k_size,
+                      padding = pad),
+            nn.BatchNorm3d(16),
+            nn.LeakyReLU(),
+            nn.MaxPool3d(kernel_size = k_size,
+                         stride = (1,1,1),
+                         padding = pad),
+
             #conv layer 3
+            nn.Conv3d(in_channels = 16,
+                      out_channels = 8,
+                      kernel_size = k_size,
+                      padding = pad),
+            nn.BatchNorm3d(8),
+            nn.LeakyReLU(),
+            nn.MaxPool3d(kernel_size = k_size,
+                         stride = (1,1,1),
+                         padding = pad),
+            
+            #conv layer 4
             nn.Conv3d(in_channels = 8,
                       out_channels = 4,
                       kernel_size = k_size,
@@ -52,7 +94,7 @@ class CnnModel(nn.Module):
             #nn.ReLU()
             nn.LeakyReLU() 
         )
-        
+          
         
     def forward(self, input):
         #batch_size = input.size(0)
