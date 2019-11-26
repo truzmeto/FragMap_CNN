@@ -10,10 +10,10 @@ import torch.optim as optim
 import pyvista as pv
 import numpy as np
 
-lrt = 0.001
+lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 1000
+max_epoch = 4000
 
 torch.cuda.set_device(0)
 
@@ -58,7 +58,7 @@ for epoch in range(max_epoch):
     loss.backward()
     optimizer.step()
     
-    if epoch % 20 == 0:
+    if epoch % 40 == 0:
         print('{0}, {1}'.format(epoch, loss.item()))
             
 #save trained parameters        

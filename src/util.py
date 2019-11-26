@@ -65,5 +65,24 @@ def unpad_map(dens, xpad, ypad, zpad):
     return dens
 
 
+def box_face_ave(grid):
+    """
+    This function calculates GFE average over
+    voxels along the 6 faces of the grid. n.ndarray
+    slicing and some math is used to have fast calc. 
+    
+    """
+    
+    nx, ny, nz = grid.shape
+    face_x = grid[nx-1,:,:].sum() + grid[0,:,:].sum() 
+    face_y = grid[1:nx-1,ny-1,:].sum() + grid[1:nx-1,0,:].sum() 
+    face_z = grid[1:nx-1,1:ny-1,nz-1].sum() + grid[1:nx-1,1:ny-1,0].sum() 
+    n_face_vox = nx*ny*nz - (nx-2)*(ny-2)*(nz-2)
+    face_ave = (face_x + face_y + face_z) / n_face_vox
+
+    return face_ave
+
+
+
 if __name__=='__main__':
     print("Universal knowledge must be stored somewhere!")
