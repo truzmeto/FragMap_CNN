@@ -10,7 +10,7 @@ def read_map(file_path):
     path = file_path
     with open(path) as file:
         i = 0
-        dens = []
+        gfe = []
         for line in file:
             if i == 3:
                 res = float(line.split()[1])
@@ -21,7 +21,7 @@ def read_map(file_path):
 
             if i > 5:  
                 lines = line.split()
-                dens.append(float(lines[0]))
+                gfe.append(float(lines[0]))
 
             i = i + 1
 
@@ -30,12 +30,12 @@ def read_map(file_path):
             
 
     #convert list to np.array
-    dens = np.array(dens)
+    gfe = np.array(gfe)
 
     #convert from 1D array to 3D array(tensor)
-    dens = vec2grid(n_cells, dens) #ex-f-call
+    gfe = vec2grid(n_cells, gfe) #ex-f-call
   
-    return res, n_cells, dens
+    return res, n_cells, gfe
 
 
 

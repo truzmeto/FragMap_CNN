@@ -2,7 +2,8 @@ import numpy as np
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from src.mapIO import read_map 
+from src.mapIO import read_map
+from src.util import box_face_ave
 import matplotlib.pyplot as plt
 
 frag_names = ["Gen. Apolar","Gen. Acceptor",
@@ -20,18 +21,22 @@ path_list = [path+pdb_id+"."+name+tail for name in frag_names_short]
 leg = []
 kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K) 
 for i in range(len(path_list)):
-    _, _, dens = read_map(path_list[i])
+    _, _, gfe = read_map(path_list[i])
 
-    #dens[dens > 2.50] = 0.0
-    new_shape = dens.shape[0]*dens.shape[1]*dens.shape[2]
-    vec = np.reshape(dens,new_shape)
+    f_ave = box_face_ave(gfe)
+    #print(f_ave, np.median(gfe))
+
+    #gfe[gfe > 2.50] = 0.0
+    new_shape = gfe.shape[0]*gfe.shape[1]*gfe.shape[2]
+    vec = np.reshape(gfe,new_shape) - f_ave
     #vec = np.exp(vec/kBT)  
+    
     plt.hist(vec, histtype='barstacked', bins = 200, alpha=0.4)
-
     mean = round(vec.mean(),2)
-    leg.append(frag_names[i]+ ",  " + r"$\mu$ =" + str(mean))    
+    leg.append(frag_names[i] + ",  " + r"$\mu$ =" + str(mean))    
+
 plt.title(pdb_id)
-plt.legend(leg, loc="best")
+plt.legend(leg, loc = "best", frameon = False)
 plt.xlabel("GFE")
 plt.ylabel("Freq")
 plt.show()
