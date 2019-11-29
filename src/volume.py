@@ -45,8 +45,24 @@ def get_volume(path_list, box_size, resolution):
                      num_atoms_of_type.cuda(),
                      offsets.cuda())
 
-    return volume
+    normalized_volume = normailze(volume)
 
+    return normalized_volume
+
+def normailze(vector):
+    """
+    This function converts an input torch vector to values between 0-1
+    
+    output: normalized torch tensor
+
+    """
+    min_v = torch.min(vector)
+    range_v = torch.max(vector) - min_v
+    if range_v > 0:
+        normalized = (vector - min_v) / range_v
+    else:
+        normalized = torch.zeros(vector.size())
+    return normalized
 
 if __name__=='__main__':
     print("Code daily!")

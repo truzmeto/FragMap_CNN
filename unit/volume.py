@@ -1,6 +1,7 @@
 import os
 import sys
 import torch
+import numpy as np
 from TorchProteinLibrary.Volume import TypedCoords2Volume
 from TorchProteinLibrary.FullAtomModel import PDB2CoordsUnordered, Coords2TypedCoords
 from TorchProteinLibrary.FullAtomModel import getRandomRotation, getRandomTranslation
@@ -28,7 +29,7 @@ Agroup_names = ["Sulfur/Selenium", "Nitrogen Amide",
 p = pv.Plotter(point_smoothing = True, shape=(1, 2))
 fs = 15
 
-chan_id = 0 # Atomic group ids, range 0-10
+chan_id = 10 # Atomic group ids, range 0-10
 channel = volume[0,chan_id,:,:,:].cpu().numpy()
 text = Agroup_names[chan_id]
 p.subplot(0, 0)
@@ -37,6 +38,8 @@ p.add_volume(channel, cmap = "viridis_r", opacity = "linear")
 
 chan_id = 1 
 channel = volume[0,chan_id,:,:,:].cpu().numpy()
+print(np.max(channel))
+
 text = Agroup_names[chan_id]
 p.subplot(0, 1)
 p.add_text(text, position='upper_left', font_size=fs)

@@ -17,7 +17,7 @@ lrt_adadelta = 1
 wd_adadelta = 0
 lrt = 0.001
 wd = 0.00001
-max_epoch = 5000
+max_epoch = 10000
 
 torch.cuda.set_device(0)
 
