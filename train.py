@@ -13,7 +13,7 @@ import numpy as np
 lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 4000
+max_epoch = 1000
 
 torch.cuda.set_device(0)
 
@@ -25,6 +25,10 @@ pdb_path_list = [path1]
 box_size = 57  # prog complains if box_size is float !!!!!!!!! 
 resolution = 1.000
 data = get_volume(pdb_path_list, box_size, resolution)
+
+#normalize
+data = (data - torch.min(data)) / (torch.max(data) -  torch.min(data))
+
 
 #get target
 map_path = "data/maps/"
