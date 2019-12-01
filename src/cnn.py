@@ -51,8 +51,8 @@ class CnnModel(nn.Module):
                       kernel_size = k_size,
                       padding = pad),
             nn.BatchNorm3d(12),
-            #nn.ReLU()
-            nn.LeakyReLU(),
+            nn.ReLU(),
+            #nn.LeakyReLU(),
             nn.MaxPool3d(kernel_size = k_size,
                          stride = (1,1,1),
                          padding = pad),
@@ -63,8 +63,8 @@ class CnnModel(nn.Module):
                       kernel_size = k_size,
                       padding = pad),
             nn.BatchNorm3d(6),
-            #nn.ReLU()
-            nn.LeakyReLU()
+            nn.ReLU()
+            #nn.LeakyReLU()
         )
         
         
