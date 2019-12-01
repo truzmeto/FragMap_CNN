@@ -56,7 +56,7 @@ def MinMaxNorm(inp):
     output: min-max normalized torch tensor
     """
     min_v = torch.min(inp)
-    max_v = torch.min(inp)
+    max_v = torch.max(inp)
     return (inp - min_v) / (max_v - min_v)
 
 if __name__=='__main__':
