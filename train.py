@@ -6,7 +6,7 @@ from src.cnn  import CnnModel
 from src.volume import get_volume
 from src.mapIO import get_target, write_map
 from src.util import grid2vec, unpad_map
-from unit.viz import Visualizations
+from visual.viz import Visualizations
 import torch.optim as optim
 import pyvista as pv
 import numpy as np
@@ -29,7 +29,6 @@ pdb_path_list = [path1]
 box_size = 57  # prog complains if box_size is float !!!!!!!!! 
 resolution = 1.000
 data = get_volume(pdb_path_list, box_size, resolution)
-#print(data.size())
 
 #get target
 map_path = "data/maps/"
@@ -44,7 +43,6 @@ target, pad = get_target(map_path,
                          dim = dim,
                          cutoff = True)
 
-
 target = torch.from_numpy(target).float().cuda()
 
 #invoke model
@@ -52,7 +50,7 @@ model = CnnModel().cuda()
 criterion = nn.MSELoss()
 #criterion = nn.L1Loss()
 # optimizer = optim.Adam(model.parameters(), lr=lrt, weight_decay = wd )
-optimizer = optim.Adadelta(model.parameters(), lr=lrt_adadelta, weight_decay = wd_adadelta, rho=0.9, eps=1e-06)
+optimizer = optim.Adadelta(model.parameters(), lr=lrt_adadelta, weight_decay=wd_adadelta, rho=0.9, eps=1e-06)
 vis = Visualizations()
 loss_values = []
 
@@ -63,7 +61,7 @@ for epoch in range(max_epoch):
     loss = criterion(output, target)
     loss.backward()
     optimizer.step()
-    vis.plot_loss(loss.item(), epoch)
+    #vis.plot_loss(loss.item(), epoch)
 
     if epoch % 20 == 0:
         print('Epoch {}, loss {}'.format(epoch, loss.item()))
@@ -73,7 +71,7 @@ for epoch in range(max_epoch):
 save_path = './output/map_net.pth'
 torch.save(model.state_dict(), save_path)
 
-        
+
 #save density maps to file
 out_path = "data/maps/"
 ori = [40.250, -8.472, 20.406]
@@ -94,4 +92,3 @@ for i in range(len(map_names_list)):
  
     vec = grid2vec([nx,ny,nz], vol)
     write_map(vec, out_path, out_name, ori, res, n = [nx,ny,nz])
-    
