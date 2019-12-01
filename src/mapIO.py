@@ -78,7 +78,7 @@ def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False, density=
         if density == True: #convert to density 
             dens = np.exp(-FrE/kBT) 
         else:               #normalize GFE maps
-            FrE = -FrE #mirror inverse for max pooling
+            #FrE = -FrE #mirror inverse for max pooling
             gfe_min.append(FrE.min())
             gfe_max.append(FrE.max())
             dens = (FrE - gfe_min[i]) / (gfe_max[i] - gfe_min[i])

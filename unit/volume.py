@@ -29,7 +29,6 @@ box_size = 40  #prog complains if box_size is float !!!!!!
 resolution = 1.0
 volume = get_volume(path_list, box_size, resolution)
 #volume = torch_norm(volume)
-print(volume.shape)
 
 Agroup_names = ["Sulfur/Selenium"  , "Nitrogen Amide",
                 "Nitrogen Aromatic", "Nitrogen Guanidinium",
