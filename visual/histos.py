@@ -13,7 +13,9 @@ frag_names = ["Gen. Apolar","Gen. Acceptor",
 frag_names_short = ["apolar", "hbacc", "hbdon", "meoo","acec", "mamn"]
 
 path = "../data/maps/"
-pdb_id = "1ycr"
+#pdb_id = "1ycr"
+pdb_id = "1pw2"
+
 tail = ".gfe.map"
 path_list = [path+pdb_id+"."+name+tail for name in frag_names_short]
 
@@ -31,7 +33,7 @@ for i in range(len(path_list)):
     vec = np.reshape(gfe,new_shape) - f_ave
     #vec = np.exp(vec/kBT)  
     
-    plt.hist(vec, histtype='barstacked', bins = 200, alpha=0.4)
+    plt.hist(vec, histtype='barstacked', bins = 200, alpha = 0.4)
     mean = round(vec.mean(),2)
     leg.append(frag_names[i] + ",  " + r"$\mu$ =" + str(mean))    
 

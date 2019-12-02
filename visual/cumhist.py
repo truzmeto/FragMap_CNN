@@ -15,6 +15,7 @@ frag_names = ["Gen. Apolar","Gen. Acceptor",
 frag_names_short = ["apolar", "hbacc", "hbdon", "meoo","acec", "mamn"]
 
 path = "../data/maps/"
+#pdb_id = "1ycr"
 pdb_id = "1pw2"
 tail = ".gfe.map"
 path_list = [path+pdb_id+"."+name+tail for name in frag_names_short]
@@ -22,7 +23,7 @@ path_list = [path+pdb_id+"."+name+tail for name in frag_names_short]
 
 
 leg = []
-nbins = 300
+nbins = 200
 for i in range(len(path_list)):
     _, _, gfe = read_map(path_list[i])
     
@@ -32,7 +33,7 @@ for i in range(len(path_list)):
     vec = np.reshape(gfe,new_shape) - f_ave
     
     #plt.hist(vec, histtype='barstacked', bins = 60, alpha=0.4)
-    values, base = np.histogram(vec, bins=nbins)
+    values, base = np.histogram(vec, bins = nbins)
     cum = np.cumsum(values)
     plt.plot(base[:-1], cum)
         
