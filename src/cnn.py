@@ -53,9 +53,9 @@ class CnnModel(nn.Module):
             nn.BatchNorm3d(12),
             nn.ReLU(),
             #nn.LeakyReLU(),
-            nn.MaxPool3d(kernel_size = k_size,
-                         stride = (1,1,1),
-                         padding = pad),
+            #nn.MaxPool3d(kernel_size = k_size,
+            #             stride = (1,1,1),
+            #             padding = pad),
 
             #conv layer 4
             nn.Conv3d(in_channels = 12,

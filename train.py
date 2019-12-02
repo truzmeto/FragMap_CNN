@@ -12,16 +12,17 @@ from TorchProteinLibrary.Volume import VolumeRotation
 from TorchProteinLibrary.FullAtomModel import getRandomRotation
 
 
-
 lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 100
+max_epoch = 5000
 
 torch.cuda.set_device(0)
 
-#get input
-pdb_path = 'data/' #"/scratch/tr443/fragmap/data/"
+#get input data
+#pdb_path = 'data/'
+pdb_path = "/scratch/tr443/fragmap/data/"                                                          
+
 pdb_id = "1ycr"
 path1 = pdb_path+pdb_id+".pdb"
 pdb_path_list = [path1]
@@ -33,7 +34,9 @@ volume = (data - torch.min(data)) / (torch.max(data) -  torch.min(data))
 
 
 #get target
-map_path = 'data/maps/' #"/scratch/tr443/fragmap/data/maps/"
+#map_path = 'data/maps/' 
+map_path = "/scratch/tr443/fragmap/data/maps/"                                               
+
 map_names_list = ["apolar", "hbacc", "hbdon", "meoo","acec", "mamn"]
 dim = int(box_size/resolution)
 
@@ -46,7 +49,6 @@ target, pad, gfe_min, gfe_max = get_target(map_path,
                                 cutoff = False,
                                 density = False)
 
-
 target = torch.from_numpy(target).float().cuda()
 
 #invoke model
@@ -57,32 +59,33 @@ optimizer = optim.Adam(model.parameters(), lr=lrt, weight_decay = wd )
 #optimizer = optim.SGD(model.parameters(), lr = lrt, momentum = 0.9)
 
 
-#rotate
 volume_rotate = VolumeRotation(mode='bilinear')
-
-#print("# Epoch   ", "Loss")
-for epoch in range(max_epoch):
-
-    #apply random rotations to input
-    R = getRandomRotation(len(pdb_path_list)) #per batch 
+nrot = 10
+for irot in range(nrot):
+    #apply random rotations to input                                                          
+    R = getRandomRotation(len(pdb_path_list)) #per batch                                      
     data = volume_rotate(volume, R.to(dtype=torch.float, device='cuda'))
-
-    optimizer.zero_grad()
-    output = model(data)
-    loss = criterion(output, target)
-    loss.backward()
-    optimizer.step()
     
-    if epoch % 40 == 0:
-        print('{0}, {1}'.format(epoch, loss.item()))
+    for epoch in range(max_epoch):
+        optimizer.zero_grad()
+        output = model(data)
+        loss = criterion(output, target)
+        loss.backward()
+        optimizer.step()
+    
+        if epoch % 40 == 0:
+            print('{0}, {1}'.format(epoch, loss.item()))
             
 #save trained parameters        
-save_path = 'output/map_net.pt' #'/scratch/tr443/fragmap/output/map_net.pth'
+save_path = '/scratch/tr443/fragmap/output/map_net.pth'
+
 torch.save(model.state_dict(), save_path)
 
         
 #save density maps to file
-out_path = 'output/' #"/scratch/tr443/fragmap/output/"
+#out_path = 'output/'
+out_path = "/scratch/tr443/fragmap/output/"  
+
 ori = [40.250, -8.472, 20.406] ###### ???????????
 res = resolution
 kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
