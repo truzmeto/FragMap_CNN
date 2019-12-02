@@ -6,7 +6,7 @@ from TorchProteinLibrary.FullAtomModel import PDB2CoordsUnordered, Coords2TypedC
 from TorchProteinLibrary.FullAtomModel import getRandomRotation, getRandomTranslation
 from TorchProteinLibrary.FullAtomModel import CoordsRotate, CoordsTranslate, getBBox
 
-def get_volume(path_list, box_size, resolution):
+def get_volume(path_list, box_size, resolution, norm = True):
     """
     This function invokes modules from TorchPotentialLibrary and
     reads .pdb inputs, projects atomic coordinates into
@@ -45,6 +45,9 @@ def get_volume(path_list, box_size, resolution):
                      num_atoms_of_type.cuda(),
                      offsets.cuda())
 
+    if norm == True: #apply min-max norm 
+        volume = (volume - torch.min(volume)) / (torch.max(volume) -  torch.min(volume))
+        
     return volume
 
 
