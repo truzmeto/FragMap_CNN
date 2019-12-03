@@ -8,99 +8,104 @@ from src.mapIO import get_target, write_map
 from src.util import grid2vec, unpad_map
 import torch.optim as optim
 import numpy as np
-from TorchProteinLibrary.Volume import VolumeRotation
-from TorchProteinLibrary.FullAtomModel import getRandomRotation
 
 
+#model params
 lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
 max_epoch = 5000
 box_size = 57  # prog complains if box_size is float !!!!!!!!! 
+
+# physical params
 resolution = 1.000
-
-
-torch.cuda.set_device(0)
-
-#get input data
-pdb_path = 'data/'
-#pdb_path = "/scratch/tr443/fragmap/data/"                                                          
-pdb_id = "1ycr"
-path1 = pdb_path+pdb_id+".pdb"
-pdb_path_list = [path1]
-data = get_volume(pdb_path_list, box_size, resolution, norm=True)
-
-
-#get target maps
-map_path = 'data/maps/' 
-#map_path = "/scratch/tr443/fragmap/data/maps/"                                               
-map_names_list = ["apolar", "hbacc", "hbdon", "meoo","acec", "mamn"]
-
+kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
 dim = int(box_size/resolution)
 
-#get padded target fragmap volumes
+
+#get input data
+#pdb_path = "/scratch/tr443/fragmap/data/"                                                          
+pdb_path = 'data/'
+pdb_ids = ["1ycr", "1pw2", "2f6f",
+          "4f5t", "1s4u", "2am9",
+          "3my5_a", "3w8m","4ic8"]
+pdb_path_list = []
+for ids in pdb_ids:
+    pdb_path_list.append(pdb_path + ids + ".pdb" )
+
+
+map_names_list = ["apolar", "hbacc",
+                  "hbdon", "meoo",
+                  "acec", "mamn"]
+map_path = 'data/maps/' 
+#map_path = "/scratch/tr443/fragmap/data/maps/"                                               
+    
+
+volume = get_volume(pdb_path_list, #?????????????????????????????????????????
+                    box_size,
+                    resolution,
+                    norm = True)
+
+
+#get padded fragmap volumes
 target, pad, gfe_min, gfe_max = get_target(map_path,
                                 map_names_list,
-                                pdb_id,
+                                pdb_id = pdb_ids[i], #?????????????????????????
                                 batch = 1,
                                 dim = dim,
                                 cutoff = False,
                                 density = False)
 
+ori = [40.250, -8.472, 20.406] ###### get it from input!!!!!!!!!!!!!!!!!!!!!!!!!
+
+# convert to torch.cuda
 target = torch.from_numpy(target).float().cuda()
 
 #invoke model
+torch.cuda.set_device(0)
 model = CnnModel().cuda()
 criterion = nn.MSELoss()
 #criterion = nn.L1Loss()
 optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
 #optimizer = optim.SGD(model.parameters(), lr = lrt, momentum = 0.9)
 
-volume_rotate = VolumeRotation(mode = 'bilinear')
-nrot = 10
 
-for irot in range(nrot):
-    #apply random rotations to input                                                          
-    R = getRandomRotation(len(pdb_path_list)) #per batch                                      
-    data = volume_rotate(volume, R.to(dtype = torch.float, device = 'cuda'))
+for epoch in range(max_epoch):
+
+    optimizer.zero_grad()
+    output = model(inp)
+    loss = criterion(output, target)
+    loss.backward()
+    optimizer.step()
     
-    for epoch in range(max_epoch):
-        optimizer.zero_grad()
-        output = model(data)
-        loss = criterion(output, target)
-        loss.backward()
-        optimizer.step()
-    
-        if epoch % 50 == 0:
-            print('{0}, {1}'.format(epoch, loss.item()))
+    if epoch % 50 == 0:
+        print('{0}, {1}'.format(epoch, loss.item()))
             
 #save trained parameters        
-#save_path = '/scratch/tr443/fragmap/output/map_net.pth'
-
-torch.save(model.state_dict(), save_path)
-
-        
-#save density maps to file
+#out_path = '/scratch/tr443/fragmap/output/'
 out_path = 'output/'
-#out_path = "/scratch/tr443/fragmap/output/"  
+torch.save(model.state_dict(), out_path+'net.pth')
 
-ori = [40.250, -8.472, 20.406] ###### ???????????
-res = resolution
-kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
+
 
 for i in range(len(map_names_list)):
 
-    out_name = pdb_id+"."+ map_names_list[i]
+    out_name = pdb_ids[i]+"."+ map_names_list[i]
     grid = output[0,i,:,:,:].cpu().detach().numpy()
     grid = unpad_map(grid, xpad = pad[0], ypad = pad[1], zpad = pad[2])
 
     #convert from Free-E to density 
     #grid[grid <= 0.000] = 0.0001
     #vol = grid #-kBT *np.log(grid)  
+
     vol = grid*(gfe_max[i] - gfe_min[i]) + gfe_min[i] 
     #vol = -vol
     nx, ny, nz = grid.shape
  
     vec = grid2vec([nx,ny,nz], vol)
-    write_map(vec, out_path, out_name, ori, res, n = [nx,ny,nz])
-    
+    write_map(vec,
+              out_path,
+              out_name,
+              ori = ori,
+              res = resolution,
+              n = [nx,ny,nz])
