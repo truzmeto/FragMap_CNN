@@ -11,9 +11,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.volume import get_volume
 
 
-#A simple unit test!
-pdb_ids = ["4f5t", "1ycr"]
-path_list = ["../data/4f5t.pdb", "../data/1ycr.pdb"]
+pdb_ids = ["1pw2", "1ycr","2f6f", "4f5t",
+           "2am9", "3my5_a", "3w8m", "4ic8"] 
+
+path = "../data/"
+path_list = [path+i+".pdb" for i in pdb_ids]
+
+print(path_list)
+
 box_size = 60  #prog complains if box_size is float !!!!!! 
 resolution = 1.0
 volume = get_volume(path_list,
