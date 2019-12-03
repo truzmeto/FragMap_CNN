@@ -62,7 +62,7 @@ nrot = 10
 for irot in range(nrot):
     #apply random rotations to input                                                          
     R = getRandomRotation(len(pdb_path_list)) #per batch                                      
-    data = volume_rotate(volume, R.to(dtype = torch.float, device = 'cuda'))
+    data = volume_rotate(data, R.to(dtype = torch.float, device = 'cuda'))
     
     for epoch in range(max_epoch):
         optimizer.zero_grad()
