@@ -18,8 +18,9 @@ chan_id = 1 # range 0-3
 _, _, gfe = read_map(path_list[chan_id])
 
 
+
 ######------------- Test padding ----------------#######
-pad_gfe, xpad, ypad, zpad = pad_map(gfe)
+pad_gfe, xpad, ypad, zpad = pad_map(gfe, )
 
 if np.abs(pad_gfe.sum() - gfe.sum()) > 0.000001:
     print("Error! Zero padding should not affect the sum")

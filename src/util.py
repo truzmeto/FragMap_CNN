@@ -1,6 +1,6 @@
 import numpy as np
 import random 
-  
+import sys  
 
 def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
     """
@@ -9,8 +9,8 @@ def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
 
     if batch_size > len(pdb_ids):
         print("Batch size must be less or equal to #pdbs")
-        break
-    
+        sys.exit(0)
+        
     if shuffle:
         random.shuffle(pdb_ids)
 
@@ -43,32 +43,55 @@ def grid2vec(n, grid):
     return vec
 
 
-def pad_map(dens):
+def pad_map(dens, maxD):
     """
-    This function converts np.ndarray of size(nx,ny,nz),
-    with unequal dimentions, adds a zero padding at the
-    end(or RHS) and returns np.ndarray of size(n,n,n),
-    where n is max dimention(max emong (nx,ny,nz))
+    This function pads np.ndarray of size(nx,ny,nz)
+    cubic box according to maxD provided. Zero padding
+    applied at the end (or RHS) and returns
+    np.ndarray of size(maxD,maxD,maxD).
     
     """
     
-    dim = dens.shape # tuple
-    dimx, dimy, dimz = dim # unpack tuple
-
-    #apply padding if any pair of dimensions are non-equal
-    if dimx != dimy or dimx != dimz or dimy != dimz:  
-        
-        max_dim = np.array(dim).max() # get max dim
-        xpad = max_dim - dimx
-        ypad = max_dim - dimy
-        zpad = max_dim - dimz
+    dimx, dimy, dimz = dens.shape
     
-        #pad right hand side only
-        dens = np.pad(dens,
-                      pad_width = ((0,xpad), (0,ypad), (0,zpad)),
-                      mode = 'constant') #zero padding by default
-        
+    xpad = maxD - dimx
+    ypad = maxD - dimy
+    zpad = maxD - dimz
+    
+    #pad right hand side only
+    dens = np.pad(dens,
+                  pad_width = ((0,xpad), (0,ypad), (0,zpad)),
+                  mode = 'constant') #zero padding by default
+    
     return dens, xpad, ypad, zpad 
+
+
+#def pad_map(dens):
+#    """
+#    This function converts np.ndarray of size(nx,ny,nz),
+#    with unequal dimentions, adds a zero padding at the
+#    end(or RHS) and returns np.ndarray of size(n,n,n),
+#    where n is max dimention(max emong (nx,ny,nz))
+#    
+#    """
+#    
+#    dim = dens.shape # tuple
+#    dimx, dimy, dimz = dim # unpack tuple
+#
+#    #apply padding if any pair of dimensions are non-equal
+#    if dimx != dimy or dimx != dimz or dimy != dimz:  
+#        
+#        max_dim = np.array(dim).max() # get max dim
+#        xpad = max_dim - dimx
+#        ypad = max_dim - dimy
+#        zpad = max_dim - dimz
+#    
+#        #pad right hand side only
+#        dens = np.pad(dens,
+#                      pad_width = ((0,xpad), (0,ypad), (0,zpad)),
+#                      mode = 'constant') #zero padding by default
+#        
+#    return dens, xpad, ypad, zpad 
 
 
 def unpad_map(dens, xpad, ypad, zpad):

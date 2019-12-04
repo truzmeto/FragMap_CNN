@@ -45,14 +45,14 @@ def get_target(map_path, map_names, pdb_ids, batch_size,
                 gfe_max[ibatch, imap] = FrE.max()
                 
                 dens = (FrE - gfe_min[ibatch,imap]) / (gfe_max[ibatch,imap] - gfe_min[ibatch,imap])
-                #dens = 1.0 - dens #?????????????????????????
 
+            # everything after this line is in progress!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             #apply padding
             pad_dens, xpad, ypad, zpad = pad_map(dens)   #ex-f-call
             
             #convert to tensor
-            map_tensor[ibatch, imap,:,:,:] = pad_dens
+            map_tensor[ibatch,imap,:,:,:] = pad_dens
        
-            pad = [xpad, ypad, zpad]
+            pad = [xpad, ypad, zpad] #????????????????????????????????????????????
 
     return map_tensor, pad, gfe_min, gfe_max  
