@@ -4,7 +4,8 @@ import torch
 import torch.nn as nn
 from src.cnn  import CnnModel
 from src.volume import get_volume
-from src.mapIO import get_target, write_map
+from src.mapIO import write_map, greatest_dim
+from src.target import get_target
 from src.util import grid2vec, unpad_map, sample_batch
 import torch.optim as optim
 import numpy as np
@@ -14,13 +15,12 @@ import numpy as np
 lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 5000
-box_size = 57  # prog complains if box_size is float !!!!!!!!! 
+max_epoch = 50
+batch_size = 2
 
 # physical params
 resolution = 1.000
 kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
-dim = int(box_size/resolution)
 
 
 #pdb_path = "/scratch/tr443/fragmap/data/"                                                          
@@ -37,6 +37,8 @@ map_names_list = ["apolar", "hbacc",
 map_path = 'data/maps/' 
 #map_path = "/scratch/tr443/fragmap/data/maps/"                                               
 
+dim = greatest_dim(map_path, pdb_ids)
+box_size = int(dim*resolution)
 
 batch_list, pdb_list = sample_batch(batch_size,
                                     pdb_ids,
@@ -51,15 +53,13 @@ volume = get_volume(path_list = batch_list,
 
 
 #get fragmap volumes, padded and baseline corrected
-target, pad, gfe_min, gfe_max = get_target(map_path,
-                                map_names_list,
-                                pdb_ids = pdb_list, #?????????????????????????
-                                batch = batch_size,
-                                dim = dim,
-                                cutoff = False,
-                                density = False)
-
-ori = [40.250, -8.472, 20.406] ###### get it from input!!!!!!!!!!!!!!!!!!!!!!!!!
+#target, pad, gfe_min, gfe_max = get_target(map_path,
+target = get_target(map_path,
+                    map_names_list,
+                    pdb_ids = pdb_list, #?????????????????????????
+                    dim = dim,
+                    cutoff = False,
+                    density = False)
 
 # convert to torch.cuda
 target = torch.from_numpy(target).float().cuda()
@@ -90,25 +90,26 @@ out_path = 'output/'
 torch.save(model.state_dict(), out_path+'net.pth')
 
 
+#ori = [40.250, -8.472, 20.406] ###### get it from input!!!!!!!!
 
-for i in range(len(map_names_list)):
+#for i in range(len(map_names_list)):
 
-    out_name = pdb_ids[i]+"."+ map_names_list[i]
-    grid = output[0,i,:,:,:].cpu().detach().numpy()
-    grid = unpad_map(grid, xpad = pad[0], ypad = pad[1], zpad = pad[2])
+#    out_name = pdb_ids[i]+"."+ map_names_list[i]
+#    grid = output[0,i,:,:,:].cpu().detach().numpy()
+#    grid = unpad_map(grid, xpad = pad[0], ypad = pad[1], zpad = pad[2])
 
     #convert from Free-E to density 
     #grid[grid <= 0.000] = 0.0001
     #vol = grid #-kBT *np.log(grid)  
 
-    vol = grid*(gfe_max[i] - gfe_min[i]) + gfe_min[i] 
-    #vol = -vol
-    nx, ny, nz = grid.shape
- 
-    vec = grid2vec([nx,ny,nz], vol)
-    write_map(vec,
-              out_path,
-              out_name,
-              ori = ori,
-              res = resolution,
-              n = [nx,ny,nz])
+    #vol = grid*(gfe_max[i] - gfe_min[i]) + gfe_min[i] 
+#    vol = grid
+#    nx, ny, nz = grid.shape
+# 
+#    vec = grid2vec([nx,ny,nz], vol)
+#    write_map(vec,
+#              out_path,
+#              out_name,
+#              ori = ori,
+#              res = resolution,
+#              n = [nx,ny,nz])

@@ -59,11 +59,11 @@ def pad_map(dens, maxD):
     zpad = maxD - dimz
     
     #pad right hand side only
-    dens = np.pad(dens,
+    dens2 = np.pad(dens,
                   pad_width = ((0,xpad), (0,ypad), (0,zpad)),
                   mode = 'constant') #zero padding by default
-    
-    return dens, xpad, ypad, zpad 
+    print(dens2.shape)
+    return dens2, xpad, ypad, zpad 
 
 
 #def pad_map(dens):
@@ -116,6 +116,7 @@ def box_face_ave(grid):
     """
     
     nx, ny, nz = grid.shape
+    
     face_x = grid[nx-1,:,:].sum() + grid[0,:,:].sum() 
     face_y = grid[1:nx-1,ny-1,:].sum() + grid[1:nx-1,0,:].sum() 
     face_z = grid[1:nx-1,1:ny-1,nz-1].sum() + grid[1:nx-1,1:ny-1,0].sum() 

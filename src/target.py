@@ -5,17 +5,18 @@ import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.util import pad_map, box_face_ave
-from mapIO import read_map
+from src.mapIO import read_map, greatest_dim
 
 
-def get_target(map_path, map_names, pdb_ids, batch_size,
+def get_target(map_path, map_names, pdb_ids,
                dim, cutoff = False, density = False):
     """
     This function invokes necessary frag maps, pads them
     and returns them with required tensor dimension.
     
     """
-    
+
+    batch_size = len(pdb_ids)
     n_maps = len(map_names)
     map_tensor = np.zeros(shape = (batch_size, n_maps, dim, dim, dim))
     kBT = 0.592
@@ -23,15 +24,22 @@ def get_target(map_path, map_names, pdb_ids, batch_size,
     gfe_min = np.empty(shape = [batch_size, n_maps])
     gfe_max = np.empty(shape = [batch_size, n_maps])
 
+    #get the maxD from all maps
+    maxD = greatest_dim(map_path, pdb_ids) #!!!!!!!!!!!!!!!!!!!!!!!! check
+
+    
     for ibatch in range(batch_size):
         for imap in range(n_maps):
 
-            maps = map_path + pdb_ids[ibatch] + map_names[imap] + map_tail
+            maps = map_path + pdb_ids[ibatch] +"."+map_names[imap] + ".gfe.map"
             _, _, FrE = read_map(maps)      #ex-f-call
 
+
             #apply baseline correction
-            FrE = box_face_ave(FrE)         #ex-f-call
-            
+            baseline = box_face_ave(FrE)         #ex-f-call
+            FrE = FrE - baseline
+            #print(FrE.shape)
+
             #apply cutoff to Frag Free Energy
             if cutoff:
                 FrE[FrE > 0] = 0.0 
@@ -41,18 +49,20 @@ def get_target(map_path, map_names, pdb_ids, batch_size,
             else:                           #normalize GFE maps
                 #gfe_min.append(FrE.min())
                 #gfe_max.append(FrE.max())
-                gfe_min[ibatch,imap] = FrE.min()
-                gfe_max[ibatch, imap] = FrE.max()
-                
-                dens = (FrE - gfe_min[ibatch,imap]) / (gfe_max[ibatch,imap] - gfe_min[ibatch,imap])
 
-            # everything after this line is in progress!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+               # gfe_min[ibatch,imap] = FrE.min()
+               # gfe_max[ibatch, imap] = FrE.max()
+
+                #print()
+                dens = FrE #(FrE - gfe_min[ibatch,imap]) / (gfe_max[ibatch,imap] - gfe_min[ibatch,imap])
+
+
             #apply padding
-            pad_dens, xpad, ypad, zpad = pad_map(dens)   #ex-f-call
+            pad_dens, xpad, ypad, zpad = pad_map(dens, maxD)   #ex-f-call
             
             #convert to tensor
-            map_tensor[ibatch,imap,:,:,:] = pad_dens
+            map_tensor[ibatch,imap,:,:,:] = pad_dens 
        
-            pad = [xpad, ypad, zpad] #????????????????????????????????????????????
+            pad = [xpad, ypad, zpad] 
 
-    return map_tensor, pad, gfe_min, gfe_max  
+    return map_tensor#, pad #, gfe_min, gfe_max  

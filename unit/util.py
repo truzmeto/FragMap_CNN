@@ -3,7 +3,7 @@ import sys
 import os
 import pyvista as pv
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from src.mapIO import read_map 
+from src.mapIO import read_map , greatest_dim
 from src.util import pad_map, unpad_map 
 import matplotlib.pyplot as plt
 
@@ -18,9 +18,12 @@ chan_id = 1 # range 0-3
 _, _, gfe = read_map(path_list[chan_id])
 
 
+maxD = greatest_dim("../data/maps/", ["1ycr", "1pw2", "2f6f"])
+print(maxD)
 
 ######------------- Test padding ----------------#######
-pad_gfe, xpad, ypad, zpad = pad_map(gfe, )
+pad_gfe, xpad, ypad, zpad = pad_map(gfe, maxD)
+print(pad_gfe.shape)
 
 if np.abs(pad_gfe.sum() - gfe.sum()) > 0.000001:
     print("Error! Zero padding should not affect the sum")
@@ -47,7 +50,7 @@ for item in ori_dim:
 p = pv.Plotter(point_smoothing = True, shape=(1, 2))
 fs = 16
 p.subplot(0, 0)
-text = frag_names[chan_id]+" original " + "dim = "+ str(ori_dim)
+text = frag_names[chan_id]+" original " + "dim = "+ str(pad_gfe.shape)
 p.add_text(text, position = 'upper_left', font_size = fs)
 p.add_volume(np.abs(gfe), cmap = "viridis", opacity = "linear")
 
