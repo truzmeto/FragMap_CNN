@@ -38,6 +38,24 @@ def read_map(file_path):
   
     return res, n_cells, gfe
 
+def greatest_dim(target_path, target_list):
+    """
+    Input: 
+    target_path: Path to fragment maps
+    target_list: list of samples in the batch
+    
+    """
+
+    max_dim = 0
+    for targets in target_list:
+        path = target_path + targets + ".benc.gfe.map"
+        with open(path) as file:
+            t = file.readlines()[4].split(" ")
+            for i in t[1:]:
+                if max_dim < int(i):
+                    max_dim = int(i)
+
+    return max_dim
 
 
 def write_map(vec, out_path, out_name, ori, res, n):
