@@ -17,7 +17,7 @@ pdb_ids = ["1pw2", "1ycr","2f6f", "4f5t",
 path = "../data/"
 path_list = [path+i+".pdb" for i in pdb_ids]
 
-print(path_list)
+#print(path_list)
 
 box_size = 60  #prog complains if box_size is float !!!!!! 
 resolution = 1.0
@@ -36,16 +36,17 @@ Agroup_names = ["Sulfur/Selenium"  , "Nitrogen Amide",
 p = pv.Plotter(point_smoothing = True, shape=(1, 2))
 fs = 15
 
+idp = 5 
 chan_id = 1 # Atomic group ids, range 0-10
-vol1 = volume[0,chan_id,:,:,:].cpu().numpy()
-text = Agroup_names[chan_id]+" "+pdb_ids[0]
+vol1 = volume[idp,chan_id,:,:,:].cpu().numpy()
+text = Agroup_names[chan_id]+" "+pdb_ids[idp]
 p.subplot(0, 0)
 p.add_text(text, position = 'upper_left', font_size = fs)
 p.add_volume(vol1, cmap = "viridis_r", opacity = "linear")
 
 chan_id = chan_id 
-vol2 = volume[1,chan_id,:,:,:].cpu().numpy()
-text = Agroup_names[chan_id]+" "+pdb_ids[1]
+vol2 = volume[idp+1,chan_id,:,:,:].cpu().numpy()
+text = Agroup_names[chan_id]+" "+pdb_ids[idp+1]
 p.subplot(0, 1)
 p.add_text(text, position = 'upper_left', font_size = fs)
 p.add_volume(vol2, cmap = "viridis_r", opacity = "linear")
