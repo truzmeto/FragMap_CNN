@@ -3,7 +3,7 @@ import sys
 import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from src.util import pad_map
+from src.util import pad_map, box_face_ave
 from mapIO import read_map
 
 
@@ -17,38 +17,34 @@ def get_target(map_path, map_names,
     
     """
     
-    map_path_list = []
-    for iname in map_names:
-        if iname == "excl":
-            map_tail = ".map"
-        else:
-            map_tail = ".gfe.map"
-        map_path_list.append(map_path + pdb_ids + "." + iname + map_tail)#????????????????/
-
-            
     n_maps = len(map_names)
     map_tensor = np.zeros(shape = (batch_size, n_maps, dim, dim, dim))
     kBT = 0.592
 
-    gfe_min = []
+    gfe_min = []#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     gfe_max = []
 
 
     for ibatch in range(batch_size):
         for imap in range(n_maps):
 
-            _, _, FrE = read_map(map_path_list[imap])      #in-f-call
+            maps = map_path + pdb_ids[ibatch] + map_names[imap] + map_tail
+            _, _, FrE = read_map(maps)      #ex-f-call
+
+            #apply baseline correction
+            FrE = box_face_ave(FrE)
             
             #apply cutoff to Frag Free Energy
-            if cutoff == True:
+            if cutoff:
                 FrE[FrE > 0] = 0.0 
                     
-            if density == True: #convert to density 
+            if density: #convert to density 
                 dens = np.exp(-FrE / kBT) 
             else:               #normalize GFE maps
                 gfe_min.append(FrE.min())
                 gfe_max.append(FrE.max())
                 dens = (FrE - gfe_min[imap]) / (gfe_max[imap] - gfe_min[imap])
+                #dens = 1.0 - dens
 
             #apply padding
             pad_dens, xpad, ypad, zpad = pad_map(dens)   #ex-f-call
