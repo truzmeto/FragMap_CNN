@@ -9,7 +9,7 @@ from src.mapIO import read_map, greatest_dim
 
 
 def get_target(map_path, map_names, pdb_ids,
-               dim, cutoff = False, density = False):
+               maxD, cutoff = False, density = False):
     """
     This function invokes necessary frag maps, pads them
     and returns them with required tensor dimension.
@@ -18,14 +18,14 @@ def get_target(map_path, map_names, pdb_ids,
 
     batch_size = len(pdb_ids)
     n_maps = len(map_names)
-    map_tensor = np.zeros(shape = (batch_size, n_maps, dim, dim, dim))
+    map_tensor = np.zeros(shape = (batch_size, n_maps, maxD, maxD, maxD))
     kBT = 0.592
 
     gfe_min = np.empty(shape = [batch_size, n_maps])
     gfe_max = np.empty(shape = [batch_size, n_maps])
 
     #get the maxD from all maps
-    maxD = greatest_dim(map_path, pdb_ids) #!!!!!!!!!!!!!!!!!!!!!!!! check
+    #maxD = greatest_dim(map_path, pdb_ids) #!!!!!!!!!!!!!!!!!!!!!!!! check
 
     
     for ibatch in range(batch_size):

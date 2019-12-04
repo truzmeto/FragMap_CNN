@@ -37,7 +37,8 @@ map_names_list = ["apolar", "hbacc",
 map_path = 'data/maps/' 
 #map_path = "/scratch/tr443/fragmap/data/maps/"                                               
 
-dim = greatest_dim(map_path, pdb_ids)
+dim = greatest_dim(map_path, pdb_ids) + 1
+
 box_size = int(dim*resolution)
 
 batch_list, pdb_list = sample_batch(batch_size,
@@ -57,7 +58,7 @@ volume = get_volume(path_list = batch_list,
 target = get_target(map_path,
                     map_names_list,
                     pdb_ids = pdb_list, #?????????????????????????
-                    dim = dim,
+                    maxD = dim,
                     cutoff = False,
                     density = False)
 
@@ -76,7 +77,7 @@ optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
 for epoch in range(max_epoch):
 
     optimizer.zero_grad()
-    output = model(inp)
+    output = model(volume)
     loss = criterion(output, target)
     loss.backward()
     optimizer.step()

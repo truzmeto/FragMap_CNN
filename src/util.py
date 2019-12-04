@@ -59,11 +59,11 @@ def pad_map(dens, maxD):
     zpad = maxD - dimz
     
     #pad right hand side only
-    dens2 = np.pad(dens,
+    dens = np.pad(dens,
                   pad_width = ((0,xpad), (0,ypad), (0,zpad)),
                   mode = 'constant') #zero padding by default
-    print(dens2.shape)
-    return dens2, xpad, ypad, zpad 
+    #print(dens2.shape)
+    return dens, xpad, ypad, zpad 
 
 
 #def pad_map(dens):
