@@ -3,7 +3,7 @@ import sys
 import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from src.util import pad_map, vec2grid
+from src.util import vec2grid
 
 def read_map(file_path):
     
@@ -12,6 +12,7 @@ def read_map(file_path):
         i = 0
         gfe = []
         for line in file:
+
             if i == 3:
                 res = float(line.split()[1])
             elif i == 4:
@@ -37,61 +38,6 @@ def read_map(file_path):
   
     return res, n_cells, gfe
 
-
-def get_target(map_path, map_names, pdb_id, batch, dim, cutoff = False, density=True):
-    """
-    This function invokes necessary frag maps, pads them
-    and returns them with required tensor dimension.
-    
-    """
-    
-    map_path_list = []
-    for name in map_names:
-
-        if name == "excl":
-            map_tail = ".map"
-        else:
-            map_tail = ".gfe.map"
-
-        map_path_list.append(map_path + pdb_id + "." + name + map_tail)
-
-        
-    
-    n_batch = batch
-    n_FM = len(map_names)
-    map_tensor = np.zeros(shape = (n_batch, n_FM, dim, dim, dim))
-    kBT = 0.592
-
-    gfe_min = []
-    gfe_max = []
-
-
-    for i in range(n_FM):
-        _, _, FrE = read_map(map_path_list[i])      #in-f-call
-
-        
-        #apply cutoff to Frag Free Energy
-        if cutoff == True:
-            FrE[FrE > 0] = 0.0 
-        
-            
-        if density == True: #convert to density 
-            dens = np.exp(-FrE/kBT) 
-        else:               #normalize GFE maps
-            #FrE = -FrE #mirror inverse for max pooling
-            gfe_min.append(FrE.min())
-            gfe_max.append(FrE.max())
-            dens = (FrE - gfe_min[i]) / (gfe_max[i] - gfe_min[i])
-
-        #apply padding
-        pad_dens, xpad, ypad, zpad = pad_map(dens)   #ex-f-call
-        
-        #convert to tensor
-        map_tensor[n_batch-1, i,:,:,:] = pad_dens
-       
-    pad = [xpad, ypad, zpad]
-
-    return map_tensor, pad, gfe_min, gfe_max  
 
 
 def write_map(vec, out_path, out_name, ori, res, n):

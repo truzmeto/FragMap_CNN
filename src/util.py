@@ -1,4 +1,23 @@
 import numpy as np
+import random 
+  
+
+def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
+    """
+    
+    """      
+
+    if batch_size > len(pdb_ids):
+        print("Batch size must be less or equal to #pdbs")
+        break
+    
+    if shuffle:
+        random.shuffle(pdb_ids)
+
+    pdb_list = random.sample(pdb_ids, batch_size)
+    batch_list = [pdb_path+ids+".pdb" for ids in pdb_list]
+    
+    return batch_list, pdb_list
 
 def vec2grid(n, vec):
     """

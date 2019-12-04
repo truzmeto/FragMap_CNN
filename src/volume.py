@@ -7,14 +7,14 @@ from TorchProteinLibrary.FullAtomModel import getRandomRotation, getRandomTransl
 from TorchProteinLibrary.FullAtomModel import CoordsRotate, CoordsTranslate, getBBox
 
 
-def get_volume(path_list, box_size, resolution, norm=True, rotate=False):
+def get_volume(path_list, box_size, resolution, norm = True, rotate = False):
     """
     This function invokes modules from TorchPotentialLibrary and
     reads .pdb inputs, projects atomic coordinates into
     11 density maps in a 3D grid of given size(box_size) with
     given resolution.
     11 ---> 11 atomic groups
-    
+   
     output: torch tensor(batch_size, 11, box_dim, box_dim, box_dim)
 
     """
@@ -49,14 +49,14 @@ def get_volume(path_list, box_size, resolution, norm=True, rotate=False):
                      num_atoms_of_type.cuda(),
                      offsets.cuda())
     
-    #if rotate == True: #apply rand rots
-    #    volume_rotate = VolumeRotation(mode = 'bilinear')
-    #    R = getRandomRotation(batch_size)
-    #    volume = volume_rotate(volume, R.to(dtype = torch.float, device = 'cuda'))
+    if rotate: #apply rand rots
+        volume_rotate = VolumeRotation(mode = 'bilinear')
+        R = getRandomRotation(batch_size)
+        volume = volume_rotate(volume, R.to(dtype = torch.float, device = 'cuda'))
 
             
-    #if norm == True: #apply min-max norm 
-    #    volume = (volume - torch.min(volume)) / (torch.max(volume) - torch.min(volume))
+    if norm: #apply min-max norm 
+        volume = (volume - torch.min(volume)) / (torch.max(volume) - torch.min(volume))
         
     return volume
 

@@ -5,7 +5,7 @@ import torch.nn as nn
 from src.cnn  import CnnModel
 from src.volume import get_volume
 from src.mapIO import get_target, write_map
-from src.util import grid2vec, unpad_map
+from src.util import grid2vec, unpad_map, sample_batch
 import torch.optim as optim
 import numpy as np
 
@@ -23,35 +23,38 @@ kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
 dim = int(box_size/resolution)
 
 
-#get input data
 #pdb_path = "/scratch/tr443/fragmap/data/"                                                          
 pdb_path = 'data/'
 pdb_ids = ["1ycr", "1pw2", "2f6f",
-          "4f5t", "1s4u", "2am9",
-          "3my5_a", "3w8m","4ic8"]
-pdb_path_list = []
-for ids in pdb_ids:
-    pdb_path_list.append(pdb_path + ids + ".pdb" )
+           "4f5t", "1s4u", "2am9",
+           "3my5_a", "3w8m","4ic8"]
 
-
+#pdb_path_list = [pdb_path+ids+".pdb" for ids in pdb_ids]
 map_names_list = ["apolar", "hbacc",
                   "hbdon", "meoo",
                   "acec", "mamn"]
+
 map_path = 'data/maps/' 
 #map_path = "/scratch/tr443/fragmap/data/maps/"                                               
-    
-
-volume = get_volume(pdb_path_list, #?????????????????????????????????????????
-                    box_size,
-                    resolution,
-                    norm = True)
 
 
-#get padded fragmap volumes
+batch_list, pdb_list = sample_batch(batch_size,
+                                    pdb_ids,
+                                    pdb_path,
+                                    shuffle = True)
+
+volume = get_volume(path_list = batch_list, 
+                    box_size = box_size,
+                    resolution = resolution,
+                    norm = True,
+                    rotate = True)
+
+
+#get fragmap volumes, padded and baseline corrected
 target, pad, gfe_min, gfe_max = get_target(map_path,
                                 map_names_list,
-                                pdb_id = pdb_ids[i], #?????????????????????????
-                                batch = 1,
+                                pdb_ids = pdb_list, #?????????????????????????
+                                batch = batch_size,
                                 dim = dim,
                                 cutoff = False,
                                 density = False)

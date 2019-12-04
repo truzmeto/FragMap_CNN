@@ -23,7 +23,9 @@ box_size = 60  #prog complains if box_size is float !!!!!!
 resolution = 1.0
 volume = get_volume(path_list,
                     box_size,
-                    resolution)
+                    resolution,
+                    norm = True,
+                    rotate = True)
 
 print(volume.size())
 Agroup_names = ["Sulfur/Selenium"  , "Nitrogen Amide",
