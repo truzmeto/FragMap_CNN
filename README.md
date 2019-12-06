@@ -7,7 +7,9 @@ Prediction of fragment free energy maps from protein structure with ConvNet
 
     Do: `sinfo -o "%20P %20N  %10c  %10m  %25f  %10G %20t" | grep 'titan\|pascal' ` this shows 
 
-PARTITION            NODELIST              CPUS        MEMORY      AVAIL_FEATURES             GRES       STATE 
+PARTITION            NODELIST              CPUS        MEMORY      AVAIL_FEATURES             GRES       STATE
+
+
 main*                gpu007                24          190000      edr,titan                  gpu:8      mix                  
 main*                gpu[008-010]          24          190000      edr,titan,oarc             gpu:8      mix                  
 main*                pascal[001-002,008-0  28+         128000+     edr,pascal                 gpu:2      mix                  
