@@ -5,10 +5,9 @@ Prediction of fragment free energy maps from protein structure with ConvNet
 
   In SBATCH header: To figure out what `partition`, `gres`, and `constraint=<feature>`to potentially use:
 
-    Do: 
-    `sinfo -o "%20P %20N  %10c  %10m  %25f  %10G %20t" | grep 'titan\|pascal'`
+`sinfo -o "%20P %20N  %10c  %10m  %25f  %10G %20t" | grep 'titan\|pascal'`
     
-    this shows... 
+this shows... 
 
 PARTITION            NODELIST              CPUS        MEMORY      AVAIL_FEATURES             GRES       STATE
 
