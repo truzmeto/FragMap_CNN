@@ -9,13 +9,13 @@ length = 15
 st = [27,26,25]
 
 volume[:,:,st[0]:st[0]+length,st[1],st[2]] = 0.5
-volume[:,:,st[0]+length:st[0]+length+1,st[1],st[2]] = 0.0
+volume[:,:,st[0]+length:st[0]+length+2,st[1],st[2]] = 0.2
 
 volume[:,:,st[0],st[1]:st[1]+length,st[2]] = 0.5
-volume[:,:,st[0],st[1]+length:st[1]+length+1,st[2]] = 1.
+volume[:,:,st[0],st[1]+length:st[1]+length+2,st[2]] = 1.
 
 volume[:,:,st[0],st[1],st[2]:st[2]+length] = 0.5
-volume[:,:,st[0],st[1],st[2]+length:st[2]+length+1] = 2.0
+volume[:,:,st[0],st[1],st[2]+length:st[2]+length+2] = 2.0
 
 
 R = getRandomRotation(1) #

@@ -1,4 +1,5 @@
 /data
+/output
 *.ipynb
 *.zip
 .ipynb_checkpoints/
