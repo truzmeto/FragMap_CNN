@@ -7,7 +7,7 @@ Prediction of fragment free energy maps from protein structure with ConvNet
 
 `sinfo -o "%20P %20N  %10c  %10m  %25f  %10G %20t" | grep 'titan\|pascal'`
     
-this shows... 
+this shows what to fill into the SBATCH header parameters... 
 
 PARTITION            NODELIST              CPUS        MEMORY      AVAIL_FEATURES             GRES       STATE
 
