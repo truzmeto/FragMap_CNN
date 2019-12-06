@@ -3,6 +3,11 @@ from TorchProteinLibrary.Volume import VolumeRotation
 from TorchProteinLibrary.FullAtomModel import getRandomRotation, getRandomTranslation
 import pyvista as pv
 import numpy as np
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+from src.augment import get_random_rotation
 
 volume = torch.zeros(1,1,55,54,53)
 length = 15
@@ -41,8 +46,9 @@ print(channel.shape)
 #channel = volume_rot[0,0,:,:,:].cpu().numpy()
 channel = volume[0,0,:,:,:].cpu()#.numpy()
 #channel = np.transpose(channel, axes=[2,0,1])
-channel = channel.transpose(0, 1).flip(2).numpy()
+#channel = channel.transpose(0, 1).flip(2).numpy()
 #channel = channel.flip(2).numpy()
+channel = get_random_rotation(channel).numpy()
 
 print(channel.shape)
 text = 'rotated'
