@@ -2,6 +2,7 @@ import numpy as np
 import random 
 import sys  
 
+
 def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
     """
     
@@ -18,6 +19,7 @@ def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
     batch_list = [pdb_path+ids+".pdb" for ids in pdb_list]
     
     return batch_list, pdb_list
+
 
 def vec2grid(n, vec):
     """

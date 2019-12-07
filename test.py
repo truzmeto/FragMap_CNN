@@ -38,7 +38,7 @@ volume = get_volume(path_list = batch_list,
                     norm = norm,
                     rotate = False)
 
-#_, xpad, ypad, zpad = pad_map(dens, maxD = dim)   #ex-f-call
+#_, xpad, ypad, zpad = pad_map(dens, maxD = dim) 
 
 #invoke model
 torch.cuda.set_device(0)
@@ -54,11 +54,12 @@ output = model(volume)
 out_path = out_path + "maps/"
 ori = [40.250, -8.472, 20.406] #!!!!!!!!!!!!!!!!!!!!!!!!
 
+
 for imap in range(len(map_names_list)):
     
     out_name = pdb_ids[0]+"."+ map_names_list[imap]
     grid = output[0,imap,:,:,:].cpu().detach().numpy()
-    grid = unpad_map(grid, xpad = pad[0], ypad = pad[1], zpad = pad[2]) 
+    #grid = unpad_map(grid, xpad = pad[0], ypad = pad[1], zpad = pad[2]) 
 
     #convert from Free-E to density 
     #grid[grid <= 0.000] = 0.0001
