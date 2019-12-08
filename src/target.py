@@ -25,11 +25,13 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT,
 
     baseline = np.empty(shape = [batch_size, n_maps])
     pad = []
-    
-    for ibatch in range(batch_size):
+    ibatch = 0
+
+    #for ibatch in range(batch_size):
+    for batch in pdb_ids:
         for imap in range(n_maps):
 
-            maps = map_path + pdb_ids[ibatch] +"."+map_names[imap] + ".gfe.map"
+            maps = map_path + batch +"."+map_names[imap] + ".gfe.map"
             _, _, FrE = read_map(maps)      #ex-f-call
 
 
@@ -57,8 +59,8 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT,
             
             #convert to tensor
             map_tensor[ibatch,imap,:,:,:] = pad_dens 
-
-            
+        
+        ibatch+=1
         pad.append([xpad, ypad, zpad]) 
 
     return map_tensor, pad, gfe_min, gfe_max #, baseline  
