@@ -44,7 +44,7 @@ volume = get_volume(path_list = batch_list,
 map_norm = True
 test_map, pad, gfe_min, gfe_max = get_target(map_path,
                                              map_names_list,
-                                             pdb_ids = pdb_ids[test_indx], #? the last one for now
+                                             pdb_ids = [pdb_ids[test_indx]], #? the last one for now
                                              maxD = dim,
                                              kBT = kBT
                                              cutoff = False,
