@@ -15,8 +15,12 @@ import numpy as np
 lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 1000
+max_epoch = 3000
 batch_size = 4
+
+norm = True
+map_norm = True
+nsample = 24
 
 
 #physical params
@@ -36,6 +40,7 @@ out_path = '/scratch/tr443/fragmap/output/'
 
 dim = greatest_dim(map_path, pdb_ids) + 1
 box_size = int(dim*resolution)
+params_file_name = 'net_params.pth'
 
 #invoke model
 torch.cuda.set_device(0)
@@ -45,9 +50,6 @@ criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
 #optimizer = optim.SGD(model.parameters(), lr = lrt, momentum = 0.9)
 
-norm = True
-map_norm = True
-nsample = 10
 for ibatch in range(nsample):
 
     #sample batch list from all structures
@@ -63,14 +65,14 @@ for ibatch in range(nsample):
                         rotate = True)
     
     #get target map tensor
-    target, pad, gfe_min, gfe_max = get_target(map_path,
-                                               map_names_list,
-                                               pdb_ids = pdb_list,
-                                               maxD = dim,
-                                               kBT = kBT,
-                                               cutoff = False,
-                                               density = False,
-                                               map_norm = map_norm)
+    target, _, _, _ = get_target(map_path,
+                                 map_names_list,
+                                 pdb_ids = pdb_list,
+                                 maxD = dim,
+                                 kBT = kBT,
+                                 cutoff = False,
+                                 density = False,
+                                 map_norm = map_norm)
 
     #convert target maps to torch.cuda
     target = torch.from_numpy(target).float().cuda()
@@ -87,7 +89,6 @@ for ibatch in range(nsample):
     
         if epoch % 20 == 0:
             print('{0}, {1}, {2}'.format(ibatch, epoch, loss.item()))
-
          
 #save trained parameters        
-torch.save(model.state_dict(), out_path+'net_params1.pth')
+torch.save(model.state_dict(), out_path+params_file_name)
