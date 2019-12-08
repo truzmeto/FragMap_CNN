@@ -28,11 +28,11 @@ pdb_path = "/scratch/tr443/fragmap/data/"
 pdb_ids = ["1ycr", "1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4ic8"]
 
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
-map_path = 'data/maps/' 
-#map_path = "/scratch/tr443/fragmap/data/maps/"                                               
+#map_path = 'data/maps/' 
+map_path = "/scratch/tr443/fragmap/data/maps/"                                               
 
-#out_path = '/scratch/tr443/fragmap/output/'
-out_path = 'output/'
+out_path = '/scratch/tr443/fragmap/output/'
+#out_path = 'output/'
 
 dim = greatest_dim(map_path, pdb_ids) + 1
 box_size = int(dim*resolution)
@@ -46,6 +46,7 @@ optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
 #optimizer = optim.SGD(model.parameters(), lr = lrt, momentum = 0.9)
 
 norm = True
+map_norm = True
 nsample = 10
 for ibatch in range(nsample):
 
@@ -66,8 +67,10 @@ for ibatch in range(nsample):
                                                map_names_list,
                                                pdb_ids = pdb_list,
                                                maxD = dim,
+                                               kBT = kBT,
                                                cutoff = False,
-                                               density = False)
+                                               density = False,
+                                               map_norm = map_norm)
 
     #convert target maps to torch.cuda
     target = torch.from_numpy(target).float().cuda()

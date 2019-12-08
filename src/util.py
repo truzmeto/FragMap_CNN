@@ -5,7 +5,17 @@ import sys
 
 def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
     """
-    
+    Function to produce random sample of pdb ids from a given list.
+    This ids are joined with the path to actual file location
+    and used to access the data. 
+
+    Input:  batch_size  - number of input files in a batch, dtype=list
+            pdb_ids     - full list of pdbs to sample from, dtype=list
+            pdb_path    - path to file location, dtype=string 
+          
+    Output: batch_list  - list of selected files as full path, dtype=list
+            pdb_list    - list of selected pdbs, dtype=list
+
     """      
 
     if batch_size > len(pdb_ids):
@@ -21,13 +31,13 @@ def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
     return batch_list, pdb_list
 
 
+
 def vec2grid(n, vec):
     """
     This function transforms 1D vec. into
     tensor (nx,ny,nz) data structure
     """
     nx = n[0]; ny = n[1]; nz = n[2] 
-    #grid = np.zeros(shape = (nz,ny,nx), dtype = float)
     grid = np.reshape(vec, newshape = (nx,ny,nz), order = "F")
     
     return grid
@@ -39,7 +49,6 @@ def grid2vec(n, grid):
     vector (nx*ny*nz) 
     """
     nx = n[0]; ny = n[1]; nz = n[2] 
-    #vec = np.zeros(shape = (nx*ny*nz), dtype = float)
     vec = np.reshape(grid, newshape = nx*ny*nz, order = "F")
 
     return vec
@@ -60,7 +69,7 @@ def pad_map(dens, maxD):
     ypad = maxD - dimy
     zpad = maxD - dimz
     
-    #pad right hand side only
+    #pad right hand side only ???????????????????????????????
     dens = np.pad(dens,
                   pad_width = ((0,xpad), (0,ypad), (0,zpad)),
                   mode = 'constant') #zero padding by default
@@ -133,4 +142,4 @@ def test_model(model, saved_weights_path, output_path, map_names_list, pdb_ids, 
 
 
 if __name__=='__main__':
-    print("Universal knowledge must be stored somewhere!")
+    print("I need coffe! :)")

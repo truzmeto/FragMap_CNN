@@ -22,6 +22,11 @@ volume[:,:,st[0],st[1]+length:st[1]+length+2,st[2]] = 1.
 volume[:,:,st[0],st[1],st[2]:st[2]+length] = 0.5
 volume[:,:,st[0],st[1],st[2]+length:st[2]+length+2] = 2.0
 
+volume[:,:,st[0],st[1]:st[1]+length,st[2]:st[2]+length] = 0.2
+volume[:,:,st[0],st[1]+length:st[1]+length+1,st[2]+length:st[2]+length+1] = 1.5
+
+
+
 
 R = getRandomRotation(1) #
 volume_rotate = VolumeRotation(mode='bilinear') #'nearest'
@@ -45,8 +50,8 @@ print(channel.shape)
 ###########################################################
 #channel = volume_rot[0,0,:,:,:].cpu().numpy()
 channel = volume[0,0,:,:,:].cpu()#.numpy()
-channel = channel.transpose(0,2).numpy()
-#channel = channel.transpose(0, 1).flip(2).numpy()
+#channel = channel.transpose(0,2).numpy()
+channel = channel.transpose(0, 1).flip(2).numpy()
 #channel = channel.flip(2).numpy()
 #channel = get_random_rotation(channel).numpy()
 
