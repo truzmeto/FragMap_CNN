@@ -45,10 +45,10 @@ print(channel.shape)
 ###########################################################
 #channel = volume_rot[0,0,:,:,:].cpu().numpy()
 channel = volume[0,0,:,:,:].cpu()#.numpy()
-#channel = np.transpose(channel, axes=[2,0,1])
+channel = channel.transpose(0,2).numpy()
 #channel = channel.transpose(0, 1).flip(2).numpy()
 #channel = channel.flip(2).numpy()
-channel = get_random_rotation(channel).numpy()
+#channel = get_random_rotation(channel).numpy()
 
 print(channel.shape)
 text = 'rotated'
