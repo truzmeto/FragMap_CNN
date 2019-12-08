@@ -44,9 +44,9 @@ volume = get_volume(path_list = batch_list,
 map_norm = True
 test_map, pad, gfe_min, gfe_max = get_target(map_path,
                                              map_names_list,
-                                             pdb_ids = pdb_ids[test_indx], #? the last one for now
+                                             pdb_ids = [pdb_ids[test_indx]], #? the last one for now
                                              maxD = dim,
-                                             kBT = kBT
+                                             kBT = kBT,
                                              cutoff = False,
                                              density = False,
                                              map_norm = map_norm)
@@ -74,7 +74,7 @@ ori = [23.699, -20.418, 14.198]
 for imap in range(len(map_names_list)):
    
     grid = output[0,imap,:,:,:].cpu().detach().numpy()
-    grid = unpad_map(grid, xpad = pad[0], ypad = pad[1], zpad = pad[2])
+    grid = unpad_map(grid, xpad = pad[0][0], ypad = pad[0][1], zpad = pad[0][2])
 
     #convert from Free-E to density 
     #grid[grid <= 0.000] = 0.0001
@@ -83,9 +83,8 @@ for imap in range(len(map_names_list)):
     
     if map_norm:   # inverse norm
         grid = grid*(gfe_max[:,imap] - gfe_min[:,imap]) + gfe_min[:,imap] 
-    else:
-
-        
+ 
+       
     nx, ny, nz = grid.shape              #get new dims       
     vec = grid2vec([nx,ny,nz], grid)     #flatten
     
