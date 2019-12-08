@@ -47,7 +47,7 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT,
                 dens = np.exp(-FrE / kBT) 
             else:                           #return GFE maps
 
-                if norm_map: #min-max normalize maps
+                if map_norm: #min-max normalize maps
                     gfe_min[ibatch, imap] = FrE.min()
                     gfe_max[ibatch, imap] = FrE.max()
                     dens = (FrE - gfe_min[ibatch,imap]) / (gfe_max[ibatch,imap] - gfe_min[ibatch,imap])

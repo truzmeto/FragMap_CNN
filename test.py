@@ -24,7 +24,7 @@ map_path = "/scratch/tr443/fragmap/data/maps/"
 out_path = '/scratch/tr443/fragmap/output/'
 #out_path = 'output/'
 
-test_file_name = 'net_params1.pth'
+params_file_name = 'net_params.pth'
 test_indx = 8
 
 dim = greatest_dim(map_path, pdb_ids) + 1
@@ -59,7 +59,7 @@ test_map = torch.from_numpy(test_map).float().cuda()
 #invoke model
 torch.cuda.set_device(0)
 model = CnnModel().cuda()
-model.load_state_dict(torch.load(out_path + test_file_name))
+model.load_state_dict(torch.load(out_path + params_file_name))
 output = model(volume)
 
 
