@@ -24,6 +24,7 @@ map_path = "/scratch/tr443/fragmap/data/maps/"
 out_path = '/scratch/tr443/fragmap/output/'
 #out_path = 'output/'
 
+test_file_name = 'net_params1.pth'
 dim = greatest_dim(map_path, pdb_ids) + 1
 box_size = int(dim*resolution)
 
@@ -43,7 +44,7 @@ volume = get_volume(path_list = batch_list,
 #invoke model
 torch.cuda.set_device(0)
 model = CnnModel().cuda()
-model.load_state_dict(torch.load(out_path+'net.pth'))
+model.load_state_dict(torch.load(out_path + test_file_name))
 output = model(volume)
 
 #criterion = nn.MSELoss()
@@ -51,29 +52,28 @@ output = model(volume)
 
 
 #save density maps to file
-out_path = out_path + "maps/"
+out_path = out_path  
 ori = [40.250, -8.472, 20.406] #!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 for imap in range(len(map_names_list)):
     
-    out_name = pdb_ids[0]+"."+ map_names_list[imap]
+    out_name = pdb_ids[-1]+"."+ map_names_list[imap]
     grid = output[0,imap,:,:,:].cpu().detach().numpy()
-    #grid = unpad_map(grid, xpad = pad[0], ypad = pad[1], zpad = pad[2]) 
 
+    #grid = unpad_map(grid, xpad = pad[0], ypad = pad[1], zpad = pad[2]) !!!!!!!!!!!!!!!!!!
     #convert from Free-E to density 
     #grid[grid <= 0.000] = 0.0001
     #vol = grid #-kBT *np.log(grid)  
    
     #if norm:   # inverse norm
-    #    vol = grid*(gfe_max[i] - gfe_min[i]) + gfe_min[i] 
+    #    vol = grid*(gfe_max[imap] - gfe_min[imap]) + gfe_min[imap] 
     #else:
     #vol = grid
         
     nx, ny, nz = grid.shape
     
     #flatten
-    vec = grid2vec([nx,ny,nz], vol)
+    vec = grid2vec([nx,ny,nz], grid)
 
     write_map(vec, out_path, out_name, ori = ori,
               res = resolution, n = [nx,ny,nz])
