@@ -15,8 +15,8 @@ import numpy as np
 lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 5000
-batch_size = 2
+max_epoch = 1000
+batch_size = 4
 
 
 #physical params
@@ -25,7 +25,7 @@ kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
 
 #pdb_path = 'data/'
 pdb_path = "/scratch/tr443/fragmap/data/"                                                          
-pdb_ids = ["1ycr", "1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m","4ic8"]
+pdb_ids = ["1ycr", "1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4ic8"]
 
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
 #map_path = 'data/maps/' 
@@ -46,7 +46,7 @@ optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
 #optimizer = optim.SGD(model.parameters(), lr = lrt, momentum = 0.9)
 
 norm = True
-nsample = 20
+nsample = 10
 for ibatch in range(nsample):
 
     #sample batch list from all structures
@@ -82,9 +82,9 @@ for ibatch in range(nsample):
         loss.backward()
         optimizer.step()
     
-        if epoch % 50 == 0:
-            print('{0}, {1}'.format(epoch, loss.item()))
+        if epoch % 20 == 0:
+            print('{0}, {1}, {2}'.format(ibatch, epoch, loss.item()))
 
-            
+         
 #save trained parameters        
-torch.save(model.state_dict(), out_path+'net.pth')
+torch.save(model.state_dict(), out_path+'net_params1.pth')
