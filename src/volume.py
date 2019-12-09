@@ -7,7 +7,7 @@ from TorchProteinLibrary.FullAtomModel import getRandomRotation, getRandomTransl
 from TorchProteinLibrary.FullAtomModel import CoordsRotate, CoordsTranslate, getBBox
 
 
-def get_volume(path_list, box_size, resolution, norm = True, rotate = False):
+def get_volume(path_list, box_size, resolution, norm, rot=True):
     """
     This function invokes modules from TorchPotentialLibrary and
     reads .pdb inputs, projects atomic coordinates into
@@ -48,14 +48,13 @@ def get_volume(path_list, box_size, resolution, norm = True, rotate = False):
     volume = project(coords.cuda(),
                      num_atoms_of_type.cuda(),
                      offsets.cuda())
-    
-    if rotate: #apply rand rots
+    if rot == True: #apply rand rots
         volume_rotate = VolumeRotation(mode = 'bilinear')
         R = getRandomRotation(batch_size)
         volume = volume_rotate(volume, R.to(dtype = torch.float, device = 'cuda'))
-
+        
             
-    if norm: #apply min-max norm 
+    if norm == True: #apply min-max norm 
         volume = (volume - torch.min(volume)) / (torch.max(volume) - torch.min(volume))
         
     return volume
