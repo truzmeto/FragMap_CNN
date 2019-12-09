@@ -36,8 +36,8 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT,
 
 
             #apply baseline correction
-            baseline[ibatch, imap] = box_face_ave(FrE)         #ex-f-call
-            FrE = FrE - baseline[ibatch, imap]
+            #baseline[ibatch, imap] = box_face_ave(FrE)         #ex-f-call
+            #FrE = FrE - baseline[ibatch, imap]
       
             #apply cutoff to Frag Free Energy
             if cutoff:
