@@ -3,7 +3,12 @@ Prediction of fragment free energy maps from protein structure with ConvNet
 
 ## TODO list:
 
-1. Write unit test for target.py
+0. Debugging!
+
+1. Need to prepare a simple tutorial markdown(.md), where we simply
+demonstrate what is being done here, including all functionalities,
+visualizations etc. Unit tests have perfect examples. The best way
+to do this would be using .ipynb and save it as .md file
 
 2. tensor.transpose().flip() does produce physical volume rotation
 without interpolation, but rotations are restricted to be multiple of 90.
@@ -13,7 +18,7 @@ Can we generate all 24 ?
 
 4. Add random translations(small values) as part of augmentation. This is easy!
 
-5. Right not testing is done on single protein, might do batches when
-data size increase.
+5. Right now testing is done on single protein, might do in batches when
+data size increase. Generlize!
 
-6.
+6. Hyperparam tuning.

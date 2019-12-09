@@ -63,4 +63,4 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT,
         ibatch+=1
         pad.append([xpad, ypad, zpad]) 
 
-    return map_tensor, pad, gfe_min, gfe_max #, baseline  
+    return map_tensor, pad, gfe_min, gfe_max , baseline  
