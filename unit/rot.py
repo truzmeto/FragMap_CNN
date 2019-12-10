@@ -51,7 +51,7 @@ print(channel.shape)
 #channel = volume_rot[0,0,:,:,:].cpu().numpy()
 channel = volume[0,0,:,:,:].cpu()#.numpy()
 #channel = channel.transpose(0,2).numpy()
-channel = channel.transpose(0, 1).flip(2).numpy()
+channel = channel.transpose(-1, 1).flip(0).numpy()
 #channel = channel.flip(2).numpy()
 #channel = get_random_rotation(channel).numpy()
 

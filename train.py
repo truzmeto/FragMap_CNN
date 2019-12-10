@@ -15,30 +15,30 @@ import numpy as np
 lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 3000
-batch_size = 4
+max_epoch = 100
+batch_size = 1
 
 norm = True
 map_norm = True
-nsample = 24
+nsample = 1
 
 
 #physical params
 resolution = 1.000
 kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
 
-#pdb_path = 'data/'
-pdb_path = "/scratch/tr443/fragmap/data/"                                                          
-pdb_ids = ["1ycr", "1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4ic8"]
+pdb_path = 'data/'
+#pdb_path = "/scratch/tr443/fragmap/data/"                                                          
+pdb_ids = ["1ycr"]#, "1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4ic8"]
 
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
-#map_path = 'data/maps/' 
-map_path = "/scratch/tr443/fragmap/data/maps/"                                               
+map_path = 'data/maps/' 
+#map_path = "/scratch/tr443/fragmap/data/maps/"                                               
 
-out_path = '/scratch/tr443/fragmap/output/'
-#out_path = 'output/'
+#out_path = '/scratch/tr443/fragmap/output/'
+out_path = 'output/'
 
-dim = greatest_dim(map_path, pdb_ids) + 1
+dim = 70 #greatest_dim(map_path, pdb_ids) + 1
 box_size = int(dim*resolution)
 params_file_name = 'net_params.pth'
 
@@ -62,17 +62,17 @@ for ibatch in range(nsample):
                         box_size = box_size,
                         resolution = resolution,
                         norm = norm,
-                        rotate = True)
+                        rot = True)
     
     #get target map tensor
-    target, _, _, _ = get_target(map_path,
-                                 map_names_list,
-                                 pdb_ids = pdb_list,
-                                 maxD = dim,
-                                 kBT = kBT,
-                                 cutoff = False,
-                                 density = False,
-                                 map_norm = map_norm)
+    target, _, _, _, _ = get_target(map_path,
+                                    map_names_list,
+                                    pdb_ids = pdb_list,
+                                    maxD = dim,
+                                    kBT = kBT,
+                                    cutoff = False,
+                                    density = False,
+                                    map_norm = map_norm)
 
     #convert target maps to torch.cuda
     target = torch.from_numpy(target).float().cuda()
@@ -92,3 +92,29 @@ for ibatch in range(nsample):
          
 #save trained parameters        
 torch.save(model.state_dict(), out_path+params_file_name)
+
+
+#save density maps to file
+ori = [23.699, -20.418, 14.198] 
+
+for imap in range(len(map_names_list)):
+   
+    grid = output[0,imap,:,:,:].cpu().detach().numpy()
+    grid = unpad_map(grid, xpad = pad[0][0], ypad = pad[0][1], zpad = pad[0][2])
+
+    #convert from Free-E to density 
+    #grid[grid <= 0.000] = 0.0001
+    #vol = grid #-kBT *np.log(grid)  
+
+    
+    if map_norm:   # inverse norm
+        grid = grid*(gfe_max[:,imap] - gfe_min[:,imap]) + gfe_min[:,imap] 
+ 
+       
+    nx, ny, nz = grid.shape              #get new dims       
+    vec = grid2vec([nx,ny,nz], grid)     #flatten
+    
+    #write frag maps to output file
+    out_name = pdb_ids[0]+"."+ map_names_list[imap]
+    write_map(vec, out_path, out_name, ori = ori,
+              res = resolution, n = [nx,ny,nz])
