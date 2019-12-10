@@ -11,43 +11,56 @@ TODO:
 '''
 
 
-def rotate_90(tensor):
-	# Do transpose tensor.transpose(axes1,axes2)
-	temp = torch.rot90(tensor, 1 , [2,3])
+def rotate_90(tensor, axes=[2,3]):
+	# Flips along axis (2,3)
+	temp = torch.rot90(tensor, 1 , axes)
 	return temp
 
-def rotate_180(tensor):
-	# Do flip tensor.flip(axes)
-	return 0
+def rotate_180(tensor, axes=[2,3]):
+	# Flips along axis (2,3)
+	temp = torch.rot90(tensor, 2 , axes)
+	return temp
 
-def rotate_270(tensor):
-	# Do 90 + 270 cumulative
-	return 0
+def rotate_270(tensor, axes=[2,3]):
+	# Flips along axis (2,3)
+	temp = torch.rot90(tensor, 3 , axes)
+	return temp
 
-def get_24(tensor):
+def get_24(tensor, is_gfe_map = False):
+	"""
+	> Values are repeated
+	"""
 	vol_rotated =[]
 	for i in range(-4,4):
 		for j in range(3):
-			if j < 2 :
-				temp = torch.rot90(tensor, i, [j+2, j+3])
+			if is_gfe_map:
+				if j < 2 :
+					temp = torch.rot90(tensor, i, [j+2, j+3])
+				else:
+					temp = torch.rot90(tensor, i, [j+2, j])
 			else:
-				temp = torch.rot90(tensor, i, [j+2, j])
+				if j < 2 :
+					temp = torch.rot90(tensor, i, [j, j+1])
+				else:
+					temp = torch.rot90(tensor, i, [j, j-2])
 			vol_rotated.append(temp)
 	return vol_rotated
-# def get_random_rotation(tensor):
-# 	'''
-# 	Input: tensor
-# 	Output: Randomly rotated tensor
-# 	'''
-# 	# rot = tensor.clone()
-# 	for i in range(2,5):
-# 		if np.random.random() > 0.2:
-# 			print(".", end="")
-# 			tensor = tensor.flip(i)
-# 		if np.random.random() > 0.5:
-# 			print('+',end = "")
-# 			i = np.random.choice([2,3,4])
-# 			j = np.random.choice([2,3,4])
-# 			tensor = tensor.transpose(int(i),int(j))
-# 	print("")
-# 	return tensor
+
+
+def get_random_rotation(tensor):
+	'''
+	Input: tensor
+	Output: Randomly rotated tensor
+	'''
+	# rot = tensor.clone()
+	for i in range(2,5):
+		if np.random.random() > 0.2:
+			print(".", end="")
+			tensor = tensor.flip(i)
+		if np.random.random() > 0.5:
+			print('+',end = "")
+			i = np.random.choice([2,3,4])
+			j = np.random.choice([2,3,4])
+			tensor = tensor.transpose(int(i),int(j))
+	print("")
+	return tensor

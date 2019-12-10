@@ -38,35 +38,35 @@ print(len(t))
 
 # #####################################################################
 
-# p = pv.Plotter(point_smoothing = True, shape=(1, 2))
-# fs = 15
+p = pv.Plotter(point_smoothing = True, shape=(1, 2))
+fs = 15
 
-# channel = volume[0,0,:,:,:].cpu().numpy()
-# text = 'original'
-# p.subplot(0, 0)
-# p.add_text(text, position = 'upper_left', font_size = fs)
-# p.add_volume(channel, cmap = "viridis_r", opacity = "linear")
-# #p.add_axes()
-# print(channel.shape)
+channel = volume[0,0,:,:,:].cpu().numpy()
+text = 'original'
+p.subplot(0, 0)
+p.add_text(text, position = 'upper_left', font_size = fs)
+p.add_volume(channel, cmap = "viridis_r", opacity = "linear")
+#p.add_axes()
+print(channel.shape)
 
 
-# ###########################################################
-# # #channel = volume_rot[0,0,:,:,:].cpu().numpy()
-# # channel = volume[0,0,:,:,:].cpu()#.numpy()
-# # #channel = channel.transpose(0,2).numpy()
-# # channel = channel.transpose(0, 1).flip(2).numpy()
-# # #channel = channel.flip(2).numpy()
-# #channel = get_random_rotation(channel).numpy()
+###########################################################
+# #channel = volume_rot[0,0,:,:,:].cpu().numpy()
+# channel = volume[0,0,:,:,:].cpu()#.numpy()
+# #channel = channel.transpose(0,2).numpy()
+# channel = channel.transpose(0, 1).flip(2).numpy()
+# #channel = channel.flip(2).numpy()
+#channel = get_random_rotation(channel).numpy()
 
-# volume_rot = rotate_90(volume)
-# channel_2 = volume_rot[0,0,:,:,:].cpu().numpy()
-# print(channel.shape)
-# text = 'rotated'
-# p.subplot(0, 1)
-# p.add_text(text, position = 'upper_left', font_size = fs)
-# p.add_volume(channel_2, cmap = "viridis_r", opacity = "linear")
-# p.add_axes()
-# p.show()
+volume_rot = t[22]
+channel_2 = volume_rot[0,0,:,:,:].cpu().numpy()
+print(channel.shape)
+text = 'rotated'
+p.subplot(0, 1)
+p.add_text(text, position = 'upper_left', font_size = fs)
+p.add_volume(channel_2, cmap = "viridis_r", opacity = "linear")
+p.add_axes()
+p.show()
 
 
 
