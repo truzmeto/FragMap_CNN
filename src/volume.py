@@ -7,7 +7,7 @@ from TorchProteinLibrary.FullAtomModel import getRandomRotation, getRandomTransl
 from TorchProteinLibrary.FullAtomModel import CoordsRotate, CoordsTranslate, getBBox
 
 
-def get_volume(path_list, box_size, resolution, norm, rot=True):
+def get_volume(path_list, box_size, resolution, norm = True, rot = False):
     """
     This function invokes modules from TorchPotentialLibrary and
     reads .pdb inputs, projects atomic coordinates into
