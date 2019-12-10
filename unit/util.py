@@ -23,7 +23,9 @@ print(maxD)
 
 ######------------- Test padding ----------------#######
 pad_gfe, xpad, ypad, zpad = pad_map(gfe, maxD)
-print(pad_gfe.shape)
+print('Original map',gfe.shape)
+print('Padded map',pad_gfe.shape)
+
 
 if np.abs(pad_gfe.sum() - gfe.sum()) > 0.000001:
     print("Error! Zero padding should not affect the sum")
