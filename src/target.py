@@ -40,14 +40,14 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT,
             #FrE = FrE - baseline[ibatch, imap]
       
             #apply cutoff to Frag Free Energy
-            if cutoff:
+            if cutoff == True:
                 FrE[FrE > 0] = 0.0 
                 
-            if density:                     #convert to density 
+            if density == True:                     #convert to density 
                 dens = np.exp(-FrE / kBT) 
             else:                           #return GFE maps
 
-                if map_norm: #min-max normalize maps
+                if map_norm == True: #min-max normalize maps
                     gfe_min[ibatch, imap] = FrE.min()
                     gfe_max[ibatch, imap] = FrE.max()
                     dens = (FrE - gfe_min[ibatch,imap]) / (gfe_max[ibatch,imap] - gfe_min[ibatch,imap])
@@ -63,4 +63,4 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT,
         ibatch+=1
         pad.append([xpad, ypad, zpad]) 
 
-    return map_tensor, pad, gfe_min, gfe_max , baseline  
+    return map_tensor, pad, gfe_min, gfe_max #, baseline  
