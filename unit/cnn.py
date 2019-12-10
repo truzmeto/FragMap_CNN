@@ -34,7 +34,10 @@ n_layer = [11, 48, 24, 12, 6]
 n_params = 0
 k_size = 3
 for i in range(len(n_layer)-1):
-    n_params += (k_size*k_size*k_size*n_layer[i] + 1)*n_layer[i+1]
+    if i < 1:
+        n_params += (k_size**3*n_layer[i]+1)*n_layer[i+1]
+    else:
+        n_params += (k_size**3*n_layer[i]+3)*n_layer[i+1]
 
 print("Number of parameters in model", est_params)
 print("Number of parameteres estimated", n_params)   

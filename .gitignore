@@ -1,6 +1,5 @@
 /data
 /output
-*.ipynb
 *.zip
 .ipynb_checkpoints/
 __pycache__/
