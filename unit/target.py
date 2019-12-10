@@ -14,21 +14,21 @@ kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
 pdb_path = '../data/'
 pdb_ids = ["1ycr", "1pw2", "2f6f", "4f5t", "1s4u"]#, "2am9", "3my5_a", "3w8m"]#,"4ic8"]
 
-map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
+map_names_list = ["apolar", "hbacc","hbdon"]#, "meoo", "acec", "mamn"]
 map_path = '../data/maps/' 
 
-dim = 80#greatest_dim(map_path, pdb_ids) + 1
+dim = 70 #greatest_dim(map_path, pdb_ids) + 1
 
 pdb_list = ["1ycr"]#, "1pw2"]    
 #get target map tensor
-target, pad, gfe_min, gfe_max, baseline = get_target(map_path,
-                                                    map_names_list,
-                                                    pdb_ids = pdb_list,
-                                                    maxD = dim,
-                                                    kBT = kBT,
-                                                    cutoff = False,
-                                                    density = False,
-                                                    map_norm = map_norm)
+target, pad, gfe_min, gfe_max = get_target(map_path,
+                                           map_names_list,
+                                           pdb_ids = pdb_list,
+                                           maxD = dim,
+                                           kBT = kBT,
+                                           cutoff = False,
+                                           density = False,
+                                           map_norm = map_norm)
 
 print("Max dim = ", dim)
 print('Padded Tensor Dims', target.shape)
