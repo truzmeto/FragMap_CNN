@@ -15,7 +15,7 @@ kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
 
 #pdb_path = 'data/'
 pdb_path = "/scratch/tr443/fragmap/data/"                                                          
-pdb_ids = ["1ycr","1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m", "4ic8"]
+pdb_ids = ["1ycr"]#,"1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m", "4ic8"]
 
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
 #map_path = 'data/maps/' 
@@ -25,9 +25,9 @@ out_path = '/scratch/tr443/fragmap/output/'
 #out_path = 'output/'
 
 params_file_name = 'net_params.pth'
-test_indx = 8
+test_indx = 0
 
-dim = greatest_dim(map_path, pdb_ids) + 1
+dim = 70# greatest_dim(map_path, pdb_ids) + 1
 box_size = int(dim*resolution)
 
 
@@ -69,24 +69,22 @@ print("Testing Loss",loss.item())
 
 
 #save density maps to file
-ori = [23.699, -20.418, 14.198] 
+#ori = [23.699, -20.418, 14.198] 
+ori = [40.250, -8.472, 20.406]
+
 
 for imap in range(len(map_names_list)):
    
     grid = output[0,imap,:,:,:].cpu().detach().numpy()
     grid = unpad_map(grid, xpad = pad[0][0], ypad = pad[0][1], zpad = pad[0][2])
 
-    #convert from Free-E to density 
-    #grid[grid <= 0.000] = 0.0001
-    #vol = grid #-kBT *np.log(grid)  
-
     
     if map_norm:   # inverse norm
-        grid = grid*(gfe_max[:,imap] - gfe_min[:,imap]) + gfe_min[:,imap] 
+        vol = grid*(gfe_max[:,imap] - gfe_min[:,imap]) + gfe_min[:,imap] 
  
        
-    nx, ny, nz = grid.shape              #get new dims       
-    vec = grid2vec([nx,ny,nz], grid)     #flatten
+    nx, ny, nz = vol.shape              #get new dims       
+    vec = grid2vec([nx,ny,nz], vol)     #flatten
     
     #write frag maps to output file
     out_name = pdb_ids[test_indx]+"."+ map_names_list[imap]
