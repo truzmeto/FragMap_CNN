@@ -16,7 +16,7 @@ data = torch.randn(1, c, d, h, w)
 #data2 = torch.randn(1, c, d+10, h+10, w+10)
 #data = torch.cat((data1,data2),0)    
 
-print(data.size)
+print(data.size())
 
 #invoke the model
 model = CnnModel()
