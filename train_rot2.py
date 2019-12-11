@@ -7,7 +7,7 @@ from src.volume import get_volume
 from src.mapIO import greatest_dim, write_map
 from src.target import get_target
 from src.util import grid2vec, sample_batch, unpad_mapc
-from src.augment import get_24
+from src.augment import get_24, get_random_rotation
 import torch.optim as optim
 import numpy as np
 
@@ -21,7 +21,7 @@ batch_size = 2 #number of structures in a batch
 
 norm = True
 map_norm = True
-nsample = 2
+nsample = 25
 
 #physical params
 resolution = 1.000
@@ -32,11 +32,11 @@ pdb_path = 'data/'
 pdb_ids = ["1ycr", "1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4ic8"]
 
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
-#map_path = 'data/maps/' 
-map_path = "/scratch/tr443/fragmap/data/maps/"                                               
+map_path = 'data/maps/' 
+# map_path = "/scratch/tr443/fragmap/data/maps/"                                               
 
-out_path = '/scratch/tr443/fragmap/output/'
-#out_path = 'output/'
+# out_path = '/scratch/tr443/fragmap/output/'
+out_path = 'output/'
 
 dim = greatest_dim(map_path, pdb_ids) + 1
 print(dim)
@@ -78,22 +78,19 @@ for batches in range(nsample):
     #convert target maps to torch.cuda
     target = torch.from_numpy(target).float().cuda()
 
-    # Get rotated volume for inputs
-    rot_volume = get_24(volume, is_gfe_map = False)
-    # Get rotated volume for outputs
-    rot_gfe = get_24(target, is_gfe_map = True)
+    # Get rotated volume and target 
+    rot_volume, rot_gfe= get_random_rotation(volume, target)
 
     #perform forward and backward iterations
     for epoch in range(max_epoch):
-        for rots in  range(len(rot_volume)):
             optimizer.zero_grad()
-            output = model(rot_volume[rots])
-            loss = criterion(output, rot_gfe[rots])
+            output = model(rot_volume)
+            loss = criterion(output, rot_gfe)
             loss.backward()
             optimizer.step()
-            
-        if epoch % 40 == 0:
-            print('{0},{1},{2}'.format(batches, epoch, loss.item()))
+          
+            if epoch % 40 == 0:
+                print('{0},{1},{2}'.format(batches, epoch, loss.item()))
         
 #save trained parameters        
 torch.save(model.state_dict(), out_path+params_file_name)

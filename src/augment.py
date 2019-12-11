@@ -35,28 +35,24 @@ def get_24(tensor, is_gfe_map = False):
 	for i in range(-4,4):
 		for j in range(3):
 			if j < 2 :
-				temp = torch.rot90(tensor, i, [j+2, j+3])
+				temp = torch.rot90(tensor, int(i), [j+2, j+3])
 			else:
-				temp = torch.rot90(tensor, i, [j+2, j])
+				temp = torch.rot90(tensor, int(i), [j+2, j])
 			# print(temp.shape)
 			vol_rotated.append(temp)
 	return vol_rotated
 
 
-def get_random_rotation(tensor):
+def get_random_rotation(volume, target):
 	'''
 	Input: tensor
 	Output: Randomly rotated tensor
 	'''
 	# rot = tensor.clone()
-	for i in range(2,5):
-		if np.random.random() > 0.2:
-			print(".", end="")
-			tensor = tensor.flip(i)
-		if np.random.random() > 0.5:
-			print('+',end = "")
-			i = np.random.choice([2,3,4])
-			j = np.random.choice([2,3,4])
-			tensor = tensor.transpose(int(i),int(j))
-	print("")
-	return tensor
+	for i in range(3):
+		temp = np.random.choice([2,3,4],2)
+		k = np.random.choice([1,2,3])
+		rot_volume = torch.rot90(volume, int(k), [int(temp[0]), int(temp[1])])
+		rot_target = torch.rot90(target, int(k), [int(temp[0]), int(temp[1])])
+
+	return rot_volume, rot_target
