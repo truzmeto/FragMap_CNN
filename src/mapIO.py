@@ -36,7 +36,7 @@ def read_map(file_path):
     #convert from 1D array to 3D array(tensor)
     gfe = vec2grid(n_cells, gfe) #ex-f-call
   
-    return res, n_cells, gfe
+    return res, n_cells, gfe, center
 
 def greatest_dim(target_path, target_list):
     """

@@ -22,6 +22,7 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT,
     gfe_min = np.empty(shape = [batch_size, n_maps])
     gfe_max = np.empty(shape = [batch_size, n_maps])
     pad = np.empty(shape = [batch_size, 3])
+    orig = np.empty(shape = [batch_size, 3])
 
     baseline = np.empty(shape = [batch_size, n_maps])
     ibatch = 0
@@ -31,7 +32,7 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT,
         for imap in range(n_maps):
 
             maps = map_path + batch +"."+map_names[imap] + ".gfe.map"
-            _, _, FrE = read_map(maps)      #ex-f-call
+            _, _, FrE, cent = read_map(maps)      #ex-f-call
             
         
             #apply baseline correction
@@ -61,6 +62,7 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT,
             
         #pad.append([xpad, ypad, zpad]) 
         pad[ibatch,:] = pads
+        orig[ibatch,:] = cent
         ibatch += 1
 
-    return map_tensor, pad, gfe_min, gfe_max 
+    return map_tensor, pad, gfe_min, gfe_max, orig 
