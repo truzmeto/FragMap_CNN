@@ -93,7 +93,6 @@ for batches in range(nsample):
 torch.save(model.state_dict(), out_path+params_file_name)
 
 
-
 #for imap in range(len(map_names_list)):
    
 #    grid = output[0,imap,:,:,:].cpu().detach().numpy()
