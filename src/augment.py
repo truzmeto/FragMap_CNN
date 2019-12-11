@@ -30,19 +30,15 @@ def get_24(tensor, is_gfe_map = False):
 	"""
 	> Values are repeated
 	"""
+	# print(tensor.shape)
 	vol_rotated =[]
 	for i in range(-4,4):
 		for j in range(3):
-			if is_gfe_map:
-				if j < 2 :
-					temp = torch.rot90(tensor, i, [j+2, j+3])
-				else:
-					temp = torch.rot90(tensor, i, [j+2, j])
+			if j < 2 :
+				temp = torch.rot90(tensor, i, [j+2, j+3])
 			else:
-				if j < 2 :
-					temp = torch.rot90(tensor, i, [j, j+1])
-				else:
-					temp = torch.rot90(tensor, i, [j, j-2])
+				temp = torch.rot90(tensor, i, [j+2, j])
+			# print(temp.shape)
 			vol_rotated.append(temp)
 	return vol_rotated
 
