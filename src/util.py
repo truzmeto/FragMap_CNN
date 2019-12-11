@@ -89,6 +89,49 @@ def unpad_map(dens, xpad, ypad, zpad):
     return dens
 
 
+
+def pad_mapc(dens, maxD):
+    """
+    This function pads np.ndarray of size(nx,ny,nz)
+    into a cubic box according to maxD provided.
+    Zero padding applied at both sides(RHS and LHS) to
+    produce padded volume, np.ndarray of size(maxD,maxD,maxD).
+    
+    """
+
+    pad = maxD - np.array(dens.shape,dtype=int) 
+    if any(pad < 0):
+        raise ValueError("Pad length can't be negative", pad) 
+    
+    pl = pad//2
+    pr = pad - pl
+    
+    #Pad both sides, if pad length is odd, then pad_l-even, and pad_r-odd  
+    pdens = np.pad(dens,
+                   pad_width = ((pl[0],pr[0]), (pl[1],pr[1]), (pl[2],pr[2])),
+                   mode = 'constant') #zero padding by default
+
+    return pdens, pad
+
+
+def unpad_mapc(dens, pad):
+    """
+    This function unpads the volume by
+    slicing out the original part from
+    padded volume.
+    """
+
+    nx, ny, nz = dens.shape
+    pl = pad // 2
+    pr = pad - pl
+    
+    pdens = dens[pl[0]:nx-pr[0],
+                 pl[1]:ny-pr[1],
+                 pl[2]:nz-pr[2]]
+   
+    return pdens
+
+
 def box_face_ave(grid):
     """
     This function calculates GFE average over
