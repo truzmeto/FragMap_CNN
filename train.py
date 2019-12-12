@@ -37,6 +37,7 @@ map_path = "/scratch/tr443/fragmap/data/maps/"
 out_path = '/scratch/tr443/fragmap/output/'
 #out_path = 'output/'
 
+
 dim = greatest_dim(map_path, pdb_ids) + 1
 box_size = int(dim*resolution)
 params_file_name = 'net_params.pth'
@@ -62,16 +63,17 @@ for batches in range(nsample):
                         box_size = box_size,
                         resolution = resolution,
                         norm = norm,
-                        rot = False)
+                        rot = False,
+                        trans = False)
     
     #get target map tensor
-    target, pad, gfe_min, gfe_max, ori = get_target(map_path,
-                                                map_names_list,
-                                                pdb_ids = pdb_list,
-                                                maxD = dim,
-                                                kBT = kBT,
-                                                density = False,
-                                                map_norm = map_norm)
+    target, pad, gfe_min, gfe_max, center = get_target(map_path,
+                                                       map_names_list,
+                                                       pdb_ids = pdb_list,
+                                                       maxD = dim,
+                                                       kBT = kBT,
+                                                       density = False,
+                                                       map_norm = map_norm)
     
     #convert target maps to torch.cuda
     target = torch.from_numpy(target).float().cuda()
@@ -108,5 +110,5 @@ torch.save(model.state_dict(), out_path+params_file_name)
     
     #write frag maps to output file
 #    out_name = pdb_ids[0]+"."+ map_names_list[imap]
-#    write_map(vec, out_path, out_name, ori = ori[0,:],
+#    write_map(vec, out_path, out_name, center[0,:],
 #              res = resolution, n = [nx,ny,nz])

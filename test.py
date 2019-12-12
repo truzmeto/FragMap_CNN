@@ -37,11 +37,12 @@ volume = get_volume(path_list = batch_list,
                     box_size = box_size,
                     resolution = resolution,
                     norm = norm,
-                    rot = False)
+                    rot = False,
+                    trans = False)
 
 #get testing map tensor
 map_norm = True
-test_map, pad, gfe_min, gfe_max, ori = get_target(map_path,
+test_map, pad, gfe_min, gfe_max, center = get_target(map_path,
                                             map_names_list,
                                             pdb_ids = [pdb_ids[test_indx]],
                                             maxD = dim,
@@ -83,5 +84,5 @@ for imap in range(len(map_names_list)):
     
     #write frag maps to output file
     out_name = pdb_ids[test_indx]+"."+ map_names_list[imap]
-    write_map(vec, out_path, out_name, ori = ori[0,:],
+    write_map(vec, out_path, out_name, center[0,:],
               res = resolution, n = [nx,ny,nz])
