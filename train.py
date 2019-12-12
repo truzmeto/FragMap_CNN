@@ -37,6 +37,7 @@ map_path = "/scratch/tr443/fragmap/data/maps/"
 out_path = '/scratch/tr443/fragmap/output/'
 #out_path = 'output/'
 
+
 dim = greatest_dim(map_path, pdb_ids) + 1
 box_size = int(dim*resolution)
 params_file_name = 'net_params.pth'
@@ -49,6 +50,7 @@ criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
 #optimizer = optim.SGD(model.parameters(), lr = lrt, momentum = 0.9)
 
+rand_rotations = True
 
 for batches in range(nsample):
 
@@ -58,14 +60,15 @@ for batches in range(nsample):
                                         pdb_path,
                                         shuffle = True)
     #get batch volume tensor
-    volume = get_volume(path_list = batch_list, 
-                        box_size = box_size,
-                        resolution = resolution,
-                        norm = norm,
-                        rot = False)
+    volume, rot_matrix = get_volume(path_list = batch_list, 
+                                box_size = box_size,
+                                resolution = resolution,
+                                norm = norm,
+                                rot = rand_rotations,
+                                trans = False)
     
     #get target map tensor
-    target, pad, gfe_min, gfe_max, ori = get_target(map_path,
+    target, pad, gfe_min, gfe_max, center = get_target(map_path,
                                                 map_names_list,
                                                 pdb_ids = pdb_list,
                                                 maxD = dim,
@@ -75,7 +78,10 @@ for batches in range(nsample):
     
     #convert target maps to torch.cuda
     target = torch.from_numpy(target).float().cuda()
-    
+
+    if rand_rotations:
+        target = grid_rot(target, batch_size, rot_matrix)
+        
     
     #perform forward and backward iterations
     for epoch in range(max_epoch):
@@ -108,5 +114,5 @@ torch.save(model.state_dict(), out_path+params_file_name)
     
     #write frag maps to output file
 #    out_name = pdb_ids[0]+"."+ map_names_list[imap]
-#    write_map(vec, out_path, out_name, ori = ori[0,:],
+#    write_map(vec, out_path, out_name, center[0,:],
 #              res = resolution, n = [nx,ny,nz])
