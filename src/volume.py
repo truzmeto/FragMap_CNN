@@ -53,21 +53,31 @@ def get_volume(path_list, box_size, resolution, norm = True, rot = False, trans 
 
     volume = project(coords.cuda(), num_atoms_of_type.cuda(), offsets.cuda())
    
-    #if rot: #apply rand rots to grid
-    #    volume_rotate = VolumeRotation(mode = 'bilinear')
-    #    R = getRandomRotation(batch_size)
-    #    volume = volume_rotate(volume, R.to(dtype = torch.float, device = 'cuda'))
-    #    
-        
-            
+         
     if norm: #apply min-max norm 
         volume = (volume - torch.min(volume)) / (torch.max(volume) - torch.min(volume))
         
 
     #TODO: must return rotation and translation matrices!
 
+    return volume, random_rotations
+
+
+
+def grid_rot(volume, batch_size, rot_matrix):
+    """
+    This function applies rotation on a grid
+    given a rotation matrix. Matrix comes from
+    the rotation performed on xyz for consistency
+    """
+
+    volume_rotate = VolumeRotation(mode = 'bilinear')
+    R = rot_matrix #rotgetRandomRotation(batch_size)
+    volume = volume_rotate(volume, R.to(dtype = torch.float, device = 'cuda'))
+
     return volume
-    
+        
+      
     
 if __name__=='__main__':
     print("Skibidi Wa Pa Pa!!!")

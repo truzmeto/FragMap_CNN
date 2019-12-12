@@ -50,6 +50,7 @@ criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
 #optimizer = optim.SGD(model.parameters(), lr = lrt, momentum = 0.9)
 
+rand_rotations = True
 
 for batches in range(nsample):
 
@@ -59,25 +60,28 @@ for batches in range(nsample):
                                         pdb_path,
                                         shuffle = True)
     #get batch volume tensor
-    volume = get_volume(path_list = batch_list, 
-                        box_size = box_size,
-                        resolution = resolution,
-                        norm = norm,
-                        rot = False,
-                        trans = False)
+    volume, rot_matrix = get_volume(path_list = batch_list, 
+                                box_size = box_size,
+                                resolution = resolution,
+                                norm = norm,
+                                rot = rand_rotations,
+                                trans = False)
     
     #get target map tensor
     target, pad, gfe_min, gfe_max, center = get_target(map_path,
-                                                       map_names_list,
-                                                       pdb_ids = pdb_list,
-                                                       maxD = dim,
-                                                       kBT = kBT,
-                                                       density = False,
-                                                       map_norm = map_norm)
+                                                map_names_list,
+                                                pdb_ids = pdb_list,
+                                                maxD = dim,
+                                                kBT = kBT,
+                                                density = False,
+                                                map_norm = map_norm)
     
     #convert target maps to torch.cuda
     target = torch.from_numpy(target).float().cuda()
-    
+
+    if rand_rotations:
+        target = grid_rot(target, batch_size, rot_matrix)
+        
     
     #perform forward and backward iterations
     for epoch in range(max_epoch):
