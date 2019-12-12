@@ -56,3 +56,18 @@ def get_random_rotation(volume, target):
 		rot_target = torch.rot90(target, int(k), [int(temp[0]), int(temp[1])])
 
 	return rot_volume, rot_target
+
+
+def get_random_translation(volume, target, delta = 0.005):
+	'''
+	Input: tensor
+	Output: Randomly translated tensor ?????
+	'''
+	# rot = tensor.clone()
+	
+	temp = torch.ones(volume.shape)
+
+	print(temp.shape)
+
+
+	return volume, target
