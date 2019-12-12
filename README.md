@@ -36,22 +36,6 @@ import torch
 import numpy as np
 import pyvista as pv
 
-from torchsummary import summary
-```
-
-
-    ---------------------------------------------------------------------------
-
-    ModuleNotFoundError                       Traceback (most recent call last)
-
-    <ipython-input-2-95664cee2b60> in <module>
-          7 import pyvista as pv
-          8 
-    ----> 9 from torchsummary import summary
-    
-
-    ModuleNotFoundError: No module named 'torchsummary'
-
 
 ### Step 0: Build the CNN
 
