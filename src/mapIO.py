@@ -27,8 +27,8 @@ def read_map(file_path):
             i = i + 1
 
     if i-6 != n_cells[0]*n_cells[1]*n_cells[2]:
-        print("Error! Mismatch between provided and calculated volume size")
-            
+        raise ValueError("Mismatch between provided and calc. #voxels") 
+        
 
     #convert list to np.array
     gfe = np.array(gfe)
@@ -48,7 +48,7 @@ def greatest_dim(target_path, target_list):
 
     max_dim = 0
     for targets in target_list:
-        path = target_path + targets + ".benc.gfe.map"
+        path = target_path + targets + ".benc.gfe.map" 
         with open(path) as file:
             t = file.readlines()[4].split(" ")
             for i in t[1:]:
@@ -65,7 +65,7 @@ def write_map(vec, out_path, out_name, ori, res, n):
     """
 
     fname = out_path + out_name + ".gfe.map"
-    nx = n[0]; ny = n[1]; nz = n[2]
+    nx, ny, nz = n
     spacing = res      
     
     with open(fname,'w') as fp:
@@ -74,12 +74,11 @@ def write_map(vec, out_path, out_name, ori, res, n):
         fp.write("GRID_DATA_FILE\n") 
         fp.write("MACROMOLECULE\n") 
         fp.write("SPACING %5.3f\n" % res)
-        fp.write("NELEMENTS "+str(nx-1)+" "+str(ny-1)+ " "+str(nz-1)+"\n") 
+        fp.write("NELEMENTS "+str(nx-1)+" "+str(ny-1)+ " "+str(nz-1)+"\n") #consider changing!!!!! 
         fp.write("CENTER "+str(ori[0])+" "+str(ori[1])+" "+str(ori[2])+"\n")
 
         for i in range(nx*ny*nz):
             fp.write("%10.3f\n" % vec[i])
-
 
             
 if __name__=='__main__':

@@ -9,7 +9,7 @@ import pyvista as pv
 import numpy as np
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.volume import get_volume
-from src.augment import  rotate_90, get_24
+from src.augment import  rotate_90, get_24, get_random_rotation
 
 
 
@@ -33,8 +33,8 @@ volume[:,:,st[0],st[1]+length:st[1]+length+1,st[2]+length:st[2]+length+1] = 1.5
 
 
 
-t = get_24(volume)
-print(len(t))
+t , _ = get_random_rotation(volume, volume)
+print(t.shape)
 
 # #####################################################################
 
@@ -58,8 +58,8 @@ print(channel.shape)
 # #channel = channel.flip(2).numpy()
 #channel = get_random_rotation(channel).numpy()
 
-volume_rot = t[22]
-channel_2 = volume_rot[0,0,:,:,:].cpu().numpy()
+volume_rot = t[0]
+channel_2 = volume_rot[0,:,:,:].cpu().numpy()
 print(channel.shape)
 text = 'rotated'
 p.subplot(0, 1)
@@ -67,6 +67,23 @@ p.add_text(text, position = 'upper_left', font_size = fs)
 p.add_volume(channel_2, cmap = "viridis_r", opacity = "linear")
 p.add_axes()
 p.show()
+
+
+
+# path = "../data/"
+# pdb_ids = ["1pw2", "1ycr","2f6f", "4f5t",
+#            "2am9", "3my5_a", "3w8m", "4ic8"] 
+# path_list = [path+i+".pdb" for i in pdb_ids]
+
+# box_size = 60  #prog complains if box_size is float !!!!!! 
+# resolution = 1.0
+# volume = get_volume(path_list,
+#                     box_size,
+#                     resolution,
+#                     norm = True,
+#                     rot = False)
+# _, _ = get_random_translation(volume, volume)
+
 
 
 

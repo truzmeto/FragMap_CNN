@@ -16,7 +16,7 @@ lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
 max_epoch = 2000
-batch_size = 2 #number of structures in a batch
+batch_size = 4 #number of structures in a batch
 
 norm = True
 map_norm = True
@@ -49,36 +49,46 @@ criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
 #optimizer = optim.SGD(model.parameters(), lr = lrt, momentum = 0.9)
 
+rand_rotations = False
 
-for batches in range(nsample):
+  
+#perform forward and backward iterations
+for epoch in range(max_epoch):
+   
+    for batches in range(nsample):
 
-    #sample batch list from all structures
-    batch_list, pdb_list = sample_batch(batch_size,
-                                        pdb_ids,
-                                        pdb_path,
-                                        shuffle = True)
-    #get batch volume tensor
-    volume = get_volume(path_list = batch_list, 
-                        box_size = box_size,
-                        resolution = resolution,
-                        norm = norm,
-                        rot = False)
-    
-    #get target map tensor
-    target, pad, gfe_min, gfe_max, ori = get_target(map_path,
-                                                map_names_list,
-                                                pdb_ids = pdb_list,
-                                                maxD = dim,
-                                                kBT = kBT,
-                                                density = False,
-                                                map_norm = map_norm)
+        #sample batch list from all structures
+        batch_list, pdb_list = sample_batch(batch_size,
+                                            pdb_ids,
+                                            pdb_path,
+                                            shuffle = True)
+
+        #get batch volume tensor
+        volume, rot_matrix = get_volume(path_list = batch_list, 
+                                        box_size = box_size,
+                                        resolution = resolution,
+                                        norm = norm,
+                                        rot = rand_rotations,
+                                        trans = False)
+        
+        #get target map tensor
+        target, pad, gfe_min, gfe_max, center = get_target(map_path,
+                                                           map_names_list,
+                                                           pdb_ids = pdb_list,
+                                                           maxD = dim,
+                                                           kBT = kBT,
+                                                           density = False,
+                                                           map_norm = map_norm)
     
     #convert target maps to torch.cuda
     target = torch.from_numpy(target).float().cuda()
-    
+
+    if rand_rotations:
+        target = grid_rot(target, batch_size, rot_matrix)
+        
     
     #perform forward and backward iterations
-    for epoch in range(max_epoch):
+    #for epoch in range(max_epoch):
         
         optimizer.zero_grad()
         output = model(volume)
@@ -108,5 +118,5 @@ torch.save(model.state_dict(), out_path+params_file_name)
     
     #write frag maps to output file
 #    out_name = pdb_ids[0]+"."+ map_names_list[imap]
-#    write_map(vec, out_path, out_name, ori = ori[0,:],
+#    write_map(vec, out_path, out_name, center[0,:],
 #              res = resolution, n = [nx,ny,nz])

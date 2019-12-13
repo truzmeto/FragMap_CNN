@@ -19,8 +19,8 @@ def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
     """      
 
     if batch_size > len(pdb_ids):
-        print("Batch size must be less or equal to #pdbs")
-        sys.exit(0)
+        raise ValueError("Batch size must be less or equal to #pdbs")
+        #sys.exit(0)
         
     if shuffle:
         random.shuffle(pdb_ids)
@@ -37,7 +37,7 @@ def vec2grid(n, vec):
     This function transforms 1D vec. into
     tensor (nx,ny,nz) data structure
     """
-    nx = n[0]; ny = n[1]; nz = n[2] 
+    nx, ny, nz = n 
     grid = np.reshape(vec, newshape = (nx,ny,nz), order = "F")
     
     return grid
@@ -48,45 +48,44 @@ def grid2vec(n, grid):
     This function transforms 3D grid.(nx,ny,nz) into
     vector (nx*ny*nz) 
     """
-    nx = n[0]; ny = n[1]; nz = n[2] 
+    nx, ny, nz = n 
     vec = np.reshape(grid, newshape = nx*ny*nz, order = "F")
 
     return vec
 
 
-def pad_map(dens, maxD):
-    """
-    This function pads np.ndarray of size(nx,ny,nz)
-    cubic box according to maxD provided. Zero padding
-    applied at the end (or RHS) and returns
-    np.ndarray of size(maxD,maxD,maxD).
-    
-    """
-    
-    dimx, dimy, dimz = dens.shape
-    
-    xpad = maxD - dimx
-    ypad = maxD - dimy
-    zpad = maxD - dimz
-    
-    #pad right hand side only ???????????????????????????????
-    dens = np.pad(dens,
-                  pad_width = ((0,xpad), (0,ypad), (0,zpad)),
-                  mode = 'constant') #zero padding by default
-    return dens, xpad, ypad, zpad 
-
-
-def unpad_map(dens, xpad, ypad, zpad):
-    """
-    This function unpads the volume by
-    slicing out the original part
-
-    """
-    #unpad, remove padded parts
-    n = dens.shape[0]
-    dens = dens[0:n-xpad, 0:n-ypad, 0:n-zpad].copy()
-   
-    return dens
+#def pad_map(dens, maxD):
+#    """
+#    This function pads np.ndarray of size(nx,ny,nz)
+#    cubic box according to maxD provided. Zero padding
+#    applied at the end (or RHS) and returns
+#    np.ndarray of size(maxD,maxD,maxD).
+#    
+#    """
+#    
+#    dimx, dimy, dimz = dens.shape
+#    
+#    xpad = maxD - dimx
+#    ypad = maxD - dimy
+#    zpad = maxD - dimz
+#    
+#    dens = np.pad(dens,
+#                  pad_width = ((0,xpad), (0,ypad), (0,zpad)),
+#                  mode = 'constant') #zero padding by default
+#    return dens, xpad, ypad, zpad 
+#
+#
+#def unpad_map(dens, xpad, ypad, zpad):
+#    """
+#    This function unpads the volume by
+#    slicing out the original part
+#
+#    """
+#    #unpad, remove padded parts
+#    n = dens.shape[0]
+#    dens = dens[0:n-xpad, 0:n-ypad, 0:n-zpad].copy()
+#   
+#    return dens
 
 
 
@@ -118,7 +117,8 @@ def unpad_mapc(dens, pad):
     """
     This function unpads the volume by
     slicing out the original part from
-    padded volume.
+    padded volume. It inverts the operation
+    of done by 'pad_mapc' function.
     """
 
     nx, ny, nz = dens.shape
