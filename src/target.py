@@ -49,15 +49,17 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT, density = False, map_nor
                 if map_norm == True: #min-max normalize maps
                     gfe_min[ibatch, imap] = FrE.min()
                     gfe_max[ibatch, imap] = FrE.max()
-                    dens = 1.0 - (FrE - gfe_min[ibatch,imap]) / (gfe_max[ibatch,imap] - gfe_min[ibatch,imap])
-                else:
-                    dens = FrE
+                    #dens = 1.0 - (FrE - gfe_min[ibatch,imap]) / (gfe_max[ibatch,imap] - gfe_min[ibatch,imap])
+                    FrE  = 1.0 - (FrE - gfe_min[ibatch,imap]) / (gfe_max[ibatch,imap] - gfe_min[ibatch,imap])
+                #else:
+                #    dens = FrE
              
             #apply padding
-            pad_dens, pads = pad_mapc(dens, maxD)   #ex-f-call
+            #pad_dens, pads = pad_mapc(FrE, maxD)   #ex-f-call
+            FrE, pads = pad_mapc(FrE, maxD)   #ex-f-call
             
             #convert to tensor
-            map_tensor[ibatch,imap,:,:,:] = pad_dens 
+            map_tensor[ibatch,imap,:,:,:] = FrE #pad_dens 
             
         #pad.append([xpad, ypad, zpad]) 
         pad[ibatch,:] = pads
