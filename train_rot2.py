@@ -16,12 +16,12 @@ import numpy as np
 lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 10
-batch_size = 2 #number of structures in a batch
+max_epoch = 2000
+batch_size = 8 #number of structures in a batch
 
 norm = True
-map_norm = True
-nsample = 200
+map_norm = False
+nsample = 1
 
 #physical params
 resolution = 1.000
@@ -41,7 +41,7 @@ out_path = 'output/'
 dim = greatest_dim(map_path, pdb_ids) + 1
 print(dim)
 box_size = int(dim*resolution)
-params_file_name = 'net_params_rotated_leaky.pth'
+params_file_name = 'net_params_64_xnorm_2k.pth'
 
 #invoke model
 torch.cuda.set_device(0)
@@ -63,7 +63,7 @@ for epoch in range(max_epoch):
                                             pdb_path,
                                             shuffle = True)
         #get batch volume tensor
-        volume = get_volume(path_list = batch_list, 
+        volume, _ = get_volume(path_list = batch_list, 
                             box_size = box_size,
                             resolution = resolution,
                             norm = norm,
@@ -80,12 +80,12 @@ for epoch in range(max_epoch):
         
         # #convert target maps to torch.cuda
 
-        rot_vol, rot_target = get_random_rotation(volume, torch.tensor(target))
+        # rot_vol, rot_target = get_random_rotation(volume, torch.tensor(target))
 
-        rot_target = rot_target.float().cuda()
+        rot_target = torch.from_numpy(target).float().cuda()
 
         optimizer.zero_grad()
-        output = model(rot_vol)
+        output = model(volume)
         loss = criterion(output, rot_target)
         loss.backward()
         optimizer.step()
@@ -93,7 +93,7 @@ for epoch in range(max_epoch):
         if batches % 20 == 0:
             print('{0},{1},{2}'.format(batches, epoch, loss.item()))
     if epoch == epoch//2:
-        torch.save(model.state_dict(), out_path+params_file_name+str(epoch//2))
+        torch.save(model.state_dict(), out_path+params_file_name)
 
 #save trained parameters        
 torch.save(model.state_dict(), out_path+params_file_name)
