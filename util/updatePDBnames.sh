@@ -34,24 +34,13 @@ for i in $(ls *.pdb);
 
 do 
 
-echo "Replacing CD to CD1"
+less $i | sed 's/CD\ \ ILE/CD1 ILE/g' | sed 's/HSD\ /HIS /g' | sed 's/OT1/OXT/g' | sed 's/OT2/OXT/g' > tmp/$i;
 
-	sed 's/CD\ \ ILE/CD1 ILE/g' $i > tmp/$i;
+mv tmp/$i ~/FragMap_CNN/data;
 
-echo "Replacing HSD to HIS"
-
-	sed 's/HSD\ /HIS /g' tmp/$i > tmp/$i
-
-echo "Replacing OT1 to OXT"
-
-	sed 's/OT1/OXT/g' tmp/$i > tmp/$i;
-
-echo "Replacing OT2 to OXT"
-
-	sed 's/OT2/OXT/g' tmp/$i > tmp/$i;
-
-mv tmp/* ../../data;
+echo finished $i
 
 done;
 
 
+echo DONE
