@@ -31,10 +31,9 @@ def get_volume(path_list, box_size, resolution, norm = True, rot = False, trans 
     a,b = getBBox(coords, num_atoms)
     protein_center = (a+b)*0.5
     coords = translate(coords, -protein_center, num_atoms)
-
+    random_rotations = getRandomRotation(batch_size)
     #rotate xyz 
     if rot:
-        random_rotations = getRandomRotation(batch_size)
         coords = rotate(coords, random_rotations, num_atoms)
 
 
