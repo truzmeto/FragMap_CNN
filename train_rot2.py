@@ -6,42 +6,41 @@ from src.cnn  import CnnModel_Leaky
 from src.volume import get_volume
 from src.mapIO import greatest_dim, write_map
 from src.target import get_target
-from src.util import grid2vec, sample_batch, unpad_mapc
+from src.util import grid2vec, sample_batch, unpad_mapc, save_model
 from src.augment import get_24, get_random_rotation
 import torch.optim as optim
 import numpy as np
+import pickle as pkl
 
 
 #model params
 lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 2000
-batch_size = 8 #number of structures in a batch
-
+max_epoch = 1
+batch_size = 1 #number of structures in a batch
 norm = True
 map_norm = False
 nsample = 1
+i= 0
+chkpt_step = 500
 
 #physical params
 resolution = 1.000
 kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
 
 pdb_path = 'data/'
-#pdb_path = "/scratch/tr443/fragmap/data/"                                                          
 pdb_ids = ["1ycr", "1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4ic8"]
-
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
 map_path = 'data/maps/' 
-# map_path = "/scratch/tr443/fragmap/data/maps/"                                               
-
-# out_path = '/scratch/tr443/fragmap/output/'
 out_path = 'output/'
+#pdb_path = "/scratch/tr443/fragmap/data/"                                                          
+#map_path = "/scratch/tr443/fragmap/data/maps/"                                               
+#out_path = '/scratch/tr443/fragmap/output/'
 
 dim = greatest_dim(map_path, pdb_ids) + 1
-print(dim)
 box_size = int(dim*resolution)
-params_file_name = 'net_params_64_xnorm_2k.pth'
+params_file_name = 'net_params_temp'
 
 #invoke model
 torch.cuda.set_device(0)
@@ -92,28 +91,9 @@ for epoch in range(max_epoch):
       
         if batches % 20 == 0:
             print('{0},{1},{2}'.format(batches, epoch, loss.item()))
-    if epoch == epoch//2:
-        torch.save(model.state_dict(), out_path+params_file_name)
+    if epoch == i*chkpt_step:
+        save_model(model, out_path, params_file_name)
+        i+=1
 
-#save trained parameters        
-torch.save(model.state_dict(), out_path+params_file_name)
-
-
-
-#for imap in range(len(map_names_list)):
-   
-#    grid = output[0,imap,:,:,:].cpu().detach().numpy()
-#    grid = unpad_mapc(grid, pad = pad[0,:].astype(int))
-    
-#    if map_norm == True:   # inverse norm
-#        vol = (1.0-grid)*(gfe_max[0,imap] - gfe_min[0,imap]) + gfe_min[0,imap]
-#    else:
-#        vol = grid
-        
-#    nx, ny, nz = vol.shape              #get new dims       
-#    vec = grid2vec([nx,ny,nz], vol)     #flatten
-    
-    #write frag maps to output file
-#    out_name = pdb_ids[0]+"."+ map_names_list[imap]
-#    write_map(vec, out_path, out_name, ori = ori[0,:],
-#              res = resolution, n = [nx,ny,nz])
+# save trained parameters        
+save_model(model, out_path, params_file_name)

@@ -6,26 +6,26 @@ from src.cnn  import CnnModel
 from src.volume import get_volume
 from src.mapIO import write_map, greatest_dim
 from src.target import get_target
-from src.util import grid2vec, unpad_mapc
+from src.util import grid2vec, unpad_mapc, load_model
 import torch.optim as optim
 import numpy as np
 
 resolution = 1.000
 kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
 
-#pdb_path = 'data/'
-pdb_path = "/scratch/tr443/fragmap/data/"                                                          
+pdb_path = 'data/'
+# pdb_path = "/scratch/tr443/fragmap/data/"                                                          
 pdb_ids = ["1ycr","1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m", "4ic8"]
 
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
-#map_path = 'data/maps/' 
-map_path = "/scratch/tr443/fragmap/data/maps/"                                               
+map_path = 'data/maps/' 
+# map_path = "/scratch/tr443/fragmap/data/maps/"                                               
 
-out_path = '/scratch/tr443/fragmap/output/'
-#out_path = 'output/'
+# out_path = '/scratch/tr443/fragmap/output/'
+out_path = 'output/'
 
-params_file_name = 'net_params.pth'
-test_indx = 8
+params_file_name = 'net_params_temp'
+test_indx = 0
 
 dim = greatest_dim(map_path, pdb_ids) + 1
 box_size = int(dim*resolution)
@@ -33,7 +33,7 @@ batch_list = [pdb_path+pdb_ids[test_indx]+".pdb"]
 
 #get volume tensor
 norm = True
-volume = get_volume(path_list = batch_list, 
+volume , _ = get_volume(path_list = batch_list, 
                     box_size = box_size,
                     resolution = resolution,
                     norm = norm,
@@ -57,8 +57,7 @@ test_map = torch.from_numpy(test_map).float().cuda()
 #-------------------------------------------------------------
 #invoke model
 torch.cuda.set_device(0)
-model = CnnModel().cuda()
-model.load_state_dict(torch.load(out_path + params_file_name))
+model = load_model(out_path, params_file_name)
 model.eval() #Needed to set into inference mode
 output = model(volume)
 
@@ -83,6 +82,6 @@ for imap in range(len(map_names_list)):
     vec = grid2vec([nx,ny,nz], vol)     #flatten
     
     #write frag maps to output file
-    out_name = pdb_ids[test_indx]+"."+ map_names_list[imap]
+    out_name = pdb_ids[test_indx]+"."+ map_names_list[imap]+"_o"
     write_map(vec, out_path, out_name, center[0,:],
               res = resolution, n = [nx,ny,nz])
