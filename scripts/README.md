@@ -30,7 +30,7 @@ This is the node your jupyter notebook or jupyter lab is running in.
 
 Log into amarel as follows:
 
-`ssh -L 9999:pascal010:8889 sb1638@amarel.hpc.rutgers.edu` but replace sb1638 with your NetID.
+`ssh -L 9999:pascal010:8889 sb1638@amarel.hpc.rutgers.edu` but replace pascal010 with the GPU name you got from NODELIST and sb1638 with your NetID.
 
 This will send the jupyter port 8889 in node pascal010 to your localhost port 9999.
 
