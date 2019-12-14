@@ -10,7 +10,7 @@
 
 Here `-p` will ignore making the directory if it already exists.
 
-` sbatch scripts/start_jupyter.sh `
+` sbatch start_jupyter.sh `
 
 This script will run jupyter interactively on a GPU node, based on the header. Currently the header is set to --partition=main and --constraint=pascal
 
