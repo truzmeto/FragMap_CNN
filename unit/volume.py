@@ -14,20 +14,21 @@ from src.volume import get_volume
 pdb_ids = ["1pw2", "1ycr"]#,"2f6f", "4f5t",
            #"2am9", "3my5_a", "3w8m", "4ic8"] 
 
-path = "../data/"
+path = "data/"
 path_list = [path+i+".pdb" for i in pdb_ids]
 
 #print(path_list)
 
 box_size = 60  #prog complains if box_size is float !!!!!! 
 resolution = 1.0
-volume = get_volume(path_list,
+volume, _ = get_volume(path_list,
                     box_size,
                     resolution,
-                    norm = True,
-                    rot = True)
+                    norm = False,
+                    rot = False)
 
-print(volume.size())
+print(volume.shape)
+print(torch.max(volume))
 Agroup_names = ["Sulfur/Selenium"  , "Nitrogen Amide",
                 "Nitrogen Aromatic", "Nitrogen Guanidinium",
                 "Nitrogen Ammonium", "Oxygen Carbonyl",
