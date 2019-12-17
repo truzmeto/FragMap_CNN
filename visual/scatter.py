@@ -59,6 +59,8 @@ def scatter_plot(pdb_id):
         y = gfe_p
 
         ax = fig.add_subplot(2, 3, i)
+        
+        colors = 'bgrcmy'
 
         # Move right y-axis and top x-axis to center
         ax.spines['right'].set_position('center')
@@ -72,8 +74,8 @@ def scatter_plot(pdb_id):
         ax.xaxis.set_ticks_position('top')
         ax.yaxis.set_ticks_position('right')
         
-        ax.xaxis.set_label_coords(0.5, 0)
-        ax.yaxis.set_label_coords(0, 0.5)
+        ax.xaxis.set_label_coords(0.2, 0)
+        ax.yaxis.set_label_coords(0, 0.3)
         
         l_x = np.arange(np.minimum(x.min(), y.min()),np.maximum(x.max(), y.max()),0.1)
         #print(l_x, l_y)
@@ -83,9 +85,9 @@ def scatter_plot(pdb_id):
         frag = frag_names[i-1]
 
         plt.grid()
-        plt.scatter(x, y, s=0.01)
+        plt.scatter(x, y, s=0.01, color=colors[i-1])
         plt.title(pdb_id+" predicted vs measured GFE scatter")
-        plt.legend([frag,], loc="best")
+        plt.legend([frag], loc="best")
         plt.ylabel("y=GFE measured")
         plt.xlabel("x=GFE predicted")
 
