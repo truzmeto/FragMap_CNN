@@ -16,6 +16,12 @@ to do this would be using .ipynb and save it as .md file
 
 3. Hyperparam tuning.
 
+4. Data Augmentation - Rotations.
+
+5. Core vs Surface level hotspot accuracy.
+
+6. GFE<sub>model</sub> vs GFE<sub>original</sub> Plot.
+
 
 
 ## Objective:
