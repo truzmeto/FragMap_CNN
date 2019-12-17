@@ -4,20 +4,22 @@ import os
 import pyvista as pv
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from src.util import pad_map, vec2grid
+from src.util import pad_mapc, vec2grid
 from src.mapIO import read_map, write_map
 
-frag_names = ["Benzene", "Propane", "H-bond Donor", "H-bond Acceptor"]
 
-path_list = ["../data/maps/1ycr.benc.gfe.map",
-             "../data/maps/1ycr.prpc.gfe.map",
-             "../data/maps/1ycr.hbacc.gfe.map",
-             "../data/maps/1ycr.hbdon.gfe.map"]
+pdb_ids = ["1ycr","1pw2","2f6f", "4f5t", "2am9", "3my5_a", "3w8m", "4ic8"] 
 
-chan_id = 2 # range 0-3
+path = "../data/maps/"
+frag_names = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
+idx = 3 # pdb id
+pdb_id = pdb_ids[idx]
+path_list = [path+pdb_id+"." + i + ".gfe.map" for i in frag_names]
+
+chan_id = 3 #map id
 
 ######------------- Test the read_map -----------------#######
-res, n_cells, dens = read_map(path_list[chan_id])
+res, n_cells, dens, center = read_map(path_list[chan_id])
 print("Extracted volume dimention --> ",dens.shape)
 print("Specified dimension in the file header --> ", n_cells)
 
@@ -26,7 +28,7 @@ dens[dens > 0] = 0.0 #cutoff at zero!
 channel = dens
 p = pv.Plotter(point_smoothing = True)
 p.add_volume(np.abs(channel), cmap = "viridis", opacity = "linear")
-text = frag_names[chan_id]
+text =  pdb_id + "." + frag_names[chan_id] +"  dim = " + str(dens.shape) 
 p.add_text(text, position = 'upper_left', font_size = 16)
 p.show()      
 
@@ -36,7 +38,7 @@ p.show()
 ######------------- Testing write map ----------------#######
 out_path = "./"
 out_name = "test"
-ori = [40.250, -8.472, 20.406]
+ori = center#[40.250, -8.472, 20.406]
 res = 1.000
 n = [5,5,5]
 vec = 4*np.random.rand(n[0],n[1],n[2]) - 2.0

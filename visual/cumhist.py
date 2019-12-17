@@ -15,8 +15,8 @@ frag_names = ["Gen. Apolar","Gen. Acceptor",
 frag_names_short = ["apolar", "hbacc", "hbdon", "meoo","acec", "mamn"]
 
 path = "../data/maps/"
-#pdb_id = "1ycr"
-pdb_id = "1pw2"
+pdb_ids = ["1ycr", "1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m","4ic8"]
+pdb_id = pdb_ids[8]
 tail = ".gfe.map"
 path_list = [path+pdb_id+"."+name+tail for name in frag_names_short]
 
@@ -25,7 +25,7 @@ path_list = [path+pdb_id+"."+name+tail for name in frag_names_short]
 leg = []
 nbins = 200
 for i in range(len(path_list)):
-    _, _, gfe = read_map(path_list[i])
+    _, _, gfe, center = read_map(path_list[i])
     
     #gfe[gfe> 3.30] = 0.0
     f_ave = box_face_ave(gfe)
@@ -46,4 +46,5 @@ plt.title(pdb_id+", nbins = "+str(nbins))
 plt.legend(leg, loc="best")
 plt.xlabel("GFE")
 plt.ylabel("Freq")
+plt.grid()
 plt.show()
