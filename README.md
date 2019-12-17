@@ -6,22 +6,16 @@ Prediction of fragment free energy maps from protein structure with ConvNet
 ## TODO list:
 
 0. Data Augmentation - Rotations:
-    
-    24 90 degree rotation - Arth
-    
-    Random ratations - TPL
-    
-    <span style="color:brown">some  We must get reliable, descent results with both! text</span>
+  * 24 90 degree rotation - Arth
+  * Random ratations - TPL
+  * __We must get reliable, descent results with both!__ 
  
 1. Buried vs Surface level hotspot accuracy.
 
 2. New methods for frag map baseline correction: 
-    
-    Median of the edge voxels
-    
-    Median
-    
-    Mode
+  * Median of the edge voxels
+  * Median
+  * Mode
 
 3. GFE<sub>model</sub> vs GFE<sub>original</sub> Plot.
 
@@ -36,11 +30,10 @@ to do this would be using .ipynb and save it as .md file
 
 
 6. Hyperparam tuning:
-    
-    kernel size
-    
-    number of conv layers
-    ....
+  * kernel size
+  * number of conv layers
+
+....
 
 
 
