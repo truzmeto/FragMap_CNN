@@ -63,8 +63,8 @@ class CnnModel(nn.Module):
                       kernel_size = k_size,
                       padding = pad),
             nn.BatchNorm3d(6),
-            nn.ReLU()
-            #nn.LeakyReLU()
+            # nn.ReLU()
+            # nn.LeakyReLU()
         )
         
         
@@ -127,7 +127,7 @@ class CnnModel_Leaky(nn.Module):
                       padding = pad),
             nn.BatchNorm3d(6),
             # nn.ReLU()
-            nn.LeakyReLU()
+            # nn.LeakyReLU()
         )
         
         

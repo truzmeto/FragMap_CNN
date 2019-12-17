@@ -17,11 +17,11 @@ import pickle as pkl
 lrt = 0.0001
 #lrd = 0.0001
 wd = 0.00001
-max_epoch = 1
+max_epoch = 1000
 batch_size = 1 #number of structures in a batch
 norm = True
 map_norm = False
-nsample = 1
+nsample = 10
 i= 0
 chkpt_step = 500
 
@@ -40,7 +40,7 @@ out_path = 'output/'
 
 dim = greatest_dim(map_path, pdb_ids) + 1
 box_size = int(dim*resolution)
-params_file_name = 'net_params_temp'
+params_file_name = 'net_params_1k_xnorm_hotspot'
 
 #invoke model
 torch.cuda.set_device(0)
