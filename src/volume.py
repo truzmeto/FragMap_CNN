@@ -36,10 +36,10 @@ def get_volume(path_list, box_size, resolution, norm = True, rot = False, trans 
     if rot:
         coords = rotate(coords, random_rotations, num_atoms)
 
-
+    
     box_center = torch.zeros(batch_size, 3, dtype=torch.double, device='cpu').fill_(resolution*box_size/2.0)
     coords = translate(coords, box_center, num_atoms)
-    
+
 
     #translate xyz
     if trans:                                                                                                      
