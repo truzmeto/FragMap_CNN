@@ -17,9 +17,12 @@ Prediction of fragment free energy maps from protein structure with ConvNet
     * Median
     * Mode
 
-3. GFE<sub>model</sub> vs GFE<sub>original</sub> Plot.
-
-
+3. Test different loss function:
+   * L1
+   * Log-Cosh Loss
+   * Huber Loss
+   * Quantile Loss
+   
 4. Need to prepare a simple tutorial markdown(.md), where we simply
 demonstrate what is being done here, including all functionalities,
 visualizations etc. Unit tests have perfect examples. The best way
