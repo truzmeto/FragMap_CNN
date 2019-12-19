@@ -32,9 +32,7 @@ to do this would be using .ipynb and save it as .md file
 6. Hyperparam tuning:
     * kernel size
     * number of conv layers
-
-....
-
+    * more....
 
 
 
