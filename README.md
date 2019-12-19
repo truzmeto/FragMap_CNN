@@ -20,7 +20,7 @@ Prediction of fragment free energy maps from protein structure with ConvNet
 3. Test different loss function:
    * L1
    * Log-Cosh Loss
-   * Huber Loss
+   * Huber Loss (Smooth L1)
    * Quantile Loss
    
 4. Need to prepare a simple tutorial markdown(.md), where we simply
