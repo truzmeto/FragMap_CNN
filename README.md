@@ -6,33 +6,38 @@ Prediction of fragment free energy maps from protein structure with ConvNet
 ## TODO list:
 
 0. Data Augmentation - Rotations:
-    * 24 90 degree rotation - Arth
-    * Random ratations - TPL
+    * 24 90 degree rotation:  __In progress__  *Arth*
+    * Random ratations - TPL: __In progress__ *Talant*
     * __We must get reliable, descent results with both!__ 
  
-1. Buried vs Surface level hotspot accuracy.
+1. Buried vs Surface level hotspot accuracy. __In progress__
 
-2. New methods for frag map baseline correction: 
+2. New methods for frag map baseline correction: __Done!__ *Talant*
     * Median of the edge voxels
     * Median
     * Mode
 
-3. Test different loss function:
+3. Test different loss function: __Almost Done__! -- *Sid*
    * L1
    * Log-Cosh Loss
    * Huber Loss (Smooth L1)
    * Quantile Loss
    
-4. Need to prepare a simple tutorial markdown(.md), where we simply
+4. Scatter plots for predicted vs actual frag maps. __Done__! -- *Sid*
+
+5. Need to prepare a simple tutorial markdown(.md), where we simply
 demonstrate what is being done here, including all functionalities,
 visualizations etc. Unit tests have perfect examples. The best way
-to do this would be using .ipynb and save it as .md file
+to do this would be using .ipynb and save it as .md file  __In progress__ *Sid*
 
 
-5. Code cleaning, make all functions stable! Adjust unit tests! 
+6. Prediction of discretized output maps through binning the GFE values. __In Progress__ *Sid*
+   * Loss functions: CrossEntropy or any loss function that handle classification
+
+7. Code cleaning, make all functions stable! Adjust unit tests! __In progress__ *Talant*
 
 
-6. Hyperparam tuning:
+8. Hyperparam tuning: 
     * kernel size
     * number of conv layers
     * more....

@@ -35,8 +35,8 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT, density = False, map_nor
             
             
             # apply baseline correction
-            # baseline[ibatch, imap] = box_face_ave(FrE)       #ex-f-call
-            # FrE = FrE - baseline[ibatch, imap]
+            baseline[ibatch, imap] = box_face_med(FrE)       #ex-f-call
+            FrE = FrE - baseline[ibatch, imap]
       
             #apply cutoff to Frag Free Energy
             #if cutoff == True:
@@ -44,14 +44,14 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT, density = False, map_nor
                 
             if density == True:                                #convert to density 
                 FrE = np.exp(-FrE / kBT) 
-            else:                                              #return GFE maps
-
+            else:                                              #or return GFE maps
+                
                 if map_norm == True: #min-max normalize maps
-                    gfe_min[ibatch, imap] = FrE.min()
+                    gfe_min[ibatch, imap] = FrE.min() 
                     gfe_max[ibatch, imap] = FrE.max()
                     FrE  =  (FrE - gfe_min[ibatch,imap]) / (gfe_max[ibatch,imap] - gfe_min[ibatch,imap])
              
-
+                    
             #apply centered padding
             FrE, pads = pad_mapc(FrE, maxD)   #ex-f-call
             
