@@ -8,28 +8,20 @@ from matplotlib import mlab
 from src.util import box_face_ave
 
 
-pdb_list = ['1ycr', '4ic8']
-
-
-def scatter_plot(pdb_id):
+def scatter_plot(pdb_id, frag_names, frag_names_short, path, pred_path, title):
     '''
     Scatter plot of measured vs predicted GFE per fragmap type, per protein.
     input: list of proteins (with already generated fragname_o.gfe.map file generated
     output: 2x3 multi scatterplot saved as pdb_id.png, saved to /FragMaps_CNN/figs
     '''
-    
-    frag_names = ["Gen. Apolar","Gen. Acceptor",
-                "Gen. Donor","Methanol Oxy",
-                "Acec", "Methylammonium Nitro"]
 
-    frag_names_short = ["apolar", "hbacc", "hbdon", "meoo","acec", "mamn"]
+    print('plotting ', pdb_id, ' scatterplot')
 
     pred_names_short = [i+'_o' for i in frag_names_short]
 
     #print(pred_names_short)
 
-    path = "../data/maps/"
-    pred_path = "../output/"
+
 
     tail = ".gfe.map"
 
@@ -41,8 +33,10 @@ def scatter_plot(pdb_id):
 
 
     fig = plt.figure(figsize=(20,10))
-    plot_fn= pdb_id +'_scatter.png'
-    plt.title(pdb_id+" predicted vs measured GFE scatter")
+    plot_fn= pdb_id +'_'+title+'_scatter.png'
+   
+    ## CHECK TITLE BEFORE PLOTTING
+    plt.title(pdb_id+' '+title+" predicted vs measured GFE scatter")
   
     plt.axis('off')
     
@@ -65,7 +59,17 @@ def scatter_plot(pdb_id):
         
         colors = 'bgrcmy'
         
-        l_x = np.arange(np.minimum(x.min(), y.min()),np.maximum(x.max(), y.max()),0.1)
+
+        
+        xmin= x.min()
+        xmax= x.max()
+        ymin= y.min()
+        ymax= y.max()
+        
+        absmin = np.minimum(xmin, ymin)
+        absmax = np.maximum(xmax, ymax)
+        
+        l_x = np.arange(absmin,absmax,0.1)
         #print(l_x, l_y)
         
         ax.plot(l_x,l_x, color='black')
@@ -73,8 +77,12 @@ def scatter_plot(pdb_id):
         frag = frag_names[i-1]
 
         
+        
         plt.scatter(x, y, s=0.01, color=colors[i-1])
-
+        
+        plt.xlim(absmin, absmax)
+        plt.ylim(absmin, absmax)
+        
         plt.grid()
         plt.legend([frag], loc="best")
         plt.ylabel("y=GFE measured")
@@ -85,15 +93,11 @@ def scatter_plot(pdb_id):
 
     fig.set_tight_layout(True)
     
+    #print(os.getcwd())
+    
     #plt.show()
     fig.savefig('../figs/'+plot_fn)
 
     return
-
-
-for i in pdb_list:
-    print('plotting protein ', i)
-    scatter_plot(i)
-    
 
 
