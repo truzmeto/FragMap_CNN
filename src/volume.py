@@ -59,7 +59,7 @@ def get_volume(path_list, box_size, resolution, norm = True, rot = False, trans 
 
     #TODO: must return rotation and translation matrices!
 
-    return volume#, random_rotations
+    return volume, random_rotations
 
 
 

@@ -7,7 +7,7 @@ from src.util import pad_mapc, box_face_ave
 from src.mapIO import read_map, greatest_dim
 
 
-def get_target(map_path, map_names, pdb_ids, maxD, kBT, density = False, map_norm = False, hotspot = True):
+def get_target(map_path, map_names, pdb_ids, maxD, RT, density = False, map_norm = False):
     """
     This function invokes necessary frag maps, pads them
     and returns them with required tensor dimension.
@@ -32,20 +32,9 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT, density = False, map_nor
 
             maps = map_path + batch +"."+map_names[imap] + ".gfe.map"
             _, _, FrE, cent = read_map(maps)      #ex-f-call
-            
-            if hotspot == True:
-                FrE[FrE > 0] = 0.0 
-                FrE = np.abs(FrE)
-            # #apply baseline correction
-            # baseline[ibatch, imap] = box_face_ave(FrE)         #ex-f-call
-            # FrE = FrE - baseline[ibatch, imap]
-      
-            #apply cutoff to Frag Free Energy
-            #if cutoff == True:
-            #    FrE[FrE > 0] = 0.0 
-                
+
             if density == True:                     #convert to density 
-                dens = np.exp(-FrE / kBT) 
+                dens = np.exp(-FrE / RT) 
             else:                           #return GFE maps
 
                 if map_norm == True: #min-max normalize maps
