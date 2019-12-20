@@ -126,16 +126,23 @@ def box_face_med(grid):
     This function calculates GFE median over
     voxels along 6 faces of the grid.
 
+    Benchmark: dim = (300,300,300) grid only takes 15 milli secs.
     """    
     nx, ny, nz = grid.shape
     
     #median calc. don't care about repeated voxels
+    #face = np.concatenate((grid[nx-1,:,:], grid[0,:,:],
+    #                       grid[:,ny-1,:], grid[:,0,:],
+    #                       grid[:,:,nz-1], grid[:,:,0]), axis = None)
+
+    #exact slice
     face = np.concatenate((grid[nx-1,:,:], grid[0,:,:],
-                           grid[:,ny-1,:], grid[:,0,:],
-                           grid[:,:,nz-1], grid[:,:,0]), axis = 1)
-    
+                           grid[1:nx-1,ny-1,:], grid[1:nx-1,0,:], 
+                           grid[1:nx-1,1:ny-1,nz-1], grid[1:nx-1,1:ny-1,0]), axis = None)  
+
     
     return np.median(face)
+
 
 
 def save_model(model, out_path, file_name):
