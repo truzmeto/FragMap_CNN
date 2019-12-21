@@ -6,9 +6,9 @@ import numpy as np
 import sys
 import os
 
+
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.augment import get_random_rotation
-
 
 
 def get3D_rod():
@@ -45,7 +45,7 @@ volume_rot = volume_rotate(volume.to(dtype=torch.float, device='cuda'),
 
 #####################################################################
 
-p = pv.Plotter(point_smoothing = True, shape=(2, 2))
+p = pv.Plotter(point_smoothing = True, shape=(1, 3))
 fs = 15
 
 channel = volume[0,0,:,:,:].cpu().numpy()
@@ -70,23 +70,21 @@ p.add_axes()
 
 ###########################################################
 channel = volume_rot[0,0,:,:,:].cpu().numpy()
-#channel = get_random_rotation(channel).numpy()
 text = 'Random rotation'
-p.subplot(1, 0)
+p.subplot(0, 2)
 p.add_text(text, position = 'upper_left', font_size = fs)
 p.add_volume(channel, cmap = "viridis_r", opacity = "linear")
-p.add_axes()
+#p.add_axes()
 
 ###########################################################
-channel = get_random_rotation(volume).numpy()
-text = 'Arth90 rotation'
-p.subplot(1, 1)
-p.add_text(text, position = 'upper_left', font_size = fs)
-p.add_volume(channel, cmap = "viridis_r", opacity = "linear")
-p.add_axes()
-
-
-
+#channel, _ = get_random_rotation(volume, volume)
+#ch = channel.numpy()
+#print(type(ch))
+#text = 'Arth90 rotation'
+#p.subplot(1, 1)
+#p.add_text(text, position = 'upper_left', font_size = fs)
+#p.add_volume(ch, cmap = "viridis_r", opacity = "linear")
+#p.add_axes()
 
 p.show()
 
