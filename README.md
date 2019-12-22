@@ -31,17 +31,18 @@ visualizations etc. Unit tests have perfect examples. The best way
 to do this would be using .ipynb and save it as .md file  __In progress__ *Sid*
 
 
-6. Prediction of discretized output maps through binning the GFE values. __In Progress__ *Sid*
+6. Prediction of discretized output maps through binning the GFE values. __In Progress__ *Sid & Arth*
    * Loss functions: CrossEntropy or any loss function that handle classification
 
-7. Code cleaning, make all functions stable! Adjust unit tests! __In progress__ *Talant*
+7. Code maintenance:  __In progress__ *Talant*
+   * Rewrite all functions that does numerical arifmetic in torch.cuda()!
+   * Make all functions stable! Adjust unit tests!
 
 
 8. Hyperparam tuning: 
     * kernel size
     * number of conv layers
     * more....
-
 
 
 ## Objective:
