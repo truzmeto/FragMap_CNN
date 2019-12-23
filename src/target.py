@@ -1,9 +1,10 @@
 import numpy as np
 import sys
 import os
+import torch
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from src.util import pad_mapc, box_face_ave
+from src.util import pad_mapc, box_face_ave, box_face_med
 from src.mapIO import read_map, greatest_dim
 
 
@@ -18,12 +19,12 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT, density = False, map_nor
     n_maps = len(map_names)
     map_tensor = np.zeros(shape = (batch_size, n_maps, maxD, maxD, maxD))
 
-    gfe_min = np.empty(shape = [batch_size, n_maps])
-    gfe_max = np.empty(shape = [batch_size, n_maps])
-    pad = np.empty(shape = [batch_size, 3])
-    center = np.empty(shape = [batch_size, 3])
+    gfe_min = np.empty(shape = [batch_size, n_maps], dtype = float)
+    gfe_max = np.empty(shape = [batch_size, n_maps], dtype = float)
+    pad = np.empty(shape = [batch_size, 3], dtype = int)
+    center = np.empty(shape = [batch_size, 3], dtype = float)
 
-    baseline = np.empty(shape = [batch_size, n_maps])
+    baseline = np.empty(shape = [batch_size, n_maps], dtype = float)
     ibatch = 0
 
 
@@ -64,3 +65,43 @@ def get_target(map_path, map_names, pdb_ids, maxD, kBT, density = False, map_nor
         ibatch += 1
 
     return map_tensor, pad, gfe_min, gfe_max, center 
+
+
+
+def get_target1(map_path, map_names, pdb_ids, maxD, kBT):
+    """
+    This function invokes necessary frag maps, pads them
+    and returns them with required tensor dimension.
+    
+    """
+
+    batch_size = len(pdb_ids)
+    n_maps = len(map_names)
+    map_tensor = np.zeros(shape = (batch_size, n_maps, maxD, maxD, maxD))
+
+    pad = np.empty(shape = [batch_size, 3], dtype=int)
+    center = np.empty(shape = [batch_size, 3], dtype=float)
+    ibatch = 0
+
+    for batch in pdb_ids:
+        for imap in range(n_maps):
+
+            maps = map_path + batch +"."+map_names[imap] + ".gfe.map"
+            _, _, FrE, cent = read_map(maps)                   #ex-f-call
+            
+                    
+            #apply centered padding
+            FrE, pads = pad_mapc(FrE, maxD)   #ex-f-call
+            
+            #convert to tensor
+            map_tensor[ibatch,imap,:,:,:] = FrE #pad_dens 
+
+            
+        pad[ibatch,:] = pads
+        center[ibatch,:] = cent
+        ibatch += 1
+
+    #convert target maps to torch.cuda
+    #map_tensor  = torch.from_numpy(map_tensor).float().cuda()
+    
+    return map_tensor, pad, center 
