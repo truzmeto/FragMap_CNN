@@ -24,7 +24,6 @@ def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
 
     if batch_size > len(pdb_ids):
         raise ValueError("Batch size must be less or equal to #pdbs")
-        #sys.exit(0)
         
     if shuffle:
         random.shuffle(pdb_ids)
@@ -56,40 +55,6 @@ def grid2vec(n, grid):
     vec = np.reshape(grid, newshape = nx*ny*nz, order = "F")
 
     return vec
-
-
-#def pad_map(dens, maxD):
-#    """
-#    This function pads np.ndarray of size(nx,ny,nz)
-#    cubic box according to maxD provided. Zero padding
-#    applied at the end (or RHS) and returns
-#    np.ndarray of size(maxD,maxD,maxD).
-#    
-#    """
-#    
-#    dimx, dimy, dimz = dens.shape
-#    
-#    xpad = maxD - dimx
-#    ypad = maxD - dimy
-#    zpad = maxD - dimz
-#    
-#    dens = np.pad(dens,
-#                  pad_width = ((0,xpad), (0,ypad), (0,zpad)),
-#                  mode = 'constant') #zero padding by default
-#    return dens, xpad, ypad, zpad 
-#
-#
-#def unpad_map(dens, xpad, ypad, zpad):
-#    """
-#    This function unpads the volume by
-#    slicing out the original part
-#
-#    """
-#    #unpad, remove padded parts
-#    n = dens.shape[0]
-#    dens = dens[0:n-xpad, 0:n-ypad, 0:n-zpad].copy()
-#   
-#    return dens
 
 
 
@@ -149,10 +114,37 @@ def box_face_ave(grid):
     face_x = grid[nx-1,:,:].sum() + grid[0,:,:].sum() 
     face_y = grid[1:nx-1,ny-1,:].sum() + grid[1:nx-1,0,:].sum() 
     face_z = grid[1:nx-1,1:ny-1,nz-1].sum() + grid[1:nx-1,1:ny-1,0].sum() 
+
+    #number of voxels on face, simple algebra 
     n_face_vox = nx*ny*nz - (nx-2)*(ny-2)*(nz-2)
     face_ave = (face_x + face_y + face_z) / n_face_vox
 
     return face_ave
+
+
+
+def box_face_med(grid):
+    """
+    This function calculates GFE median over
+    voxels along 6 faces of the grid.
+
+    Benchmark: dim = (300,300,300) grid only takes 15 milli secs.
+    """    
+    nx, ny, nz = grid.shape
+    
+    #median calc. don't care about repeated voxels
+    #face = np.concatenate((grid[nx-1,:,:], grid[0,:,:],
+    #                       grid[:,ny-1,:], grid[:,0,:],
+    #                       grid[:,:,nz-1], grid[:,:,0]), axis = None)
+
+    #exact slice
+    face = np.concatenate((grid[nx-1,:,:], grid[0,:,:],
+                           grid[1:nx-1,ny-1,:], grid[1:nx-1,0,:], 
+                           grid[1:nx-1,1:ny-1,nz-1], grid[1:nx-1,1:ny-1,0]), axis = None)  
+
+    
+    return np.median(face)
+
 
 
 def save_model(model, out_path, file_name):
@@ -160,6 +152,7 @@ def save_model(model, out_path, file_name):
     with open(out_path + "model/"+ file_name+".pkl",'wb') as fp:
         pickle.dump(model, fp)
 
+        
 def load_model(out_path,file_name):
     with open(out_path + "model/" + file_name+".pkl", 'rb') as fp:
         model = pickle.load(fp)
@@ -167,6 +160,7 @@ def load_model(out_path,file_name):
     return model
 
 
+<<<<<<< HEAD
 
 
 def create_bin(gfe_map):
@@ -202,5 +196,7 @@ def get_bin_frequency(gfe_map):
     freq_list = [len(cp1), len(cp2), len(cp3), len(cp4) ,len(cp5)]
     return freq_list
 
+=======
+>>>>>>> d445e6c7f65f5e126a27dc02e8b24120bad4d610
 if __name__=='__main__':
-    print("I need coffe! :)")
+    print("I need coffe! :( ")

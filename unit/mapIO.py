@@ -18,12 +18,21 @@ Agroup_names = ["Sulfur/Selenium"  , "Nitrogen Amide",
                 "Carbon sp3"]
 path = "data/maps/"
 frag_names = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
+<<<<<<< HEAD
 idx = 8 # pdb id
+=======
+idx = 7 # pdb id
+>>>>>>> d445e6c7f65f5e126a27dc02e8b24120bad4d610
 pdb_id = pdb_ids[idx]
 path_list = [path+pdb_id+"." + i + ".gfe.map" for i in frag_names]
 #pdb_ids = ['4ic8']
 
+<<<<<<< HEAD
 chan_id = 0
+=======
+chan_id = 5 #map id
+
+>>>>>>> d445e6c7f65f5e126a27dc02e8b24120bad4d610
 ######------------- Test the read_map -----------------#######
 res, n_cells, dens, center = read_map(path_list[chan_id])
 print("Extracted volume dimention --> ",dens.shape)
@@ -33,6 +42,7 @@ temp2 = np.copy(dens)
 temp3 = np.copy(dens)
 
 #plot map density
+<<<<<<< HEAD
 dens[dens <4] = 0
 # dens[dens > -1] = 0
 p = pv.Plotter(point_smoothing = True, shape=(2, 3))
@@ -47,6 +57,13 @@ temp[temp > 4] = 0
 p.subplot(0,1)
 p.add_volume(temp[n_cells[0]//2:n_cells[0]//2+5,:,:], cmap = "viridis", opacity = "linear")
 text =  pdb_id + "." + frag_names[chan_id] +" 3 < GFE < 4"
+=======
+#dens[dens < 0] = 0.0 #cutoff at zero!
+channel = np.exp(-dens[:,:,33:35]/0.58)
+p = pv.Plotter(point_smoothing = True)
+p.add_volume(channel, cmap = "viridis", opacity = "linear")
+text =  pdb_id + "." + frag_names[chan_id] + " Density"#+"  dim = " + str(dens.shape) 
+>>>>>>> d445e6c7f65f5e126a27dc02e8b24120bad4d610
 p.add_text(text, position = 'upper_left', font_size = 16)
 
 temp2[temp2 <2] = 0
