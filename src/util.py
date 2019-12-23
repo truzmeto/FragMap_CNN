@@ -5,6 +5,8 @@ import torch
 import pickle
 
 
+RT =  0.00198720425864083 * 298.15
+
 def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
     """
     Function to produce random sample of pdb ids from a given list.
@@ -166,6 +168,39 @@ def load_model(out_path,file_name):
 
 
 
+
+def create_bin(gfe_map):
+    # Create bins using the GFE segregation
+    '''
+    0 for GFE above +RT. (I presume all “core” GFE values are above RT but it should be checked, of course. We don’t want any mislabelled voxel.)
+    1 for GFE between 0 and +RT
+    2 for GFE between -RT and 0
+    3 for GFE between -2RT and -RT
+    4 for GFE below -2RT
+    '''
+
+
+    return 0
+
+def get_bin_frequency(gfe_map):
+    # Return the frequency of GFE values in each binpossibly Variable-torch
+    cp1= np.copy(gfe_map)
+    cp2= np.copy(gfe_map)
+    cp3= np.copy(gfe_map)
+    cp4= np.copy(gfe_map)
+    cp5= np.copy(gfe_map)
+
+    cp1 = cp1[cp1>0.25*RT]
+    cp2 = cp2[cp2>0]
+    cp2 = cp2[cp2<0.25*RT]
+    cp3 = cp3[cp3<0]
+    cp3 = cp3[cp3>-0.25*RT]
+    cp4 = cp4[cp4<-0.25*RT]
+    cp4 = cp4[cp4>-0.5*RT]
+    cp5 = cp5[cp5<-0.5*RT]
+
+    freq_list = [len(cp1), len(cp2), len(cp3), len(cp4) ,len(cp5)]
+    return freq_list
 
 if __name__=='__main__':
     print("I need coffe! :)")
