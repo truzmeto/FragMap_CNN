@@ -18,21 +18,15 @@ Agroup_names = ["Sulfur/Selenium"  , "Nitrogen Amide",
                 "Carbon sp3"]
 path = "data/maps/"
 frag_names = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
-<<<<<<< HEAD
-idx = 8 # pdb id
-=======
+
 idx = 7 # pdb id
->>>>>>> d445e6c7f65f5e126a27dc02e8b24120bad4d610
 pdb_id = pdb_ids[idx]
 path_list = [path+pdb_id+"." + i + ".gfe.map" for i in frag_names]
 #pdb_ids = ['4ic8']
 
-<<<<<<< HEAD
 chan_id = 0
-=======
-chan_id = 5 #map id
 
->>>>>>> d445e6c7f65f5e126a27dc02e8b24120bad4d610
+
 ######------------- Test the read_map -----------------#######
 res, n_cells, dens, center = read_map(path_list[chan_id])
 print("Extracted volume dimention --> ",dens.shape)
