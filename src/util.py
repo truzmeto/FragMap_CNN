@@ -160,9 +160,6 @@ def load_model(out_path,file_name):
     return model
 
 
-<<<<<<< HEAD
-
-
 def create_bin(gfe_map):
     # Create bins using the GFE segregation
     '''
@@ -196,7 +193,6 @@ def get_bin_frequency(gfe_map):
     freq_list = [len(cp1), len(cp2), len(cp3), len(cp4) ,len(cp5)]
     return freq_list
 
-=======
->>>>>>> d445e6c7f65f5e126a27dc02e8b24120bad4d610
+
 if __name__=='__main__':
     print("I need coffe! :( ")
