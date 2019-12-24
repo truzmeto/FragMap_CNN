@@ -40,7 +40,7 @@ out_path = 'output/'
 
 dim = greatest_dim(map_path, pdb_ids) + 1
 box_size = int(dim*resolution)
-params_file_name = 'net_params_test'
+params_file_name = 'net_params_temp'
 
 #invoke model
 torch.cuda.set_device(0)
