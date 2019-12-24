@@ -8,11 +8,8 @@ from src.util import pad_mapc, box_face_ave, box_face_med
 from src.mapIO import read_map, greatest_dim
 
 
-<<<<<<< HEAD
 def get_target(map_path, map_names, pdb_ids, maxD, kBT, density = False, map_norm = False, hotspot = False):
-=======
-def get_target(map_path, map_names, pdb_ids, maxD, kBT, density = False, map_norm = False):
->>>>>>> d445e6c7f65f5e126a27dc02e8b24120bad4d610
+
     """
     This function invokes necessary frag maps, pads them
     and returns them with required tensor dimension.
