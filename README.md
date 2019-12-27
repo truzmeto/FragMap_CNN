@@ -5,6 +5,8 @@ Prediction of fragment free energy maps from protein structure with ConvNet
 
 ## TODO list:
 
+### This repo must be kept clean and organized! 
+
 0. Data Augmentation - Rotations:
     * 24 90 degree rotation:  __In progress__  *Arth*
     * Random ratations - TPL: __In progress__ *Talant*
@@ -28,7 +30,7 @@ Prediction of fragment free energy maps from protein structure with ConvNet
 5. Need to prepare a simple tutorial markdown(.md), where we simply
 demonstrate what is being done here, including all functionalities,
 visualizations etc. Unit tests have perfect examples. The best way
-to do this would be using .ipynb and save it as .md file  __In progress__ *Sid*
+to do this would be using .ipynb and save it as .md file  __In progress__ *All*
 
 
 6. Prediction of discretized output maps through binning the GFE values. __In Progress__ *Sid & Arth*

@@ -32,11 +32,12 @@ def read_map(file_path):
 
     #convert list to np.array
     gfe = np.array(gfe)
-
+    
     #convert from 1D array to 3D array(tensor)
     gfe = vec2grid(n_cells, gfe) #ex-f-call
-  
+    
     return res, n_cells, gfe, center
+
 
 def greatest_dim(target_path, target_list):
     """
@@ -82,5 +83,5 @@ def write_map(vec, out_path, out_name, ori, res, n):
 
             
 if __name__=='__main__':
-    print("Patience is the key to everything!")
+    print(" ^^__O__ ^^ ")
     

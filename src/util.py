@@ -1,8 +1,6 @@
 import numpy as np
 import random 
 import sys  
-import torch
-import pickle
 
 
 def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
@@ -56,7 +54,7 @@ def grid2vec(n, grid):
 
 
 
-def pad_mapc(dens, maxD):
+def pad_mapc(dens, maxD, pad_val):
     """
     This function pads np.ndarray of size(nx,ny,nz)
     into a cubic box according to maxD provided.
@@ -75,9 +73,10 @@ def pad_mapc(dens, maxD):
     #Pad both sides, if pad length is odd, then pad_l-even, and pad_r-odd  
     pdens = np.pad(dens,
                    pad_width = ((pl[0],pr[0]), (pl[1],pr[1]), (pl[2],pr[2])),
-                   mode = 'constant') #zero padding by default
+                   mode = 'constant', constant_values = pad_val) 
 
     return pdens, pad
+
 
 
 def unpad_mapc(dens, pad):
@@ -126,37 +125,20 @@ def box_face_med(grid):
     This function calculates GFE median over
     voxels along 6 faces of the grid.
 
-    Benchmark: dim = (300,300,300) grid only takes 15 milli secs.
-    """    
-    nx, ny, nz = grid.shape
-    
-    #median calc. don't care about repeated voxels
-    #face = np.concatenate((grid[nx-1,:,:], grid[0,:,:],
-    #                       grid[:,ny-1,:], grid[:,0,:],
-    #                       grid[:,:,nz-1], grid[:,:,0]), axis = None)
+    Benchmark: dim = (300, 300, 300) grid only takes 15 milli secs.
+    """
 
+    nx, ny, nz = grid.shape
+        
     #exact slice
     face = np.concatenate((grid[nx-1,:,:], grid[0,:,:],
                            grid[1:nx-1,ny-1,:], grid[1:nx-1,0,:], 
                            grid[1:nx-1,1:ny-1,nz-1], grid[1:nx-1,1:ny-1,0]), axis = None)  
-
+    
     
     return np.median(face)
 
 
 
-def save_model(model, out_path, file_name):
-    torch.save(model.state_dict(), out_path+"weights/"+file_name+".pth")
-    with open(out_path + "model/"+ file_name+".pkl",'wb') as fp:
-        pickle.dump(model, fp)
-
-        
-def load_model(out_path,file_name):
-    with open(out_path + "model/" + file_name+".pkl", 'rb') as fp:
-        model = pickle.load(fp)
-    model.load_state_dict(torch.load(out_path+"weights/"+file_name+".pth"))
-    return model
-
-
 if __name__=='__main__':
-    print("I need coffe! :( ")
+    print("I need coffe! ")

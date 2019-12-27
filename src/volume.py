@@ -57,8 +57,6 @@ def get_volume(path_list, box_size, resolution, norm = True, rot = False, trans 
         volume = (volume - torch.min(volume)) / (torch.max(volume) - torch.min(volume))
         
 
-    #TODO: must return rotation and translation matrices!
-
     return volume, random_rotations
 
 

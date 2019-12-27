@@ -24,7 +24,8 @@ nsample = 100
 
 #physical params
 resolution = 1.000
-kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
+RT = 0.59248368 # T=298.15K, R = 0.001987204 kcal/(mol K)
+
 
 pdb_path = 'data/'
 #pdb_path = "/scratch/tr443/fragmap/data/"                                                          
@@ -72,21 +73,19 @@ for epoch in range(max_epoch):
                                         rot = rand_rotations,
                                         trans = False)
         
-        #get target map tensor
-        target, _, _, _, _, = get_target(map_path,
-                                map_names_list,
-                                pdb_ids = pdb_list,
-                                maxD = dim,
-                                kBT = kBT,
-                                density = False,
-                                map_norm = map_norm)
-    
-        #convert target maps to torch.cuda
-        target = torch.from_numpy(target).float().cuda()
+        #get target map tensor torch.cuda()
+        target, _, _ = get_target(map_path,
+                                  map_names_list,
+                                  pdb_ids = pdb_list,
+                                  maxD = dim)
 
+        #target maps preprocessing here!
+        
+
+        #rotate maps
         if rand_rotations:
             target = grid_rot(target, batch_size, rot_matrix)
-        
+
             
         optimizer.zero_grad()
         output = model(volume)
@@ -95,7 +94,7 @@ for epoch in range(max_epoch):
         optimizer.step()
         
         if epoch % 10 == 0:
-            print('{0}, {1}, {2}, {3}'.format(batches, epoch, loss.item(), pdb_list ))
+            print('{0}, {1}, {2}, {3}'.format(batches, epoch, loss.item(), pdb_list))
             
         
     if epoch % 50 == 0:

@@ -6,12 +6,12 @@ from src.cnn  import CnnModel
 from src.volume import get_volume
 from src.mapIO import write_map, greatest_dim
 from src.target import get_target
-from src.util import grid2vec, unpad_mapc #, load_model
+from src.util import grid2vec, unpad_mapc 
 import torch.optim as optim
 import numpy as np
 
 resolution = 1.000
-kBT = 0.592  #T=298K, kB = 0.001987 kcal/(mol K)
+RT = 0.59248368  # T=298.15K, R = 0.001987204 kcal / (mol K)
 
 pdb_path = 'data/'
 #pdb_path = "/scratch/tr443/fragmap/data/"                                                          
@@ -46,7 +46,7 @@ test_map, pad, gfe_min, gfe_max, center = get_target(map_path,
                                         map_names_list,
                                         pdb_ids = [pdb_ids[test_indx]],
                                         maxD = dim,
-                                        kBT = kBT,
+                                        RT = RT,
                                         density = False,
                                         map_norm = map_norm)
 

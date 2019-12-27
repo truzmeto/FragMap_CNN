@@ -8,26 +8,20 @@ from src.mapIO import greatest_dim
 from src.target import get_target
 from src.util import unpad_mapc
 
-kBT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
-
 pdb_path = '../data/'
-pdb_ids = ["1ycr", "1pw2", "2f6f"]#, "4f5t", "1s4u"]#, "2am9", "3my5_a", "3w8m"]#,"4ic8"]
+pdb_ids = ["1ycr", "1pw2", "2f6f"]#, "4f5t", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4ic8"]
 
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
 map_path = '../data/maps/' 
-
-dim = 400 #greatest_dim(map_path, pdb_ids) + 1
+dim = 100 #greatest_dim(map_path, pdb_ids) + 1
 
 pdb_list = ["1ycr", "1pw2"]    
-map_norm = False
-density = True
-target, pad, gfe_min, gfe_max, center = get_target(map_path,
-                                        map_names_list,
-                                        pdb_ids = pdb_list,
-                                        maxD = dim,
-                                        kBT = kBT,
-                                        density = density,
-                                        map_norm = map_norm)
+#get target map tensor
+
+target, pad, center = get_target(map_path,
+                                 map_names_list,
+                                 pdb_ids = pdb_list,
+                                 maxD = dim)
 
 print("Max dim = ", dim)
 print('Padded Tensor Dims', target.shape)
