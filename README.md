@@ -3,9 +3,17 @@
 
 Prediction of fragment free energy maps from protein structure with ConvNet
 
-## TODO list:
+## Note to repo admins:
 
-### This repo must be kept clean and organized! 
+#### This repo must be kept clean and organized! Please do not change original functions!
+     If you do change them, keep it for your own use, and don't push it here.  You can
+     only push required tasks, while making sure that your code satisfy the following:
+     * Code must be both memory and speed efficient
+     * Code must be easily redable, clean
+     * Every function needs unittest, which validates its correctness!
+     * All arithmethic operations performed on grid(usually large(100x100x100)) must be done with torch.cuda()! 
+
+## TODO list:
 
 0. Data Augmentation - Rotations:
     * 24 90 degree rotation:  __In progress__  *Arth*
