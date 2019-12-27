@@ -1,6 +1,8 @@
 
 # FragMap_CNN Tutorial
 
+![Fragments bound structure of 1ycr ](figs/1ycr_orig.gif)
+
 Prediction of fragment free energy maps from protein structure with ConvNet
 
 ## Note to repo admins:
