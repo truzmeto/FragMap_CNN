@@ -11,7 +11,8 @@ Prediction of fragment free energy maps from protein structure with ConvNet
      * Code must be both memory and speed efficient
      * Code must be easily redable, clean
      * Every function needs unittest, which validates its correctness!
-     * All arithmethic operations performed on grid(usually large(100x100x100)) must be done with torch.cuda()! 
+     * All arithmethic operations performed on grid(usually large(100x100x100))
+     must be done with torch.cuda()! 
 
 ## TODO list:
 
