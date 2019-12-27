@@ -8,7 +8,7 @@ from src.mapIO import greatest_dim
 from src.target import get_target1
 from src.util import unpad_mapc
 
-RT = 0.592 # T=298K, kB = 0.001987 kcal/(mol K)
+RT = 0.592 # T=298K, R = 0.001987 kcal/(mol K)
 
 pdb_path = '../data/'
 pdb_ids = ["1ycr", "1pw2", "2f6f"]#, "4f5t", "1s4u"]#, "2am9", "3my5_a", "3w8m"]#,"4ic8"]

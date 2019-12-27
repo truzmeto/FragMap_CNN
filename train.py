@@ -2,13 +2,15 @@ import os
 import sys
 import torch
 import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+
+#import functions from src
 from src.cnn  import CnnModel
 from src.volume import get_volume, grid_rot
 from src.mapIO import greatest_dim, write_map
 from src.target import get_target
 from src.util import grid2vec, sample_batch, unpad_mapc
-import torch.optim as optim
-import numpy as np
 
 
 #model params
@@ -53,7 +55,8 @@ optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
 
 rand_rotations = True
 
-print("#batch_id", "epoch", "Loss", "pdb_list")
+
+#print("#batch_id", "epoch", "Loss", "pdb_list")
 #perform forward and backward iterations
 for epoch in range(max_epoch):
    
