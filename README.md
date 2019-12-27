@@ -22,9 +22,8 @@ __only push required tasks, while making sure that your code satisfy the followi
 ## TODO list:
 
 0. Data Augmentation - Rotations: :fire:
-    * 24 90 degree rotation:  __Done!__ :sunglasses: *Talant & Arth* 
-    * Random ratations - TPL: __Donewith TPL!__ *Talant*  :eyes: :ocean:
-      	     * Prediction results: __In progress__  
+    * 24 90 degree rotation:  __Done!__ :sunglasses: -- *Talant & Arth* 
+    * Random ratations - TPL: __Done!__ -- *Talant*  :eyes: :ocean:
     * __We must get reliable, descent results with both!__ 
  
 1. Buried vs Surface level hotspot accuracy. __In progress__
