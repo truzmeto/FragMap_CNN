@@ -15,7 +15,8 @@ RT = 0.59248368  # T=298.15K, R = 0.001987204 kcal / (mol K)
 
 pdb_path = 'data/'
 #pdb_path = "/scratch/tr443/fragmap/data/"                                                          
-pdb_ids = ["1ycr","1pw2", "2f6f", "4f5t"]#, "1s4u", "2am9", "3my5_a", "3w8m", "4ic8"]
+pdb_ids = ["1ycr", "1pw2", "2f6f","4ic8", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4f5t"]
+
 
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
 map_path = 'data/maps/' 

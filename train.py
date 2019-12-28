@@ -56,6 +56,7 @@ optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
 rand_rotations = True
 
 
+
 #print("#batch_id", "epoch", "Loss", "pdb_list")
 #perform forward and backward iterations
 for epoch in range(max_epoch):
