@@ -1,5 +1,5 @@
 
-# -> Grid Free Energy Prediction with ConvNet <-
+-># Grid Free Energy Prediction with ConvNet <-
 
 <p align="center">
   <img src="figs/1ycr_orig.gif">
