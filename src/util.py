@@ -66,16 +66,20 @@ def pad_mapc(dens, maxD, pad_val):
     pad = maxD - np.array(dens.shape,dtype=int) 
     if any(pad < 0):
         raise ValueError("Pad length can't be negative", pad) 
-    
-    pl = pad//2
-    pr = pad - pl
-    
-    #Pad both sides, if pad length is odd, then pad_l-even, and pad_r-odd  
-    pdens = np.pad(dens,
-                   pad_width = ((pl[0],pr[0]), (pl[1],pr[1]), (pl[2],pr[2])),
-                   mode = 'constant', constant_values = pad_val) 
-
-    return pdens, pad
+        #print("Applying unpadding!")
+        #return  unpad_mapc(dens, np.abs(pad)), np.array([0,0,0],dtype=int)
+        
+    else:
+        
+        pl = pad//2
+        pr = pad - pl
+        
+        #Pad both sides, if pad length is odd, then pad_l-even, and pad_r-odd  
+        dens = np.pad(dens,
+                      pad_width = ((pl[0],pr[0]), (pl[1],pr[1]), (pl[2],pr[2])),
+                      mode = 'constant', constant_values = pad_val) 
+        
+        return dens, pad
 
 
 
@@ -85,16 +89,19 @@ def unpad_mapc(dens, pad):
     slicing out the original part from
     padded volume. It inverts the operation
     of done by 'pad_mapc' function.
-    """
+    
+    Input:  tensor -- np.ndarray(shape=(nx,ny,nz))
+            pad    -- np.array(px,py,pz)
 
+    Output: tensor -- np.ndarray(shape=(nx-px,ny-py,nz-pz))
+    """
     nx, ny, nz = dens.shape
+  
     pl = pad // 2
     pr = pad - pl
-    
     pdens = dens[pl[0]:nx-pr[0],
                  pl[1]:ny-pr[1],
                  pl[2]:nz-pr[2]]
-   
     return pdens
 
 

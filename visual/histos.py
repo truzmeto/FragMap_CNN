@@ -14,7 +14,7 @@ frag_names_short = ["apolar", "hbacc", "hbdon", "meoo","acec", "mamn"]
 
 path = "../data/maps/"
 pdb_ids = ["1ycr", "1pw2", "2f6f", "4f5t", "1s4u", "2am9", "3my5_a", "3w8m","4ic8"]
-pdb_id = pdb_ids[8]
+pdb_id = pdb_ids[3]
 
 tail = ".gfe.map"
 path_list = [path+pdb_id+"."+name+tail for name in frag_names_short]
@@ -29,7 +29,7 @@ for i in range(len(path_list)):
     baseline = box_face_med(gfe)
     new_shape = gfe.shape[0]*gfe.shape[1]*gfe.shape[2]
     vec = np.reshape(gfe,new_shape) - baseline
-    
+    print(baseline)
     plt.hist(vec, histtype='barstacked', bins = 200, alpha = 0.4)
     #mean = round(vec.mean(),2)
     median = round(np.median(vec),2)

@@ -6,7 +6,7 @@ from src.cnn  import CnnModel
 from src.volume import get_volume
 from src.mapIO import write_map, greatest_dim
 from src.target import get_target
-from src.util import grid2vec, unpad_mapc 
+from src.util import grid2vec, unpad_mapc , pad_mapc
 import torch.optim as optim
 import numpy as np
 
@@ -15,7 +15,8 @@ RT = 0.59248368  # T=298.15K, R = 0.001987204 kcal / (mol K)
 
 pdb_path = 'data/'
 #pdb_path = "/scratch/tr443/fragmap/data/"                                                          
-pdb_ids = ["1ycr", "1pw2", "2f6f","4ic8", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4f5t"]
+#pdb_ids = ["1ycr", "1pw2", "2f6f","4ic8", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4f5t"]
+pdb_ids = ["4f5t"]
 
 
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
@@ -23,13 +24,14 @@ map_path = 'data/maps/'
 #map_path = "/scratch/tr443/fragmap/data/maps/"                                               
 
 # out_path = '/scratch/tr443/fragmap/output/'
-out_path = 'output/test6/'
+out_path = 'output/'
 
-params_file_name = 'net_params'
-test_indx = 0
+params_file_name = '50net_params'
 
-dim = 100#greatest_dim(map_path, pdb_ids) + 1
+dim = 58 #greatest_dim(map_path, pdb_ids) + 1
 box_size = int(dim*resolution)
+
+test_indx = 0
 batch_list = [pdb_path+pdb_ids[test_indx]+".pdb"] 
 
 #get volume tensor
@@ -42,23 +44,19 @@ volume , _ = get_volume(path_list = batch_list,
                     trans = False)
 
 #get testing map tensor
-map_norm = True
-test_map, pad, gfe_min, gfe_max, center = get_target(map_path,
-                                        map_names_list,
-                                        pdb_ids = [pdb_ids[test_indx]],
-                                        maxD = dim,
-                                        RT = RT,
-                                        density = False,
-                                        map_norm = map_norm)
+map_norm = False
+test_map, pad, center = get_target(map_path,
+                                   map_names_list,
+                                   pdb_ids = [pdb_ids[test_indx]],
+                                   maxD = dim)
 
 #convert target maps to torch.cuda
-test_map = torch.from_numpy(test_map).float().cuda()
+#test_map = torch.from_numpy(test_map).float().cuda()
 
 
 #-------------------------------------------------------------
 #invoke model
 torch.cuda.set_device(0)
-#model = load_model(out_path, params_file_name)
 model = CnnModel().cuda()
 model.load_state_dict(torch.load(out_path + params_file_name+".pth"))
 model.eval() #Needed to set into inference mode
@@ -67,16 +65,17 @@ output = model(volume)
 
 criterion = nn.MSELoss()
 loss = criterion(output, test_map)
+
+print("pad=", pad)
 print("Testing Loss", loss.item())
-
-
 for imap in range(len(map_names_list)):
     
     grid = output[0,imap,:,:,:].cpu().detach().numpy()
-    grid = unpad_mapc(grid, pad = pad[0,:].astype(int))
+    grid = unpad_mapc(grid, pad = pad[0,:])
+    
     
     if map_norm == True:   # inverse norm
-        vol = (1.0 - grid) * ( gfe_max[0,imap] - gfe_min[0,imap] ) + gfe_min[0,imap]
+        vol = grid * ( gfe_max[0,imap] - gfe_min[0,imap] ) + gfe_min[0,imap]
     else:
         vol = grid
         

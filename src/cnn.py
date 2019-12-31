@@ -24,46 +24,46 @@ class CnnModel(nn.Module):
         self.conv = nn.Sequential(
             #conv layer 1
             nn.Conv3d(in_channels = num_input_channels,
-                      out_channels = 64, #n convlolutions
+                      out_channels = 36, #n convlolutions
                       kernel_size = k_size,
                       padding = pad),
-            nn.BatchNorm3d(64),
-            nn.ReLU(),
-            #nn.LeakyReLU(),
+            #nn.BatchNorm3d(36),
+            #nn.ReLU(),
+            nn.LeakyReLU(),
             nn.MaxPool3d(kernel_size = k_size,
                          stride = (1,1,1),
                          padding = pad),
 
             #conv layer 2
-            nn.Conv3d(in_channels = 64,
-                      out_channels = 32,
+            nn.Conv3d(in_channels = 36,
+                      out_channels = 18,
                       kernel_size = k_size,
                       padding = pad),
-            nn.BatchNorm3d(32),
-            nn.ReLU(),
-            #nn.LeakyReLU(),
+            #nn.BatchNorm3d(18),
+            #nn.ReLU(),
+            nn.LeakyReLU(),
             #nn.MaxPool3d(kernel_size = k_size,
             #             stride = (1,1,1),
             #             padding = pad),
             
             #conv layer 3
-            nn.Conv3d(in_channels = 32,
-                      out_channels = 16,
+            nn.Conv3d(in_channels = 18,
+                      out_channels = 12,
                       kernel_size = k_size,
                       padding = pad),
-            nn.BatchNorm3d(16),
-            nn.ReLU(),
+            #nn.BatchNorm3d(12),
+            #nn.ReLU(),
             #nn.LeakyReLU(),
             #nn.MaxPool3d(kernel_size = k_size,
             #             stride = (1,1,1),
             #             padding = pad),
 
             #conv layer 4
-            nn.Conv3d(in_channels = 16,
+            nn.Conv3d(in_channels = 12,
                       out_channels = 6,
                       kernel_size = k_size,
                       padding = pad),
-            nn.BatchNorm3d(6),
+            #nn.BatchNorm3d(6),
             #nn.ReLU()
             #nn.LeakyReLU()
         )

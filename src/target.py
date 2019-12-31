@@ -47,6 +47,8 @@ def get_target(map_path, map_names, pdb_ids, maxD):
         center[ibatch,:] = cent
         ibatch += 1
 
+        
+   
     #convert target maps to torch.cuda
     map_tensor  = torch.from_numpy(map_tensor).float().cuda()
     
