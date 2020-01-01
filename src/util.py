@@ -3,6 +3,7 @@ import random
 import sys  
 
 
+
 def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
     """
     Function to produce random sample of pdb ids from a given list.
@@ -141,8 +142,7 @@ def box_face_med(grid):
     face = np.concatenate((grid[nx-1,:,:], grid[0,:,:],
                            grid[1:nx-1,ny-1,:], grid[1:nx-1,0,:], 
                            grid[1:nx-1,1:ny-1,nz-1], grid[1:nx-1,1:ny-1,0]), axis = None)  
-    
-    
+       
     return np.median(face)
 
 

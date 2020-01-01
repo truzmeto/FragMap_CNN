@@ -22,22 +22,21 @@ def get_target(map_path, map_names, pdb_ids, maxD):
 
     pad = np.empty(shape = [batch_size, 3], dtype=int)
     center = np.empty(shape = [batch_size, 3], dtype=float)
-    ibatch = 0
 
+    ibatch = 0
     for batch in pdb_ids:
         for imap in range(n_maps):
 
             maps = map_path + batch +"."+map_names[imap] + ".gfe.map"
-            _, _, FrE, cent = read_map(maps)                   #ex-f-call
+            _, _, FrE, cent = read_map(maps)                   
             
 
             #apply baseline correction
             baseline = box_face_med(FrE)       
             FrE = FrE - baseline
-      
-            
+                  
             #apply centered padding
-            FrE, pads = pad_mapc(FrE, maxD, baseline)  #ex-f-call
+            FrE, pads = pad_mapc(FrE, maxD, 0.00)  #ex-f-call
             
             #convert to tensor
             map_tensor[ibatch,imap,:,:,:] = FrE        #padded_gfe 
@@ -55,6 +54,8 @@ def get_target(map_path, map_names, pdb_ids, maxD):
     return map_tensor, pad, center 
 
 
+
+#depreciated!
 def get_target1(map_path, map_names, pdb_ids, maxD, RT,
                density = False, map_norm = False):
     """

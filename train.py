@@ -13,7 +13,6 @@ from src.mapIO import greatest_dim, write_map
 from src.target import get_target
 from src.util import grid2vec, sample_batch, unpad_mapc
 
-
 #model params
 lrt = 0.0001
 #lrd = 0.0001
@@ -50,10 +49,8 @@ params_file_name = 'net_params.pth'
 #invoke model
 torch.cuda.set_device(0)
 model = CnnModel().cuda()
-#criterion = nn.MSELoss()
 criterion = nn.SmoothL1Loss() #nn.L1Loss()
 optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
-#optimizer = optim.SGD(model.parameters(), lr = lrt, momentum = 0.9)
 rand_rotations = True
 
 
@@ -72,9 +69,7 @@ for epoch in range(1, max_epoch+1):
                                             box_size = box_size,
                                             resolution = resolution,
                                             norm = norm,
-                                            rot = rand_rotations,
-                                            trans = False)
-        
+                                            rot = rand_rotations)
             #get target map tensor torch.cuda()
             target, _, _ = get_target(map_path,
                                       map_names_list,
@@ -95,16 +90,11 @@ for epoch in range(1, max_epoch+1):
         optimizer.zero_grad()
         output = model(volume)
         loss = criterion(output, target)
-
         loss.backward()
         optimizer.step()
 
         #print("gpu_mem: allocated",                                                                     
         #      str(torch.cuda.memory_allocated(device=None)/1000000)+"Mbs" )                             
-
-       
-        #print("gpu mem. empty",                                                         
-        #      str((torch.cuda.memory_cached()-torch.cuda.memory_allocated())/1000000)+"Mbs" )    
 
                 
         if epoch % 10 == 0:
