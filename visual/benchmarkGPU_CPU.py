@@ -51,7 +51,7 @@ delta = 5
 cpu2gpu = []
 boxDim = []
 n = 20
-for d in range(10, 110, delta):
+for d in range(10, 95, delta):
     
     boxDim.append(d)
     x = torch.rand(4, 11, d, d, d)

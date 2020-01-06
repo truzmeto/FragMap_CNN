@@ -19,17 +19,10 @@ def scatter_plot(pdb_id, frag_names, frag_names_short, path, pred_path, title):
 
     pred_names_short = [i+'_o' for i in frag_names_short]
 
-    #print(pred_names_short)
-
-
 
     tail = ".gfe.map"
-
     path_list = [path+pdb_id+"."+name+tail for name in frag_names_short]
-
     pred_path_list = [pred_path+pdb_id+"."+name+tail for name in pred_names_short]
-
-    #print(pred_path_list)
 
 
     fig = plt.figure(figsize=(20,10))
@@ -44,22 +37,12 @@ def scatter_plot(pdb_id, frag_names, frag_names_short, path, pred_path, title):
         _, _, gfe_p, _ = read_map(pred_path_list[i-1])
         _, _, gfe, _ = read_map(path_list[i-1])
 
-        
-        #print(gfe.shape)
-        #print(gfe_p.shape)
-        
-        #print(gfe)
-        #print(gfe_p)
-        
 
         x = gfe_p
         y = gfe
 
         ax = fig.add_subplot(2, 3, i)
-        
         colors = 'bgrcmy'
-        
-
         
         xmin= x.min()
         xmax= x.max()
@@ -70,13 +53,10 @@ def scatter_plot(pdb_id, frag_names, frag_names_short, path, pred_path, title):
         absmax = np.maximum(xmax, ymax)
         
         l_x = np.arange(absmin,absmax,0.1)
-        #print(l_x, l_y)
         
         ax.plot(l_x,l_x, color='black')
 
         frag = frag_names[i-1]
-
-        
         
         plt.scatter(x, y, s=0.01, color=colors[i-1])
         
@@ -94,7 +74,6 @@ def scatter_plot(pdb_id, frag_names, frag_names_short, path, pred_path, title):
     fig.set_tight_layout(True)
     
     #print(os.getcwd())
-    
     #plt.show()
     fig.savefig('../figs/'+plot_fn)
 
