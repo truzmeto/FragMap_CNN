@@ -13,8 +13,6 @@ from src.cnn import CnnModel, count_parameters
 c, d, h, w = 11, 20, 20, 20
 torch.manual_seed(3000)
 data = torch.randn(1, c, d, h, w)
-#data2 = torch.randn(1, c, d+10, h+10, w+10)
-#data = torch.cat((data1,data2),0)    
 
 print(data.size())
 

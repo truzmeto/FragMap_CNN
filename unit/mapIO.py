@@ -24,15 +24,13 @@ print("Extracted volume dimention --> ",dens.shape)
 print("Specified dimension in the file header --> ", n_cells)
 
 #plot map density
-#dens[dens < 0] = 0.0 #cutoff at zero!
-channel = np.exp(-dens[:,:,33:35]/0.58)
+dens[dens < 0] = 0.0 #cutoff at zero!
+channel = dens #np.exp(-dens[:,:,33:35]/0.58)
 p = pv.Plotter(point_smoothing = True)
 p.add_volume(channel, cmap = "viridis", opacity = "linear")
 text =  pdb_id + "." + frag_names[chan_id] + " Density"#+"  dim = " + str(dens.shape) 
 p.add_text(text, position = 'upper_left', font_size = 16)
 p.show()      
-
-
 
 
 ######------------- Testing write map ----------------#######

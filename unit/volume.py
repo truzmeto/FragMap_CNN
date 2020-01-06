@@ -1,10 +1,6 @@
 import os
 import sys
 import torch
-from TorchProteinLibrary.Volume import TypedCoords2Volume
-from TorchProteinLibrary.FullAtomModel import PDB2CoordsUnordered, Coords2TypedCoords
-from TorchProteinLibrary.FullAtomModel import getRandomRotation, getRandomTranslation
-from TorchProteinLibrary.FullAtomModel import CoordsRotate, CoordsTranslate, getBBox
 import pyvista as pv
 import numpy as np
 
@@ -52,7 +48,7 @@ p.add_text(text, position = 'upper_left', font_size = fs)
 p.add_volume(vol1, cmap = "viridis_r", opacity = "linear")
 
 chan_id = chan_id+1
-idp=idp
+idp = idp
 vol2 = volume[idp,chan_id,:,:,:].cpu().numpy()
 text = Agroup_names[chan_id]+" "+pdb_ids[idp]
 p.subplot(0, 1)

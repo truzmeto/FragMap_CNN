@@ -46,7 +46,8 @@ def get_volume(path_list, box_size, resolution,
     
     #translate xyz
     if trans:                                                                                                      
-        random_translations = getRandomTranslation(a, b, resolution*box_size)                    coords = translate(coords, random_translations, num_atoms)                             
+        random_translations = getRandomTranslation(a, b, resolution*box_size)
+        coords = translate(coords, random_translations, num_atoms)                             
 
     coords, num_atoms_of_type, offsets = assignTypes(coords.to(dtype=torch.float32),
                                                      resnames, atomnames, num_atoms)
