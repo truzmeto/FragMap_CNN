@@ -55,6 +55,26 @@ def get_target(map_path, map_names, pdb_ids, maxD):
 
 
 
+def bin_target(target, maxV, minV, scale=1):
+    
+    target[target > maxV] = maxV
+    target[target < minV] = minV
+    target = (maxV - target)*scale
+    target = torch.ceil(target).type(torch.cuda.LongTensor)
+
+    return target
+
+
+
+def ubin_target(target, maxV, scale=1):
+
+    target = target / scale
+    target = maxV - target
+  
+    return target
+
+
+
 #depreciated!
 def get_target1(map_path, map_names, pdb_ids, maxD, RT,
                density = False, map_norm = False):

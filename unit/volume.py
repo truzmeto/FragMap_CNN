@@ -27,6 +27,7 @@ volume, _ = get_volume(path_list,
                        rot = False,
                        trans = False)
 print(volume.shape)
+volume = volume*20
 print(torch.max(volume))
 
 Agroup_names = ["Sulfur/Selenium"  , "Nitrogen Amide",
