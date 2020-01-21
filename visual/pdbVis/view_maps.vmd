@@ -1,0 +1,59 @@
+# SILCS Sampler
+#
+# Copyright (c) 2016 SilcsBio, LLC. All Rights Reserved.
+#
+# Any unauthorized reproduction, use, or modification of this work
+# is prohibited.
+#
+# Contact:
+#
+# SilcsBio, LLC
+# 8 Market Place
+# Baltimore, MD, 21202
+# 410-929-5783
+# info@silcsbio.com
+# http://www.silcsbio.com
+
+# load protein#######################################################
+set proteinpdb 1ycr.pdb
+set ligdir "./ligand"
+set mapdir "maps"
+set prefix "1ycr"
+set workdir .
+#####################################################################
+
+if {![file exists $proteinpdb]} {
+    tk_messageBox -type ok -message "Select the folder where silcs_fragmap folder is downloaded" -icon info
+    set workdir [tk_chooseDirectory -title "Select the folder where FragMap files are downloaded"]
+    set proteinpdb [file join $workdir $proteinpdb]
+    set ligdir [file join $workdir $ligdir]
+    set mapdir [file join $workdir $mapdir]
+}
+
+mol load pdb $proteinpdb
+
+# display setup
+axes location off
+color Display Background white
+display resize 800 800
+
+# load VMD plugin
+source [file join $workdir "plugins" "vmd" "fragmap_tools.tcl"]
+::silcs::fragmap
+
+# adjust default variables for fragmap
+set ::silcs::prefix $prefix
+set ::silcs::mapdir $mapdir
+
+# display fragmaps
+::silcs::show_fragmap
+
+# turn on protein (noh) surface
+::silcs::loadsurface "surf" flag 1
+
+# final display adjustment
+mol showrep 0 0 off ; # turn off default protein line drawing
+mol top 0
+display resetview
+scale by 1.5
+display projection Orthographic
