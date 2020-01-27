@@ -34,7 +34,7 @@ pdb_path = 'data/'
 pdb_ids = ["1ycr", "1pw2", "2f6f","4ic8", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4f5t"]
 
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
-map_path = 'data/maps/' 
+map_path = '../data/maps/' 
 #map_path = "/scratch/tr443/fragmap/data/maps/"                                               
 
 #out_path = '/scratch/tr443/fragmap/output/'

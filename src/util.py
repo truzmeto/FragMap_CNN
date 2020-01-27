@@ -4,6 +4,7 @@ import sys
 
 
 
+
 def sample_batch(batch_size, pdb_ids, pdb_path, shuffle = True):
     """
     Function to produce random sample of pdb ids from a given list.
@@ -57,14 +58,14 @@ def grid2vec(n, grid):
 
 def pad_mapc(dens, maxD, pad_val):
     """
-    This function pads np.ndarray of size(nx,ny,nz)
+    This function pads np.ndarray of size(nx, ny, nz)
     into a cubic box according to maxD provided.
     Zero padding applied at both sides(RHS and LHS) to
     produce padded volume, np.ndarray of size(maxD,maxD,maxD).
     
     """
 
-    pad = maxD - np.array(dens.shape,dtype=int) 
+    pad = maxD - np.array(dens.shape, dtype = int) 
     if any(pad < 0):
         raise ValueError("Pad length can't be negative", pad) 
         #print("Applying unpadding!")
@@ -89,7 +90,7 @@ def unpad_mapc(dens, pad):
     This function unpads the volume by
     slicing out the original part from
     padded volume. It inverts the operation
-    of done by 'pad_mapc' function.
+    done by 'pad_mapc' function.
     
     Input:  tensor -- np.ndarray(shape=(nx,ny,nz))
             pad    -- np.array(px,py,pz)

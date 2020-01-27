@@ -1,7 +1,13 @@
 import torch
 
+
 def Rot90Seq(volume, iRot):
     """
+    Function to generate 24 90 degree rotations in 3D using 
+    torch.rot90 function. All permutations are stored in a hash table
+    and rotate states can be retrived by key( rot index [0,...,23]). 
+    
+    ------------------
     
     Input: volume - input tensor, dim = [batch_size, nchannels, dim, dim, dim] 
            iRot = [0,1,2,3....23] -  each unique 90 rotation
@@ -18,8 +24,6 @@ def Rot90Seq(volume, iRot):
            
     """
     
-    #store all integers that generate 24 rotations in a dictionary(hash tab)
-    #for efficient table lookup. Also, last 3 indecies are always voxel indecies!
 
     
     if volume.nelement() == 0:
