@@ -12,11 +12,24 @@ def count_parameters(model):
 
 
 class MinPool3d(nn.MaxPool3d):
-     def forward(self, input):
+    """
+    This performe min-poling, the exact opposite of max-pooling.
+    It is useful when prediction aims negative valued data points.
+    """
+    def forward(self, input):
         return -F.max_pool3d(-input, self.kernel_size, self.stride,
                             self.padding, self.dilation, self.ceil_mode,
                             self.return_indices)
-  
+
+class iLeakyReLU(nn.LeakyReLU):
+    """
+    This is inverse LeakyReLU, it does exact opposite
+    of what LeakyReLU does!
+    """
+    def forward(self, input):
+        return -F.leaky_relu(-input, self.negative_slope, self.inplace)
+    
+    
 #custom weigt init    
 def weight_init(m):
     if isinstance(m, nn.Conv3d):
