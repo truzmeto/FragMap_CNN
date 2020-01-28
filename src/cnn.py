@@ -11,6 +11,35 @@ def count_parameters(model):
     return n_params
 
 
+class MinPool3d(nn.MaxPool3d):
+     def forward(self, input):
+        return -F.max_pool3d(-input, self.kernel_size, self.stride,
+                            self.padding, self.dilation, self.ceil_mode,
+                            self.return_indices)
+  
+#custom weigt init    
+def weight_init(m):
+    if isinstance(m, nn.Conv3d):
+        size = m.weight.size()
+        fan_out = size[1]*size[2]*size[3]*size[4] # number of rows
+        fan_in = size[0]*size[2]*size[3]*size[4] # number of columns
+        #variance = np.sqrt(2.0/(fan_out))
+        variance = np.sqrt(4.0/(fan_out))
+        m.weight.data.normal_(0.0, variance)
+        m.bias.data.zero_()
+
+
+    if isinstance(m, nn.Linear):
+        size = m.weight.size()
+        fan_out = size[0] # number of rows
+        fan_in = size[1] # number of columns
+        variance = np.sqrt(2.0/(fan_out))
+        m.weight.data.normal_(0.0, variance)
+        m.bias.data.zero_()
+
+
+    
+
 class CnnModel(nn.Module):
     def __init__(self, num_input_channels = 11):
         super(CnnModel, self).__init__()

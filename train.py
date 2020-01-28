@@ -29,13 +29,13 @@ nsample = 1
 resolution = 1.000
 RT = 0.59248368 # T=298.15K, R = 0.001987204 kcal/(mol K)
 
-pdb_path = 'data/'
-#pdb_path = "/scratch/tr443/fragmap/data/"                                                          
+pdb_path = '/u1/home/tr443/data/fragData/'
+#pdb_path = "/scratch/tr443/fragmap/data/"
 pdb_ids = ["1ycr", "1pw2", "2f6f","4ic8", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4f5t"]
 
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
-map_path = '../data/maps/' 
-#map_path = "/scratch/tr443/fragmap/data/maps/"                                               
+map_path = '/u1/home/tr443/data/fragData/maps/'
+#map_path = "/scratch/tr443/fragmap/data/maps/"
 
 #out_path = '/scratch/tr443/fragmap/output/'
 out_path = 'output/'
@@ -65,7 +65,7 @@ for epoch in range(1, max_epoch+1):
 
         with torch.no_grad():
             #get batch volume tensor
-            volume, rot_matrix = get_volume(path_list = batch_list, 
+            volume, rot_matrix = get_volume(path_list = batch_list,
                                             box_size = box_size,
                                             resolution = resolution,
                                             norm = norm,
@@ -76,39 +76,39 @@ for epoch in range(1, max_epoch+1):
                                       pdb_ids = pdb_list,
                                       maxD = dim)
 
-            
-            
+
+
             #target maps preprocessing here!
-            
-            
+
+
             if rand_rotations:
                 target = grid_rot(target, batch_size, rot_matrix)
 
         #############################################################
-        
-        
+
+
         optimizer.zero_grad()
         output = model(volume)
         loss = criterion(output, target)
         loss.backward()
         optimizer.step()
 
-        #print("gpu_mem: allocated",                                                                     
-        #      str(torch.cuda.memory_allocated(device=None)/1000000)+"Mbs" )                             
+        #print("gpu_mem: allocated",
+        #      str(torch.cuda.memory_allocated(device=None)/1000000)+"Mbs" )
 
-                
+
         if epoch % 10 == 0:
             print('{0}, {1}, {2}, {3}'.format(batches, epoch, loss.item(), pdb_list))
 
-            
+
         #gc.collect()
         #del volume, target, output
         #torch.cuda.empty_cache() #
-        #print("gpu_cacched_mem",                                                         
-        #      str(torch.cuda.memory_cached(device=None)/1000000)+"Mbs" )                            
+        #print("gpu_cacched_mem",
+        #      str(torch.cuda.memory_cached(device=None)/1000000)+"Mbs" )
 
-    
+
     if epoch % 50 == 0:
         torch.save(model.state_dict(), out_path + str(epoch) + params_file_name)
 
-    
+
