@@ -4,8 +4,9 @@ import torch
 def Rot90Seq(volume, iRot):
     """
     Function to generate 24 90 degree rotations in 3D using 
-    torch.rot90 function. All permutations are stored in a hash table
-    and rotate states can be retrived by key( rot index [0,...,23]). 
+    torch.rot90 builtin function. All permutations are stored in a
+    hash table and rotated states can be efficiently looked up by
+    key( rot index [0,...,23]). 
     
     ------------------
     
@@ -20,11 +21,10 @@ def Rot90Seq(volume, iRot):
                                      (j,k) = y --> z 
 
     Output:
-          volume - input tensor, dim = [batch_size, nchannels, dim, dim, dim]
+           volume - output tensor, dim = [batch_size, nchannels, dim, dim, dim]
            
     """
     
-
     
     if volume.nelement() == 0:
         raise ValueError("Volume tensor is empty!")
@@ -66,8 +66,8 @@ def Rot90Seq(volume, iRot):
 
     
     rot_list = Drot[iRot]
-    for subl in rot_list:
-        volume = torch.rot90(volume, k = subl[0], dims = subl[1:3])
+    for sub_list in rot_list:
+        volume = torch.rot90(volume, k = sub_list[0], dims = sub_list[1:3])
         
     return volume
     
