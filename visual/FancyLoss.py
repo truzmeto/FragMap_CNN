@@ -13,40 +13,51 @@ fs = 14
 #Out_GFE = x;  Target = y
 thresh = 1.0
 
+def StepF(inp, thresh):
+    return 0.5*(1.0 - torch.sign(inp + thresh))
 
 ##################### ----with torch-----#####################################
-#x = torch.from_numpy(x)
-#y = torch.from_numpy(y)
+x = torch.from_numpy(x)
+y = torch.from_numpy(y)
 #l1 = torch.abs(x - y)
-
+ 
 #step1 = 0.5*(1.0 - torch.sign( x + y - 2*thresh))
+step1 = StepF(x+y, -2.0*thresh)
 #step2 = 0.5*(1.0 - torch.sign(-y + thresh))
+step2 = StepF(-y, thresh)
 #step3 = 0.5*(1.0 - torch.sign( x - thresh))
+step3 = StepF(x, -thresh)
 
 #step1p  = 0.5*(1.0 - torch.sign(-x - y + 2*thresh))
-#step2p = 0.5*(1.0 - torch.sign(-x + thresh))
-#step3p = 0.5*(1.0 - torch.sign( y - thresh))
+step1p = StepF(-x-y, 2.0*thresh)
 
-#z1 = l1*step1
-#z2 = -2*(x-thresh)*step1p*step2 *step3
-#z3 = -2*(y-thresh)*step1p*step2p*step3p
-#z = z1 + z2 + z3
-#z = z.numpy()
+#step2p = 0.5*(1.0 - torch.sign(-x + thresh))
+step2p = StepF(-x,thresh)
+
+#step3p = 0.5*(1.0 - torch.sign( y - thresh))
+step3p = StepF(y, -thresh)
+
+z = torch.abs(x - y)*step1 - \
+    2.0*(x-thresh)*step1p*step2 *step3 - \
+    2.0*(y-thresh)*step1p*step2p*step3p
+
+z = z.numpy()
+
 ################################################################
 
-l1 = np.abs(x - y)
-step1 = 0.5*(1.0 - np.sign( x + y - 2*thresh))
-step2 = 0.5*(1.0 - np.sign(-y + thresh))
-step3 = 0.5*(1.0 - np.sign( x - thresh))
-
-step1p = 0.5*(1.0 - np.sign(-x - y + 2*thresh))
-step2p = 0.5*(1.0 - np.sign(-x + thresh))
-step3p = 0.5*(1.0 - np.sign(y - thresh))
-#step4 = 0.5*(1.0 - np.sign(-x - y + 2*thresh))
-z1 = l1*step1
-z2 = -2*(x-thresh)*step2*step3*step1p
-z3 = -2*(y-thresh)*step2p*step3p*step1p
-z = z1 + z2 + z3
+#l1 = np.abs(x - y)
+#step1 = 0.5*(1.0 - np.sign( x + y - 2*thresh))
+#step2 = 0.5*(1.0 - np.sign(-y + thresh))
+#step3 = 0.5*(1.0 - np.sign( x - thresh))
+#
+#step1p = 0.5*(1.0 - np.sign(-x - y + 2*thresh))
+#step2p = 0.5*(1.0 - np.sign(-x + thresh))
+# step3p = 0.5*(1.0 - np.sign(y - thresh))
+##step4 = 0.5*(1.0 - np.sign(-x - y + 2*thresh))
+#z1 = l1*step1
+#z2 = -2*(x-thresh)*step2*step3*step1p
+#z3 = -2*(y-thresh)*step2p*step3p*step1p
+#z = z1 + z2 + z3
 
 
 fig = plt.figure(figsize = (12, 8))

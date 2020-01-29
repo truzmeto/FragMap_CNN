@@ -34,28 +34,31 @@ class XSigmoidLoss(torch.nn.Module):
         return torch.mean(2 * diff / (1 + torch.exp(-diff)) - diff)
 
 
+
+    
 class PenLoss(torch.nn.Module):
     def __init__(self):
         super().__init__()
 
-    def forward(self, output, target, thresh):
-
-        l1 = torch.abs(output - target)
-
-        step1 = 0.5*(1.0 - torch.sign( output+ target- 2*thresh))
-        step2 = 0.5*(1.0 - torch.sign(-target+ thresh))
-        step3 = 0.5*(1.0 - torch.sign( output- thresh))
-
-        step1p  = 0.5*(1.0 - torch.sign(-output- target+ 2*thresh))
-        step2p = 0.5*(1.0 - torch.sign(-output+ thresh))
-        step3p = 0.5*(1.0 - torch.sign( target- thresh))
-
-        z1 = l1*step1
-        z2 = -2*(output - thresh)*step1p*step2 *step3
-        z3 = -2*(target - thresh)*step1p*step2p*step3p
         
-        loss = z1 + z2 + z3
-
+    def StepF(self, inp, thresh):
+        return 0.5*(1.0 - torch.sign(inp + thresh))
+    
+    
+    def forward(self, output, target, thresh):
+        
+        loss = torch.abs(output - target) * \
+               self.StepF(output + target, -2.0*thresh) - \
+               2.0*(output - thresh) * \
+               self.StepF(-output - target, 2.0*thresh) * \
+               self.StepF(-target, thresh) * \
+               self.StepF(output, -thresh) - \
+               2.0*(target - thresh) * \
+               self.StepF(-output - target, 2.0*thresh) * \
+               self.StepF(-output, thresh) * \
+               self.StepF( target, -thresh)
+        
+        
         return loss.mean()
 
 
