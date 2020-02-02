@@ -5,9 +5,25 @@ import pyvista as pv
 import numpy as np
 import sys
 import os
+from scipy import ndimage
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.rot24 import Rot90Seq
+
+
+
+def rotate_ligand(ligand, rotation_angle):    
+   
+    ligand = ndimage.interpolation.rotate(ligand,
+                                          angle = rotation_angle,
+                                          axes=(2,0),
+                                          reshape=False,
+                                          order=0,
+                                          mode= 'nearest', #'constant',
+                                          cval=0.0)
+   
+    return ligand
+
 
 def get3D_rod():
     """
@@ -45,7 +61,7 @@ if __name__=='__main__':
 
     #####################################################################
     
-    p = pv.Plotter(point_smoothing = True, shape=(1, 3))
+    p = pv.Plotter(point_smoothing = True, shape=(1, 4))
     fs = 15
     
     channel = volume[0,0,:,:,:].cpu().numpy()
@@ -60,23 +76,36 @@ if __name__=='__main__':
 
     ###########################################################
     channel = volume_rot[0,0,:,:,:].cpu().numpy()
-    text = 'Random rotation'
-    p.subplot(0, 1)
+    text = 'RandomRot TPL'
+    p.subplot(0, 2)
     p.add_text(text, position = 'upper_left', font_size = fs)
     p.add_volume(channel, cmap = "viridis_r", opacity = "linear")
     #p.add_axes()
     
     ###########################################################
-    irot = 1
+    irot = 13
     channel = Rot90Seq(volume, iRot=irot)
     ch = channel[0,0,:,:,:].numpy()
     #print(type(ch))
-    text = 'Rot90 around z(x-->y), RotIndx = '+str(irot)
-    p.subplot(0, 2)
+    text = 'Rot90 around z(x-->y) \n RotIndx = '+str(irot)
+    p.subplot(0, 1)
     p.add_text(text, position = 'upper_left', font_size = fs)
     p.add_volume(ch, cmap = "viridis_r", opacity = "linear")
     #p.add_axes()
 
+
+    
+    ###########################################################
+    ch1 = rotate_ligand(volume[0,0,:,:,:].numpy(), rotation_angle=20)    
+    #print(type(ch))
+    text = 'scipy.ndRot \n  0 order interpol'
+    p.subplot(0, 3)
+    p.add_text(text, position = 'upper_left', font_size = fs)
+    p.add_volume(ch1, cmap = "viridis_r", opacity = "linear")
+    #p.add_axes()
+
+
+    
     p.show()
 
 
