@@ -2,6 +2,8 @@ import numpy as np
 import sys
 import os
 import torch
+from TorchProteinLibrary.FullAtomModel import PDB2CoordsUnordered
+from TorchProteinLibrary.FullAtomModel import getBBox
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.util import pad_mapc,  box_face_med
@@ -54,7 +56,44 @@ def get_target(map_path, map_names, pdb_ids, maxD):
     return map_tensor, pad, center 
 
 
+def get_bbox(pdb_ids, path):
+    """
+    Function returns bbox size for all
+    input pdbs. 
+    """
+    
+    path_list = [path + i + ".pdb" for i in pdb_ids]
+    pdb2coords = PDB2CoordsUnordered()
+    coords, _, resnames, _, atomnames, num_atoms = pdb2coords(path_list)
+    a, b = getBBox(coords, num_atoms)
+    c = a - b
 
+    return torch.abs(c).int().numpy()
+
+
+def stipOBB(pdb_ids, path, gfe):
+    """
+
+    to be continued!!!!!!!!!!!!!
+    """
+    nxyz = np.array(gfe.shape) // 2 
+    xyz_bb = get_bbox(pdb_ids, path) // 2
+    
+    #ix = nx // 2 -  xyz[:,0] + 2
+    #iy = ny // 2 -  xyz[:,1] + 2
+    #iz = nz // 2 -  xyz[:,2] + 2
+    ixyz = xyz_bb - nxyz + 2
+
+    gfe[0:ixL , 0:iyL, 0:izL] = box_med()
+    gfe[ixR:nx , iyR:ny, yzR:nz] = box_med()
+    
+    
+    
+    return 0
+
+
+
+#Below, not used functions!
 def bin_target(target, maxV, minV, scale=1):
     
     target[target > maxV] = maxV
@@ -75,7 +114,7 @@ def ubin_target(target, maxV, scale=1):
 
 
 
-#depreciated!
+
 def get_target1(map_path, map_names, pdb_ids, maxD, RT,
                density = False, map_norm = False):
     """
