@@ -6,7 +6,6 @@ import torch.optim as optim
 import numpy as np
 import gc
 
-#import functions from src
 from src.cnn  import CnnModel
 from src.volume import get_volume
 from src.mapIO import greatest_dim
@@ -69,7 +68,6 @@ def run_model(volume, target, model, train = True):
 
 if __name__=='__main__':
 
-    
     
     lrt = 0.0001
     wd = 0.00001

@@ -33,8 +33,32 @@ class XSigmoidLoss(torch.nn.Module):
         diff = output - target
         return torch.mean(2 * diff / (1 + torch.exp(-diff)) - diff)
 
+    
+class Regularization(torch.nn.Module):
+    """
+    Class calculates L1 or L2 regularization terms
+    by accessing model parameters(weights).    
+    """
 
+    def __init__(self):
+        super().__init__()
+    
+    def forward(self, model, RegType="L1", Lambda=0.00001):
 
+        if RegType == "L1":
+            L1 = 0.0
+            for w in model.parameters():
+                L1 = L1 + w.norm(1)
+            L = L1*Lambda
+        
+        if RegType == "L2":
+            L2 = 0.0
+            for w in model.parameters():
+                L2 = L2 + w.norm(2)
+            L = L2*Lambda
+
+        return L
+    
     
 class PenLoss(torch.nn.Module):
     def __init__(self):
