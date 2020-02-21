@@ -8,7 +8,7 @@ import pyvista as pv
 from se3cnn.image.convolution import SE3Convolution
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from src.convSE import ProteinReprSE3
+from src.convSE import FragMapSE3
 
 
 ########---------- Simple test with 1 forward pass -----------########
@@ -16,10 +16,9 @@ c, d, h, w = 11, 20, 20, 20
 torch.manual_seed(3000)
 data = torch.randn(1, c, d, h, w)
 
-print(data.size())
-
+#print(data.size())
 #invoke the model
-model = ProteinReprSE3()#.cuda()
+model = FragMapSE3()#.cuda()
 #model = CnnModel()
 output = model(data)
 
