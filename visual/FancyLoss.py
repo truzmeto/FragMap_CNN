@@ -11,7 +11,7 @@ y = x.copy().T # transpose
 fs = 14
 
 #Out_GFE = x;  Target = y
-thresh = 1.0
+thresh = 0.0
 
 def StepF(inp, thresh):
     return 0.5*(1.0 - torch.sign(inp + thresh))
