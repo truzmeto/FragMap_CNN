@@ -1,0 +1,324 @@
+3my5_a apolar Median 0.123
+3my5_a apolar Face Median 0.11
+3my5_a hbacc Median 0.09
+3my5_a hbacc Face Median 0.08
+3my5_a hbdon Median 0.089
+3my5_a hbdon Face Median 0.07
+3my5_a meoo Median 0.104
+3my5_a meoo Face Median 0.08
+3my5_a acec Median 0.167
+3my5_a acec Face Median 0.13
+3my5_a mamn Median 0.166
+3my5_a mamn Face Median 0.08
+4f5t apolar Median 0.129
+4f5t apolar Face Median 0.12
+4f5t hbacc Median 0.106
+4f5t hbacc Face Median 0.1
+4f5t hbdon Median 0.11
+4f5t hbdon Face Median 0.1
+4f5t meoo Median 0.119
+4f5t meoo Face Median 0.12
+4f5t acec Median 0.213
+4f5t acec Face Median 0.16
+4f5t mamn Median 0.169
+4f5t mamn Face Median 0.2
+4wj9 apolar Median 0.156
+4wj9 apolar Face Median 0.13
+4wj9 hbacc Median 0.125
+4wj9 hbacc Face Median 0.08
+4wj9 hbdon Median 0.134
+4wj9 hbdon Face Median 0.08
+4wj9 meoo Median 0.149
+4wj9 meoo Face Median 0.09
+4wj9 acec Median 0.231
+4wj9 acec Face Median 0.14
+4wj9 mamn Median 0.291
+4wj9 mamn Face Median 0.11
+3bi0 apolar Median 0.134
+3bi0 apolar Face Median 0.12
+3bi0 hbacc Median 0.095
+3bi0 hbacc Face Median 0.07
+3bi0 hbdon Median 0.092
+3bi0 hbdon Face Median 0.07
+3bi0 meoo Median 0.109
+3bi0 meoo Face Median 0.09
+3bi0 acec Median 0.161
+3bi0 acec Face Median 0.11
+3bi0 mamn Median 0.181
+3bi0 mamn Face Median 0.09
+1d6e_nopep_fixed apolar Median 0.119
+1d6e_nopep_fixed apolar Face Median 0.12
+1d6e_nopep_fixed hbacc Median 0.103
+1d6e_nopep_fixed hbacc Face Median 0.1
+1d6e_nopep_fixed hbdon Median 0.103
+1d6e_nopep_fixed hbdon Face Median 0.1
+1d6e_nopep_fixed meoo Median 0.113
+1d6e_nopep_fixed meoo Face Median 0.11
+1d6e_nopep_fixed acec Median 0.192
+1d6e_nopep_fixed acec Face Median 0.14
+1d6e_nopep_fixed mamn Median 0.183
+1d6e_nopep_fixed mamn Face Median 0.18
+1ycr apolar Median 0.105
+1ycr apolar Face Median 0.09
+1ycr hbacc Median 0.074
+1ycr hbacc Face Median 0.04
+1ycr hbdon Median 0.063
+1ycr hbdon Face Median 0.05
+1ycr meoo Median 0.076
+1ycr meoo Face Median 0.08
+1ycr acec Median 0.115
+1ycr acec Face Median 0.07
+1ycr mamn Median 0.127
+1ycr mamn Face Median 0.03
+1pw2 apolar Median 0.132
+1pw2 apolar Face Median 0.12
+1pw2 hbacc Median 0.091
+1pw2 hbacc Face Median 0.08
+1pw2 hbdon Median 0.097
+1pw2 hbdon Face Median 0.08
+1pw2 meoo Median 0.119
+1pw2 meoo Face Median 0.09
+1pw2 acec Median 0.166
+1pw2 acec Face Median 0.13
+1pw2 mamn Median 0.171
+1pw2 mamn Face Median 0.09
+2f6f apolar Median 0.12
+2f6f apolar Face Median 0.1
+2f6f hbacc Median 0.093
+2f6f hbacc Face Median 0.07
+2f6f hbdon Median 0.101
+2f6f hbdon Face Median 0.07
+2f6f meoo Median 0.126
+2f6f meoo Face Median 0.07
+2f6f acec Median 0.174
+2f6f acec Face Median 0.08
+2f6f mamn Median 0.177
+2f6f mamn Face Median 0.11
+4ic8 apolar Median 0.126
+4ic8 apolar Face Median 0.12
+4ic8 hbacc Median 0.099
+4ic8 hbacc Face Median 0.08
+4ic8 hbdon Median 0.099
+4ic8 hbdon Face Median 0.08
+4ic8 meoo Median 0.1
+4ic8 meoo Face Median 0.09
+4ic8 acec Median 0.2
+4ic8 acec Face Median 0.11
+4ic8 mamn Median 0.156
+4ic8 mamn Face Median 0.12
+1s4u apolar Median 0.113
+1s4u apolar Face Median 0.1
+1s4u hbacc Median 0.094
+1s4u hbacc Face Median 0.07
+1s4u hbdon Median 0.098
+1s4u hbdon Face Median 0.08
+1s4u meoo Median 0.106
+1s4u meoo Face Median 0.08
+1s4u acec Median 0.186
+1s4u acec Face Median 0.09
+1s4u mamn Median 0.169
+1s4u mamn Face Median 0.14
+2am9 apolar Median 0.128
+2am9 apolar Face Median 0.11
+2am9 hbacc Median 0.089
+2am9 hbacc Face Median 0.08
+2am9 hbdon Median 0.096
+2am9 hbdon Face Median 0.08
+2am9 meoo Median 0.103
+2am9 meoo Face Median 0.07
+2am9 acec Median 0.152
+2am9 acec Face Median 0.11
+2am9 mamn Median 0.143
+2am9 mamn Face Median 0.06
+1bvi_m1_fixed apolar Median 0.088
+1bvi_m1_fixed apolar Face Median 0.08
+1bvi_m1_fixed hbacc Median 0.082
+1bvi_m1_fixed hbacc Face Median 0.07
+1bvi_m1_fixed hbdon Median 0.095
+1bvi_m1_fixed hbdon Face Median 0.08
+1bvi_m1_fixed meoo Median 0.152
+1bvi_m1_fixed meoo Face Median 0.15
+1bvi_m1_fixed acec Median 0.17
+1bvi_m1_fixed acec Face Median 0.02
+1bvi_m1_fixed mamn Median 0.1
+1bvi_m1_fixed mamn Face Median 0.1
+4djw apolar Median -0.246
+4djw apolar Face Median -0.26
+4djw hbacc Median -0.203
+4djw hbacc Face Median -0.22
+4djw hbdon Median -0.205
+4djw hbdon Face Median -0.22
+4djw meoo Median -0.251
+4djw meoo Face Median -0.28
+4djw acec Median 0.106
+4djw acec Face Median 0.02
+4djw mamn Median -0.223
+4djw mamn Face Median -0.25
+4lnd_ba1 apolar Median 0.171
+4lnd_ba1 apolar Face Median 0.15
+4lnd_ba1 hbacc Median 0.096
+4lnd_ba1 hbacc Face Median 0.08
+4lnd_ba1 hbdon Median 0.1
+4lnd_ba1 hbdon Face Median 0.08
+4lnd_ba1 meoo Median 0.115
+4lnd_ba1 meoo Face Median 0.09
+4lnd_ba1 acec Median 0.206
+4lnd_ba1 acec Face Median 0.13
+4lnd_ba1 mamn Median 0.177
+4lnd_ba1 mamn Face Median 0.07
+4obo apolar Median -0.192
+4obo apolar Face Median -0.2
+4obo hbacc Median -0.181
+4obo hbacc Face Median -0.2
+4obo hbdon Median -0.175
+4obo hbdon Face Median -0.2
+4obo meoo Median -0.223
+4obo meoo Face Median -0.25
+4obo acec Median -0.025
+4obo acec Face Median -0.06
+4obo mamn Median 0.106
+4obo mamn Face Median 0.02
+1h1q apolar Median -0.215
+1h1q apolar Face Median -0.23
+1h1q hbacc Median -0.186
+1h1q hbacc Face Median -0.2
+1h1q hbdon Median -0.186
+1h1q hbdon Face Median -0.2
+1h1q meoo Median -0.195
+1h1q meoo Face Median -0.25
+1h1q acec Median 0.015
+1h1q acec Face Median -0.06
+1h1q mamn Median -0.025
+1h1q mamn Face Median -0.1
+3fly apolar Median -0.218
+3fly apolar Face Median -0.24
+3fly hbacc Median -0.195
+3fly hbacc Face Median -0.22
+3fly hbdon Median -0.195
+3fly hbdon Face Median -0.22
+3fly meoo Median -0.223
+3fly meoo Face Median -0.28
+3fly acec Median 0.106
+3fly acec Face Median -0.02
+3fly mamn Median -0.164
+3fly mamn Face Median -0.22
+4gih apolar Median -0.172
+4gih apolar Face Median -0.18
+4gih hbacc Median -0.155
+4gih hbacc Face Median -0.16
+4gih hbdon Median -0.155
+4gih hbdon Face Median -0.18
+4gih meoo Median -0.164
+4gih meoo Face Median -0.2
+4gih acec Median 0.059
+4gih acec Face Median -0.02
+4gih mamn Median -0.099
+4gih mamn Face Median -0.13
+2gmx apolar Median -0.215
+2gmx apolar Face Median -0.23
+2gmx hbacc Median -0.186
+2gmx hbacc Face Median -0.21
+2gmx hbdon Median -0.186
+2gmx hbdon Face Median -0.22
+2gmx meoo Median -0.217
+2gmx meoo Face Median -0.25
+2gmx acec Median 0.104
+2gmx acec Face Median 0.01
+2gmx mamn Median -0.116
+2gmx mamn Face Median -0.15
+4hw3 apolar Median -0.141
+4hw3 apolar Face Median -0.16
+4hw3 hbacc Median -0.111
+4hw3 hbacc Face Median -0.13
+4hw3 hbdon Median -0.122
+4hw3 hbdon Face Median -0.14
+4hw3 meoo Median -0.063
+4hw3 meoo Face Median -0.1
+4hw3 acec Median -0.063
+4hw3 acec Face Median -0.1
+4hw3 mamn Median 0.059
+4hw3 mamn Face Median -0.06
+4ypw_prot_nocter apolar Median -0.162
+4ypw_prot_nocter apolar Face Median -0.18
+4ypw_prot_nocter hbacc Median -0.122
+4ypw_prot_nocter hbacc Face Median -0.13
+4ypw_prot_nocter hbdon Median -0.133
+4ypw_prot_nocter hbdon Face Median -0.16
+4ypw_prot_nocter meoo Median -0.164
+4ypw_prot_nocter meoo Face Median -0.16
+4ypw_prot_nocter acec Median 0.106
+4ypw_prot_nocter acec Face Median 0.02
+4ypw_prot_nocter mamn Median -0.223
+4ypw_prot_nocter mamn Face Median -0.25
+3w8m apolar Median 0.126
+3w8m apolar Face Median 0.11
+3w8m hbacc Median 0.092
+3w8m hbacc Face Median 0.08
+3w8m hbdon Median 0.095
+3w8m hbdon Face Median 0.08
+3w8m meoo Median 0.126
+3w8m meoo Face Median 0.09
+3w8m acec Median 0.159
+3w8m acec Face Median 0.06
+3w8m mamn Median 0.142
+3w8m mamn Face Median 0.12
+2qbs apolar Median -0.172
+2qbs apolar Face Median -0.19
+2qbs hbacc Median -0.195
+2qbs hbacc Face Median -0.22
+2qbs hbdon Median -0.205
+2qbs hbdon Face Median -0.23
+2qbs meoo Median -0.251
+2qbs meoo Face Median -0.28
+2qbs acec Median 0.157
+2qbs acec Face Median 0.06
+2qbs mamn Median -0.099
+2qbs mamn Face Median -0.13
+4jv7 apolar Median -0.103
+4jv7 apolar Face Median -0.12
+4jv7 hbacc Median 0.001
+4jv7 hbacc Face Median -0.02
+4jv7 hbdon Median -0.012
+4jv7 hbdon Face Median -0.02
+4jv7 meoo Median 0.106
+4jv7 meoo Face Median 0.06
+4jv7 acec Median -0.164
+4jv7 acec Face Median -0.2
+4jv7 mamn Median 0.157
+4jv7 mamn Face Median 0.02
+5q0i apolar Median -0.144
+5q0i apolar Face Median -0.15
+5q0i hbacc Median -0.181
+5q0i hbacc Face Median -0.19
+5q0i hbdon Median -0.175
+5q0i hbdon Face Median -0.19
+5q0i meoo Median -0.164
+5q0i meoo Face Median -0.16
+5q0i acec Median 0.106
+5q0i acec Face Median 0.06
+5q0i mamn Median -0.133
+5q0i mamn Face Median -0.16
+1r2b apolar Median -0.172
+1r2b apolar Face Median -0.19
+1r2b hbacc Median -0.181
+1r2b hbacc Face Median -0.2
+1r2b hbdon Median -0.186
+1r2b hbdon Face Median -0.2
+1r2b meoo Median -0.195
+1r2b meoo Face Median -0.25
+1r2b acec Median 0.059
+1r2b acec Face Median -0.02
+1r2b mamn Median 0.015
+1r2b mamn Face Median -0.06
+2jjc apolar Median -0.169
+2jjc apolar Face Median -0.19
+2jjc hbacc Median -0.155
+2jjc hbacc Face Median -0.18
+2jjc hbdon Median -0.175
+2jjc hbdon Face Median -0.2
+2jjc meoo Median -0.195
+2jjc meoo Face Median -0.22
+2jjc acec Median 0.059
+2jjc acec Face Median -0.02
+2jjc mamn Median -0.223
+2jjc mamn Face Median -0.28
