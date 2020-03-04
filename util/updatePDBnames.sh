@@ -12,7 +12,7 @@
 ## cp *.pdb into orig_pdbs ### to save original unmodified .pdb files
 ## DO: bash ../util/updatePDBnames.sh 
 
-cd ../data/orig_pdbs
+cd orig_pdbs
 
 echo 'Running in' $(pwd)
 
@@ -34,9 +34,9 @@ for i in $(ls *.pdb);
 
 do 
 
-less $i | sed 's/CD\ \ ILE/CD1 ILE/g' | sed 's/HSD\ /HIS /g' | sed 's/OT1/OXT/g' | sed 's/OT2/OXT/g' > tmp/$i;
+less $i | sed 's/CD\ \ ILE/CD1 ILE/g' | sed 's/HSD\ /HIS /g' | sed 's/HSE\ /HIS /g' | sed 's/HSP\ /HIS /g' | sed 's/OT1/OXT/g' | sed 's/OT2/OXT/g' > tmp/$i;
 
-mv tmp/$i ~/FragMap_CNN/data;
+mv tmp/$i ../;
 
 echo finished $i
 

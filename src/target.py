@@ -92,6 +92,10 @@ def stipOBB(pdb_ids, path, gfe):
     return 0
 
 
+
+
+
+
 #Below, not used functions!
 def bin_target(target, maxV, minV, scale=1):
 
