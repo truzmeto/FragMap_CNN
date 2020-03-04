@@ -33,8 +33,6 @@ def get_target(map_path, map_names, pdb_ids, maxD):
             maps = map_path + ipdb + "." + map_names[imap] + ".gfe.map"
             _, _, FrE, cent = read_map(maps)
 
-
-            #apply baseline correction
             #baseline = box_face_med(FrE)
             baseline = np.median(FrE)
             FrE = FrE - baseline
@@ -45,13 +43,9 @@ def get_target(map_path, map_names, pdb_ids, maxD):
             #convert to tensor
             map_tensor[ibatch,imap,:,:,:] = FrE        #padded_gfe
 
-
         pad[ibatch,:] = pads
         center[ibatch,:] = cent
         ibatch += 1
-
-
-
 
     #convert target maps to torch.cuda
     map_tensor = torch.from_numpy(map_tensor).float().cuda()
@@ -99,31 +93,32 @@ def stipOBB(pdb_ids, path, gfe):
 
 
 #Below, not used functions!
-def bin_target(target, maxV, minV, scale=1):
-
-    target[target > maxV] = maxV
-    target[target < minV] = minV
-    target = (maxV - target)*scale
-    target = torch.ceil(target).type(torch.cuda.LongTensor)
-
-    return target
-
-
-
-def ubin_target(target, maxV, scale=1):
-
-    target = target / scale
-    target = maxV - target
-
-    return target
+#def bin_target(target, maxV, minV, scale=1):
+#
+#    target[target > maxV] = maxV
+#    target[target < minV] = minV
+#    target = (maxV - target)*scale
+#    target = torch.ceil(target).type(torch.cuda.LongTensor)
+#
+#    return target
+#
+#
+#
+#def ubin_target(target, maxV, scale=1):
+#
+#    target = target / scale
+#    target = maxV - target
+#
+#    return target
 
 
 if __name__=='__main__':
 
+    
 
     pdb_ids = ["4f5t"]#"1ycr", "1pw2", "1s4u", "2f6f"]#, "2am9", "3my5_a", "3w8m", "4ic8", "4f5t"]
-    #path = "/u1/home/tr443/data/fragData/"
-    path = "../../data/"
+    path = "/u1/home/tr443/data/fragData/"
+    #path = "../../data/"
 
     #path_list = [path + i + ".pdb" for i in pdb_ids]
     ibbox = get_bbox(pdb_ids, path)
