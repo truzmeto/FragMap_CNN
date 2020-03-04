@@ -1,6 +1,6 @@
-import numpy as np
 import sys
 import os
+import numpy as np
 import torch
 from TorchProteinLibrary.FullAtomModel import PDB2CoordsUnordered
 from TorchProteinLibrary.FullAtomModel import getBBox
@@ -59,26 +59,34 @@ def get_target(map_path, map_names, pdb_ids, maxD):
     return map_tensor, pad, center
 
 
+
 def get_bbox(pdb_ids, path):
     """
     Function returns bbox size for all
     input pdbs.
+    ---------------------------
+
+    Input:   pdb_ids - list of pdb names
+             path    - path to pdb files directory 
+
+    Output:  
+    
     """
 
     path_list = [path + i + ".pdb" for i in pdb_ids]
     pdb2coords = PDB2CoordsUnordered()
     coords, _, resnames, _, atomnames, num_atoms = pdb2coords(path_list)
-    a, b = getBBox(coords, num_atoms)
-    c = a - b
-
-    return torch.abs(c).int() #.numpy()
+    r_min, r_max = getBBox(coords, num_atoms)
+    bbox_dims = torch.abs(r_min - r_max).int()
+    
+    return bbox_dims
 
 
 
 def stipOBB(pdb_ids, path, gfe):
     """
-
-    to be continued!!!!!!!!!!!!!
+    Function to strip out artifacts(high positive GFE values) outside of the bounding box.
+    
     """
 
     nxyz = gfe.shape // 2
@@ -87,13 +95,7 @@ def stipOBB(pdb_ids, path, gfe):
     gfe[0:ixL , 0:iyL, 0:izL] = box_med()
     gfe[ixR:nx , iyR:ny, yzR:nz] = box_med()
 
-
-
     return 0
-
-
-
-
 
 
 #Below, not used functions!
@@ -119,45 +121,39 @@ def ubin_target(target, maxV, scale=1):
 if __name__=='__main__':
 
 
-    pdb_ids = ["1ycr"]#, "1pw2", "1s4u", "2f6f"]#, "2am9", "3my5_a", "3w8m", "4ic8", "4f5t"]
-    path = "/u1/home/tr443/data/fragData/" #../../data/"
-    path_list = [path + i + ".pdb" for i in pdb_ids]
+    pdb_ids = ["4f5t"]#"1ycr", "1pw2", "1s4u", "2f6f"]#, "2am9", "3my5_a", "3w8m", "4ic8", "4f5t"]
+    #path = "/u1/home/tr443/data/fragData/"
+    path = "../../data/"
 
+    #path_list = [path + i + ".pdb" for i in pdb_ids]
     ibbox = get_bbox(pdb_ids, path)
     #print(ibbox)
 
-    dim = int(80)
+    dim = int(103)
     map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
-    map_path = path + "maps/" #'/u1/home/tr443/data/fragData/maps/'
+    map_path = path + "maps/"
+    
     gfe, pad, center = get_target(map_path,
                                   map_names_list,
                                   pdb_ids = pdb_ids,
                                   maxD = dim)
 
-    gap = 3
-    dL = dim//2 - ibbox//2 - gap
-    dR = dim//2 + ibbox//2 + gap
-
-    #print(dL, dR)
+    gap = 1
+    dL = dim//2 - ibbox//2 #- gap
+    dR = dim//2 + ibbox//2 #+ gap
 
     i = 0
     for ipdb in pdb_ids:
 
-        gfe[i,:, 0:dL[i][0] , :, :] = 0.0
-        gfe[i, :, :, 0:dL[i][1], :] = 0.0
-        gfe[i, :, :, :, 0:dL[i][2]] = 0.0
+        gfe1 = gfe.clone()
+        gfe1[i, :, 0:dL[i][0],   0:dL[i][1],   0:dL[i][2]]   = 0.0
+        gfe1[i, :, dR[i][0]:dim, dR[i][1]:dim, dR[i][2]:dim] = 0.0
 
-
-        gfe[i, :, dR[i][0]:dim, :, :] = 0.0
-        gfe[i, :, :, dR[i][1]:dim, :] = 0.0
-        gfe[i, :, :, :, dR[i][2]:dim] = 0.0
-
+        gfe = gfe1# torch.where(gfe < 0.1, gfe, gfe1)
         i = i + 1
 
-
-
+                
     gfe = gfe.cpu().detach().numpy()
-    #print(gfe.shape)
     for i in range(6):
 
         grid = gfe[0,i,:,:,:]#.numpy()
@@ -168,8 +164,8 @@ if __name__=='__main__':
         new_shape = nx*ny*nz
         vec = np.reshape(grid, new_shape, order="F")
 
-        out_name = pdb_ids[0] + "." + map_names_list[i]
-        write_map(vec, "", out_name, center[0,:], res = 1.0, n = [nx,ny,nz])
+        out_name = pdb_ids[0] + "." + map_names_list[i]+"P"
+        write_map(vec, "../output/maps/", out_name, center[0,:], res = 1.0, n = [nx,ny,nz])
 
 
 
