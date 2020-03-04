@@ -11,7 +11,7 @@ from src.mapIO import read_map, write_map
 
 
 
-def get_target(map_path, map_names, pdb_ids, maxD):
+def get_target(path, map_names, pdb_ids, maxD):
     """
     This function invokes necessary frag maps, pads them
     and returns them with required tensor dimension.
@@ -19,6 +19,7 @@ def get_target(map_path, map_names, pdb_ids, maxD):
 
     """
 
+    map_path = path + "maps/"
     batch_size = len(pdb_ids)
     n_maps = len(map_names)
     map_tensor = np.zeros(shape = (batch_size, n_maps, maxD, maxD, maxD))
@@ -50,7 +51,10 @@ def get_target(map_path, map_names, pdb_ids, maxD):
     #convert target maps to torch.cuda
     map_tensor = torch.from_numpy(map_tensor).float().cuda()
 
-    return map_tensor, pad, center
+    #strip out high gfe values that reside outside of bbox
+    gfe = stipOBB(pdb_ids, path, map_tensor, gfe_thresh = 0.1, gap = 0)
+
+    return gfe, pad, center
 
 
 
@@ -76,91 +80,42 @@ def get_bbox(pdb_ids, path):
     return bbox_dims
 
 
-
-def stipOBB(pdb_ids, path, gfe):
+def stipOBB(pdb_ids, path, gfe, gfe_thresh = 0.1, gap = 1):
     """
-    Function to strip out artifacts(high positive GFE values) outside of the bounding box.
+    Function to strip out artifacts(high positive GFE values)
+    outside of the bounding box. It performs above cleanng
+    satisfying two necessary conditions:
+    1. GFE values must reside outside of bounding box
+    2. GFE values must be greater than the threshold(0.1)
+  
+    """
+
+    ibbox = get_bbox(pdb_ids, path)
+    dim = gfe.shape[-1]
+     
+    dL = dim//2 - ibbox//2 - gap
+    dR = dim//2 + ibbox//2 + gap
     
-    """
-
-    nxyz = gfe.shape // 2
-    xyz_bb = get_bbox(pdb_ids, path) // 2
-
-    gfe[0:ixL , 0:iyL, 0:izL] = box_med()
-    gfe[ixR:nx , iyR:ny, yzR:nz] = box_med()
-
-    return 0
-
-
-#Below, not used functions!
-#def bin_target(target, maxV, minV, scale=1):
-#
-#    target[target > maxV] = maxV
-#    target[target < minV] = minV
-#    target = (maxV - target)*scale
-#    target = torch.ceil(target).type(torch.cuda.LongTensor)
-#
-#    return target
-#
-#
-#
-#def ubin_target(target, maxV, scale=1):
-#
-#    target = target / scale
-#    target = maxV - target
-#
-#    return target
+    i = 0
+    for ipdb in pdb_ids:
+        
+        gfe1 = gfe.clone()
+        gfe1[i, :, 0:dL[i][0],  :, :] = 0.0
+        gfe1[i, :, :, 0:dL[i][1], :]  = 0.0
+        gfe1[i, :, :, :, 0:dL[i][2]]  = 0.0
+        
+        gfe1[i,  :, dR[i][0]:dim, :, :] = 0.0
+        gfe1[i, :, :, dR[i][1]:dim, :]  = 0.0
+        gfe1[i, :, :, :, dR[i][2]:dim]  = 0.0
+           
+        gfe = torch.where(gfe < gfe_thresh, gfe, gfe1) # keep gfe values less than 0.1
+                                                       # and replace the rest with gfe1 values
+                                                       # that acts upon valuse outside of bbox
+        i = i + 1
+        
+    return gfe
 
 
 if __name__=='__main__':
-
+    print("I feel good!")
     
-
-    pdb_ids = ["4f5t"]#"1ycr", "1pw2", "1s4u", "2f6f"]#, "2am9", "3my5_a", "3w8m", "4ic8", "4f5t"]
-    path = "/u1/home/tr443/data/fragData/"
-    #path = "../../data/"
-
-    #path_list = [path + i + ".pdb" for i in pdb_ids]
-    ibbox = get_bbox(pdb_ids, path)
-    #print(ibbox)
-
-    dim = int(103)
-    map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
-    map_path = path + "maps/"
-    
-    gfe, pad, center = get_target(map_path,
-                                  map_names_list,
-                                  pdb_ids = pdb_ids,
-                                  maxD = dim)
-
-    gap = 1
-    dL = dim//2 - ibbox//2 #- gap
-    dR = dim//2 + ibbox//2 #+ gap
-
-    i = 0
-    for ipdb in pdb_ids:
-
-        gfe1 = gfe.clone()
-        gfe1[i, :, 0:dL[i][0],   0:dL[i][1],   0:dL[i][2]]   = 0.0
-        gfe1[i, :, dR[i][0]:dim, dR[i][1]:dim, dR[i][2]:dim] = 0.0
-
-        gfe = gfe1# torch.where(gfe < 0.1, gfe, gfe1)
-        i = i + 1
-
-                
-    gfe = gfe.cpu().detach().numpy()
-    for i in range(6):
-
-        grid = gfe[0,i,:,:,:]#.numpy()
-        grid = unpad_mapc(grid, pad = pad[0,:])
-
-        nx, ny, nz = grid.shape
-        #print(nx,ny,nz)
-        new_shape = nx*ny*nz
-        vec = np.reshape(grid, new_shape, order="F")
-
-        out_name = pdb_ids[0] + "." + map_names_list[i]+"P"
-        write_map(vec, "../output/maps/", out_name, center[0,:], res = 1.0, n = [nx,ny,nz])
-
-
-
