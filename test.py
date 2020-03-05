@@ -102,10 +102,6 @@ if __name__=='__main__':
         ######################################################
         print("Testing Loss", loss.item(), ipdb)
 
-        #cleanup
-        gc.collect()
-        del volume, test_map 
-        torch.cuda.empty_cache() #
         
         #output predicted maps
         output_maps(output, pad, resolution, ipdb, out_path, map_name_list)
