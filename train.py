@@ -4,111 +4,123 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
-import gc
 
 #import functions from src
-from src.cnn  import CnnModel
-from src.volume import get_volume, grid_rot
-from src.mapIO import greatest_dim, write_map
+from src.volume import get_volume
+from src.mapIO import greatest_dim
 from src.target import get_target
-from src.util import grid2vec, sample_batch, unpad_mapc
-
-#model params
-lrt = 0.0001
-#lrd = 0.0001
-wd = 0.00001
-max_epoch = 20
-batch_size = 4 #number of structures in a batch
-
-norm = True
-map_norm = False
-nsample = 1
+from src.rot24 import Rot90Seq
+from src.loss_fns import PenLoss
+from src.convSE import FragMapSE3
 
 
-#physical params
-resolution = 1.000
-RT = 0.59248368 # T=298.15K, R = 0.001987204 kcal/(mol K)
+def get_inp(pdb_ids, pdb_path, rotate = True):
+    """
+    This function takes care of all inputs: 
+    volume, maps + rotations etc..
 
-pdb_path = '/u1/home/tr443/data/fragData/'
-#pdb_path = "/scratch/tr443/fragmap/data/"
-pdb_ids = ["1ycr", "1pw2", "2f6f","4ic8", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4f5t"]
+    """
+    
+    norm = True
+    resolution = 1.000
+    map_path = pdb_path + "maps/"                                                                                
+    map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
+    dim = greatest_dim(map_path, pdb_ids) + 1
+    box_size = int(dim*resolution)
+    batch_list = [pdb_path + ids + ".pdb" for ids in pdb_ids]
 
-map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
-map_path = '/u1/home/tr443/data/fragData/maps/'
-#map_path = "/scratch/tr443/fragmap/data/maps/"
+    with torch.no_grad():
 
-#out_path = '/scratch/tr443/fragmap/output/'
-out_path = 'output/'
+        volume, _ = get_volume(path_list = batch_list, 
+                               box_size = box_size,
+                               resolution = resolution,
+                               norm = norm,
+                               rot = False,
+                               trans = False)
+        
+        target, _, _ = get_target(pdb_path,
+                                  map_names_list,
+                                  pdb_ids = pdb_ids,
+                                  maxD = dim)
 
-dim = greatest_dim(map_path, pdb_ids) + 1
-box_size = int(dim*resolution)
-
-print("#Box Dim = ",box_size)
-params_file_name = 'net_params.pth'
-
-#invoke model
-torch.cuda.set_device(0)
-model = CnnModel().cuda()
-criterion = nn.SmoothL1Loss() #nn.L1Loss()
-optimizer = optim.Adam(model.parameters(), lr = lrt, weight_decay = wd )
-rand_rotations = True
-
-
-print("#batch_id", "epoch", "Loss", "pdb_list")
-
-for epoch in range(1, max_epoch+1):
-    for batches in range(nsample):
-        batch_list, pdb_list = sample_batch(batch_size,
-                                            pdb_ids,
-                                            pdb_path,
-                                            shuffle = True)
-
-        with torch.no_grad():
-            #get batch volume tensor
-            volume, rot_matrix = get_volume(path_list = batch_list,
-                                            box_size = box_size,
-                                            resolution = resolution,
-                                            norm = norm,
-                                            rot = rand_rotations)
-            #get target map tensor torch.cuda()
-            target, _, _ = get_target(map_path,
-                                      map_names_list,
-                                      pdb_ids = pdb_list,
-                                      maxD = dim)
+        
+        if rotate:
+            irot = torch.randint(0, 24, (1,)).item()
+            volume = Rot90Seq(volume, iRot = irot)
+            target = Rot90Seq(target, iRot = irot)
+                    
+    return volume, target
 
 
+def run_model(volume, target, model, criterion, train = True):
+    
+    if train:
+        model.train()
+        model.zero_grad()
+    else:
+        model.eval()
 
-            #target maps preprocessing here!
+        
+    output = model(volume)
+    L1 = criterion(output, target, thresh = 1.0)
 
-
-            if rand_rotations:
-                target = grid_rot(target, batch_size, rot_matrix)
-
-        #############################################################
-
-
-        optimizer.zero_grad()
-        output = model(volume)
-        loss = criterion(output, target)
+    
+    L1_reg = 0.0
+    for w in model.parameters():
+        L1_reg = L1_reg + w.norm(1)
+   
+    Lambda = 0.000001
+    loss = L1 + Lambda * L1_reg
+   
+    if train:
         loss.backward()
         optimizer.step()
-
-        #print("gpu_mem: allocated",
-        #      str(torch.cuda.memory_allocated(device=None)/1000000)+"Mbs" )
-
-
-        if epoch % 10 == 0:
-            print('{0}, {1}, {2}, {3}'.format(batches, epoch, loss.item(), pdb_list))
+    
+    return L1.item()
 
 
-        #gc.collect()
-        #del volume, target, output
-        #torch.cuda.empty_cache() #
-        #print("gpu_cacched_mem",
-        #      str(torch.cuda.memory_cached(device=None)/1000000)+"Mbs" )
+if __name__=='__main__':
+    
+    
+    lrt = 0.0001
+    #wd = 0.00001
+    max_epoch = 5000
+    start = 0
+    dev_id = 1    
 
+    pdb_path = "../../data/"
+    pdb_ids = ["1ycr", "1pw2", "2f6f", "4ic8", "1s4u", "2am9", "3w8m"]
+    pdb_val = ["3my5_a", "4f5t"]
+    
+    out_path = 'output/'
+    params_file_name = 'net_params'
+   
+    torch.cuda.set_device(dev_id)
+    model = FragMapSE3().cuda()
+    criterion = PenLoss()
 
-    if epoch % 50 == 0:
-        torch.save(model.state_dict(), out_path + str(epoch) + params_file_name)
+    #uncomment line below if need to load saved parameters
+    #model.load_state_dict(torch.load(out_path +str(start)+params_file_name))#+".pth"))
 
+    
+    optimizer = optim.Adam(model.parameters(), lr = lrt)#, weight_decay = wd)
+    iStart = start + 1
+    iEnd = max_epoch + 1
+    
+    for epoch in range(iStart, iEnd):
+            
+        volume, target = get_inp(pdb_ids, pdb_path, rotate = False)
+        lossT = run_model(volume, target, model, criterion, train = True)    
+                          
+        volumeV, targetV = get_inp(pdb_val, pdb_path, rotate = True)
+        lossV = run_model(volumeV, targetV, model, criterion, train = False)  
+       
+        if epoch % 20 == 0:
+            torch.save(model.state_dict(), out_path + str(epoch) + params_file_name)
+         
+        if epoch % 2 == 0:
+            with open(out_path + 'log_train_val.txt', 'a') as fout:
+                fout.write('%d\t%f\t%f\n'%(epoch, lossT, lossV))
 
+    
+       

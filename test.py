@@ -2,19 +2,18 @@ import os
 import sys
 import torch
 import torch.nn as nn
+import torch.optim as optim
+import numpy as np
 
 from src.convSE import FragMapSE3
 from src.volume import get_volume
 from src.mapIO import write_map, greatest_dim
 from src.target import get_target
 from src.util import grid2vec, unpad_mapc, pad_mapc
-import torch.optim as optim
-import numpy as np
-import gc
 from src.loss_fns import PenLoss
 
 
-def get_inp(pdb_ids, resolution, pdb_path, rotate = True):
+def get_inp(pdb_ids, resolution, pdb_path, rotate = False):
     """
     This function takes care of all inputs: 
     volume, maps + rotations etc..
@@ -37,7 +36,7 @@ def get_inp(pdb_ids, resolution, pdb_path, rotate = True):
                                rot = False,
                                trans = False)
         
-        target, pad, center = get_target(map_path,
+        target, pad, center = get_target(pdb_path,
                                 map_names_list,
                                 pdb_ids = pdb_ids,
                                 maxD = dim)
@@ -80,6 +79,7 @@ if __name__=='__main__':
     map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
     map_path = '../../data/maps/'
     out_path = 'output/'
+    map_names_listM = [m + "M" for m in map_names_list]
 
     
     params_file_name = str(istate_load)+'net_params'
@@ -97,11 +97,13 @@ if __name__=='__main__':
         
         #invoke model
         output = model(volume)
-        loss = criterion(output, test_map, thresh = 1.0)
+        loss = criterion(output, test_map, thresh = 2.0)
         
         ######################################################
         print("Testing Loss", loss.item(), ipdb)
-
-        
-        #output predicted maps
+     
+        #output predicted maps and modified input maps
         output_maps(output, pad, resolution, ipdb, out_path, map_name_list)
+        output_maps(test_map, pad, resolution, ipdb, out_path, map_name_listM)
+
+

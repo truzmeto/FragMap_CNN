@@ -91,8 +91,12 @@ def stipOBB(pdb_ids, path, gfe, gfe_thresh = 0.1, gap = 1):
     """
 
     ibbox = get_bbox(pdb_ids, path)
-    dim = gfe.shape[-1]
-     
+    dims = gfe.shape
+        
+    if (dims[2] != dims[3]) or (dims[2] != dims[3]) or (dims[3] != dims[4]):
+        raise ValueError("Box dims is not cubic!")
+ 
+    dim = dims[-1]
     dL = dim//2 - ibbox//2 - gap
     dR = dim//2 + ibbox//2 + gap
     

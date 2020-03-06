@@ -49,8 +49,7 @@ def get_volume(path_list, box_size, resolution,
         random_translations = getRandomTranslation(a, b, resolution*box_size)
         coords = translate(coords, random_translations, num_atoms)                             
 
-    coords, num_atoms_of_type, offsets = assignTypes(coords.to(dtype=torch.float32),
-                                                     resnames, atomnames, num_atoms)
+    coords, num_atoms_of_type, offsets = assignTypes(coords.to(dtype=torch.float32), resnames, atomnames, num_atoms)
     volume = project(coords.cuda(), num_atoms_of_type.cuda(), offsets.cuda())
     
     if norm: #apply min-max norm 
@@ -74,8 +73,6 @@ def grid_rot(volume, batch_size, rot_matrix):
     volume = volume_rotate(volume, R.to(dtype = torch.float, device = 'cuda'))
 
     return volume
-
-
 
 
 if __name__=='__main__':
