@@ -52,7 +52,7 @@ def get_target(path, map_names, pdb_ids, maxD):
     map_tensor = torch.from_numpy(map_tensor).float().cuda()
 
     #strip out high gfe values that reside outside of bbox
-    gfe = stipOBB(pdb_ids, path, map_tensor, gfe_thresh = 0.1, gap = 0)
+    gfe = stipOBB(pdb_ids, path, map_tensor, gfe_thresh = -0.2, gap = 0)
 
     return gfe, pad, center
 
@@ -112,7 +112,7 @@ def stipOBB(pdb_ids, path, gfe, gfe_thresh = 0.1, gap = 1):
         gfe1[i, :, :, dR[i][1]:dim, :]  = 0.0
         gfe1[i, :, :, :, dR[i][2]:dim]  = 0.0
            
-        gfe = torch.where(gfe < gfe_thresh, gfe, gfe1) # keep gfe values less than 0.1
+        gfe = torch.where(gfe < gfe_thresh, gfe, gfe1) # keep gfe values less than 'gfe_thresh'
                                                        # and replace the rest with gfe1 values
                                                        # that acts upon valuse outside of bbox
         i = i + 1
