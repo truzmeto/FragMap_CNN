@@ -6,31 +6,37 @@ from torch.nn.modules.module import Module
 import torch.nn.functional as F
 import numpy as np
 
-from se3cnn.image.convolution import SE3Convolution
+#from se3cnn.image.convolution import SE3Convolution
+from se3cnn import SE3Convolution
+
 
 class FragMapSE3(Module):
-    def __init__(self, num_input_channels=11):
+    def __init__(self, inp_chans=11):
         super(FragMapSE3, self).__init__()
 
+        #to keep volume dims same
+        k = 5
+        p = (k-1)//2
+
         self.conv = nn.Sequential(
-            SE3Convolution([(num_input_channels,0)], [(32,0)], size=5, dyn_iso=True, padding=2, bias=None),
+            SE3Convolution([(inp_chans,0)], [(32,1)], size=k, dyn_iso=True, padding=p, bias=None),
             nn.ReLU(),
-            # ScalarActivation([(multiplier*2, F.relu)], bias=False),
-
-            SE3Convolution([(32,0)], [(64,0)], size=5, dyn_iso=True, padding=2, bias=None),
+                      
+            SE3Convolution([(32,1)], [(64,1)], size=k, dyn_iso=True, padding=p, bias=None),
             nn.ReLU(),
-            # ScalarActivation([(multiplier*2, F.relu)], bias=False),
+            #MinPool3d(kernel_size = k,
+            #             stride = (1,1,1),
+            #             padding = p),
 
-            SE3Convolution( [(64,0)], [(32,0)], size=5, dyn_iso=True, padding=2, bias=None),
+
+            SE3Convolution( [(64,1)], [(32, 0)], size=k, dyn_iso=True, padding=p, bias=None),
             nn.ReLU(),
-
-            SE3Convolution( [(32,0)], [(6,0)], size=5, dyn_iso=True, padding=2, bias=None),
-            nn.ReLU(),
-
+            nn.Dropout3d(0.1),
+            
+            SE3Convolution( [(32,0)],  [(6,0)], size=k, dyn_iso=True, padding=p, bias=None),
         )
 
-
-        self.apply(init_weights)
+        #self.apply(init_weights)
 
 
     def forward(self, input):
@@ -40,6 +46,7 @@ class FragMapSE3(Module):
 
 #custom weigt init
 def init_weights(m):
+    print(type(m))
     if type(m) == nn.Conv3d:
         torch.nn.init.xavier_uniform_(m.weight)
     if type(m) == nn.Linear:
@@ -52,33 +59,17 @@ def count_parameters(model):
     return n_params
 
 
+class MinPool3d(nn.MaxPool3d):
+    """
+
+    """
+
+    def forward(self, input):
+        return -F.max_pool3d(-input, self.kernel_size, self.stride,
+                             self.padding, self.dilation, self.ceil_mode,
+                             self.return_indices)
+
+
+
 if __name__=='__main__':
-
-    import pyvista as pv
-
-    ########---------- Simple test with 1 forward pass -----------########
-    c, d, h, w = 11, 20, 20, 20
-    torch.manual_seed(3000)
-    data = torch.randn(1, c, d, h, w)
-
-    print(data.size())
-
-    #invoke the model
-    model = ProteinReprSE3()
-    #model = CnnModel()
-    output = model(data)
-
-    #compare input and output shapes
-    print("11 input channels VS 4 output channels")
-    print("Input dimension -->", data.size())
-    print("Output dimension -->",output.size())
-
-
-    #plot output density map
-    chan_id = 4 # can be 0,1,2,3
-    channel = output[0,chan_id,:,:,:].detach().numpy()
-    p = pv.Plotter(point_smoothing = True)
-    p.add_volume(np.abs(channel), cmap = "viridis", opacity = "linear")
-
-    p.show()
-
+    print("dude")

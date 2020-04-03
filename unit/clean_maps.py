@@ -9,18 +9,19 @@ from src.target import get_target
 from src.util import pad_mapc, unpad_mapc
 
 
-pdb_ids = ["1bvi_m1_fixed"]#"1ycr", "1pw2", "1s4u", "2f6f"]#, "2am9", "3my5_a", "3w8m", "4ic8", "4f5t"]
+pdb_ids = ["5q0i"]#"1bvi_m1_fixed"]#"1ycr", "1pw2", "1s4u", "2f6f"]#, "2am9", "3my5_a", "3w8m", "4ic8", "4f5t"]
 path = "/u1/home/tr443/data/fragData/"
 #path = "../../data/"
 
-dim = int(53)
+dim = int(72)
 map_names_list = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
 
 gfe, pad, center = get_target(path,
-                              map_names_list,
-                              pdb_ids = pdb_ids,
-                              maxD = dim)
+                            map_names_list,
+                            pdb_ids = pdb_ids,
+                            maxD = dim)
 
+print("min = ", gfe.min(), " max = ",  gfe.max())
 gfe = gfe.cpu().detach().numpy()
 for i in range(6):
     
