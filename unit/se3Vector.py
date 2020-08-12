@@ -1,9 +1,9 @@
 import torch
 
-from se3cnn.image.convolution import SE3Convolution
-#from se3cnn import SE3Convolution
-from se3cnn.image.gated_block import GatedBlock
-#from se3cnn.blocks import GatedBlock
+#from se3cnn.image.convolution import SE3Convolution
+from se3cnn import SE3Convolution
+#from se3cnn.image.gated_block import GatedBlock
+from se3cnn.blocks import GatedBlock
 
 size = 32  # space size
 
@@ -21,3 +21,4 @@ vector_field = block(scalar_field)
 scalar_field = conv(vector_field)
 
 print(vector_field.size())
+print(scalar_field.size())
