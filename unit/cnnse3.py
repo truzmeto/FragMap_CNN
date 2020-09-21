@@ -5,8 +5,8 @@ import torch.nn.functional as F
 import torch
 import numpy as np
 import pyvista as pv
-from se3cnn.image.convolution import SE3Convolution
 
+from se3cnn.image.convolution import SE3Convolution
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.convSE import FragMapSE3
 
