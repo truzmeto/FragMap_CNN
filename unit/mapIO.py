@@ -9,9 +9,9 @@ from src.mapIO import read_map, write_map
 
 
 pdb_ids = ["1ycr","1pw2","2f6f", "4f5t", "2am9", "3my5_a", "3w8m", "4ic8"] 
-
-path = "../data/maps/"
+path = "/u1/home/tr443/data/fragData/maps/"
 frag_names = ["apolar", "hbacc","hbdon", "meoo", "acec", "mamn"]
+
 idx = 7 # pdb id
 pdb_id = pdb_ids[idx]
 path_list = [path+pdb_id+"." + i + ".gfe.map" for i in frag_names]

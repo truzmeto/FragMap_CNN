@@ -8,23 +8,17 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.volume import get_volume
 
 
-pdb_ids = ["3my5_a", "4f5t"]#, "4wj9", "3bi0", "1d6e_nopep_fixed",
-           #"1ycr", "1pw2", "2f6f", "4ic8", "1s4u", "2am9",
-           #"1bvi_m1_fixed", "4djw", "4lnd_ba1", "4obo",
-           #"1h1q", "3fly", "4gih", "2gmx", "4hw3", "4ypw_prot_nocter",
-           # "3w8m", "2qbs", "4jv7", "5q0i", "1r2b", "2jjc"]
+pdb_ids = ["3my5_a", "4f5t", "4wj9"]
 
-
-#print(len(pdb_ids))
 ipdb = len(pdb_ids)-2
-path = "/u1/home/tr443/data/fragData/"
+path = "/u1/home/tr443/data/fragData/" #??????????
 
 box_size = 90  #prog complains if box_size is float !!!!!!
 resolution = 1.0
 
 for i in range(len(pdb_ids)):
 
-    #    #path_list = [path+i+".pdb" for i in [pdb_ids[ipdb]]]
+    #path_list = [path+i+".pdb" for i in [pdb_ids[ipdb]]]
     path_list = [path + pdb_ids[i] + ".pdb"]
     print(pdb_ids[i])
     volume, _ = get_volume(path_list,

@@ -8,15 +8,13 @@ from src.mapIO import greatest_dim
 from src.target import get_target
 from src.util import unpad_mapc
 
-pdb_path = '../data/'
+pdb_path = "/u1/home/tr443/data/fragData/"
 pdb_ids = ["1ycr"]#, "1pw2", "2f6f"]#, "4f5t", "1s4u", "2am9", "3my5_a", "3w8m"]#,"4ic8"]
-
 map_names_list = ["apolar"]#, "hbacc","hbdon", "meoo", "acec", "mamn"]
-map_path = '../data/maps/' 
+map_path = pdb_path  
 dim = 100 #greatest_dim(map_path, pdb_ids) + 1
 
 pdb_list = ["1ycr"]#, "1pw2"]    
-#get target map tensor
 
 target, pad, center = get_target(map_path,
                                  map_names_list,
@@ -28,6 +26,3 @@ print('Padded Tensor Dims', target.shape)
 print("Pads ", pad)
 print("Max val", target.max())
 
-#unpad 1st structure and 1st volume
-#up_gfe = unpad_map(target[0,0,:,:,:], pad[0][0]+1,pad[0][1]+1, pad[0][2]+1)
-#print("Unpadded 1st map", up_gfe.shape)
