@@ -30,7 +30,7 @@ def box_face_error(pred, target):
     #number of voxels on face, simple algebra
     n_face_vox = nx*ny*nz - (nx-2)*(ny-2)*(nz-2)
     face_err = dface_x + dface_y + dface_z
-    face_err = face_err.sqrt() / n_face_vox
+    face_err = face_err.sqrt() / np.sqrt(n_face_vox)
 
     return face_err
 
