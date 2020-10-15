@@ -6,12 +6,12 @@ import torch.optim as optim
 import numpy as np
 
 #import functions from src
-from src.volume import get_volume
-from src.mapIO import greatest_dim
-from src.target import get_target
-from src.rot24 import Rot90Seq
-from src.loss_fns import PenLoss
-from src.convSE import FragMapSE3
+from src.Util.volume import get_volume
+from src.Util.mapIO import greatest_dim
+from src.Util.target import get_target
+from src.Util.rot24 import Rot90Seq
+from src.Loss.loss_fns import PenLoss
+from src.Model.convSE import FragMapSE3
 
 
 def get_inp(pdb_ids, pdb_path, rotate = True):
