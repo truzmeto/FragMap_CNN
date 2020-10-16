@@ -3,7 +3,7 @@ import pyvista as pv
 import numpy as np
 import sys
 import os
-from rot import get3D_rod
+from Shapes3D import get3D_rod
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from src.Util.rot24 import Rot90Seq

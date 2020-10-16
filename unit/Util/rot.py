@@ -6,6 +6,7 @@ import numpy as np
 import sys
 import os
 from scipy import ndimage
+from Shapes3D import get3D_rod
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from src.Util.rot24 import Rot90Seq
@@ -24,37 +25,12 @@ def rotate_ligand(ligand, rotation_angle):
     return ligand
 
 
-def get3D_rod():
-    """
-    function that constructs xyz axiz type object
-    with diff. colored tips to check if rotations
-    are physcal
-    """
-
-    volume = torch.zeros(1,1,55,54,53)
-    length = 15
-    st = [27,26,25]
-
-    volume[:,:,st[0]:st[0]+length,st[1],st[2]] = 0.5
-    volume[:,:,st[0]+length:st[0]+length+2,st[1],st[2]] = 0.2
-
-    volume[:,:,st[0],st[1]:st[1]+length,st[2]] = 0.5
-    volume[:,:,st[0],st[1]+length:st[1]+length+2,st[2]] = 1.
-    
-    volume[:,:,st[0],st[1],st[2]:st[2]+length] = 0.5
-    volume[:,:,st[0],st[1],st[2]+length:st[2]+length+2] = 2.0
-    
-    volume[:,:,st[0],st[1]:st[1]+length,st[2]:st[2]+length] = 0.2
-    volume[:,:,st[0],st[1]+length:st[1]+length+1,st[2]+length:st[2]+length+1] = 1.5
-
-    return volume
-
 
 if __name__=='__main__':
    
     volume =  get3D_rod()
     R = getRandomRotation(1) #
-    volume_rotate = VolumeRotation(mode='bilinear') #'nearest'
+    volume_rotate = VolumeRotation(mode='bilinear') #'nearect'
     volume_rot = volume_rotate(volume.to(dtype=torch.float, device='cuda'),
                                R.to(dtype=torch.float, device='cuda'))
 

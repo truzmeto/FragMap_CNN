@@ -14,11 +14,8 @@ torch.manual_seed(3000)
 data = torch.randn(1, c, d, h, w)
 print(data.size())
 
-#invoke the model
-in_dim = c
-out_dim = 6
-
-model = UNet(in_dim=in_dim, out_dim=out_dim, num_filters=4)
+in_dim = c; out_dim = 6
+model = UNet(in_dim = in_dim, out_dim = out_dim, num_filters = 4)
 output = model(data)
 
 #compare input and output shapes
