@@ -8,26 +8,36 @@ import pyvista as pv
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from src.SE3Model.SE3Model import E3nn
-
+from unit.Util.Shapes3D import get3D_rod
 ########---------- Simple test with 1 forward pass -----------########
-c, d, h, w = 11, 20, 20, 20
+
+b, c, d, h, w = 2, 11, 32, 32, 32
+dim = (b, c, d, h, w)
+inp =  get3D_rod(dim).cuda()
 torch.manual_seed(1000)
-data = torch.randn(1, c, d, h, w).cuda()
+
 model = E3nn().cuda()
-
 print("11 input channels VS 6 output channels")
-print("Input dimension -->", data.size())
+print("Input dimension -->", inp.size())
 
-
-data = torch.einsum('tixyz->txyzi', data)
+data = torch.einsum('tixyz->txyzi', inp)
 output = model(data)
 output = torch.einsum('txyzi->tixyz', output)
 print("Output dimension -->",output.size())
 
 
 #plot output density map
-chan_id = 0 # can be 0,1,2,3
+chan_id = 2 # can be 0,1,2,3
+channel = inp[0,chan_id,:,:,:].cpu().detach().numpy()
+fs = 16; cmap = 'gist_ncar'#'rainbow'
+p = pv.Plotter(point_smoothing = True, shape=(1, 2))
+p.subplot(0, 0)
+p.add_text("Input", position = 'upper_left', font_size = fs)
+p.add_volume(np.abs(channel), cmap = cmap, opacity = "linear")
+
 channel = output[0,chan_id,:,:,:].cpu().detach().numpy()
-p = pv.Plotter(point_smoothing = True)
-p.add_volume(np.abs(channel), cmap = "viridis", opacity = "linear")
+p.subplot(0, 1)
+p.add_text("Output", position = 'upper_left', font_size = fs)
+p.add_volume(np.abs(channel), cmap = cmap, opacity = "linear")
+
 p.show()
