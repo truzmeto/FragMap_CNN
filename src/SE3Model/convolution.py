@@ -10,9 +10,11 @@ from e3nn.radial import CosineBasisModel
 
 
 class Convolution(torch.nn.Module):
-    def __init__(self, Rs_in, Rs_out, size, steps=(1, 1, 1), lmax=None, fuzzy_pixels=False, **kwargs):
+    def __init__(self, Rs_in, Rs_out, size, steps=(1, 1, 1), lmax=None, transpose=False, fuzzy_pixels=False, **kwargs):
         super().__init__()
 
+        
+        self.trans = transpose
         r = torch.linspace(-1, 1, size)
         x = r * steps[0] / min(steps)
         x = x[x.abs() <= 1]
@@ -48,7 +50,7 @@ class Convolution(torch.nn.Module):
             Y.mul_(math.sqrt(4 * math.pi))  # normalization='component'
             self.kernel.Y.copy_(Y.mean(0))
 
-    def forward(self, features, trans=False):
+    def forward(self, features):
         """
         :param tensor features: [batch, x, y, z, channel]
         :return: [batch, x, y, z, channel]
@@ -57,7 +59,7 @@ class Convolution(torch.nn.Module):
         k = torch.einsum('xyzij->ijxyz', self.kernel())
         k.mul_(1 / k[0, 0].numel() ** 0.5)
 
-        if trans == False:
+        if self.trans == False:
             features = torch.nn.functional.conv3d(features, k, **self.kwargs)
         else:
             features = torch.nn.functional.conv_transpose3d(features, k, **self.kwargs)

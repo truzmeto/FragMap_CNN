@@ -24,9 +24,9 @@ k_size = 3;
 print("Upsampling test with SE3ConvTranspose3D")
 print("Input dimension -->", inp.size())
 
-model = Convolution(Rs_in, Rs_out, size=k_size, stride=2, padding=1, output_padding=1).cuda()
+model = Convolution(Rs_in, Rs_out, size=k_size, stride=2, padding=1, transpose=True, output_padding=1).cuda()
 data = torch.einsum('tixyz->txyzi', inp)
-output = model(data, trans = True)
+output = model(data)
 output = torch.einsum('txyzi->tixyz', output)
 
 print("Output dimension -->",output.size())

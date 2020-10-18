@@ -16,6 +16,7 @@ dim = (b, c, d, h, w)
 inp =  get3D_rod(dim).cuda()
 torch.manual_seed(1000)
 
+
 print("SE3 single forward pass convolution test")
 print("Input dimension -->", inp.size())
 
@@ -25,7 +26,7 @@ k_size = 5; pad = k_size//2
 
 model = Convolution(Rs_in, Rs_out, size = k_size, padding = pad).cuda()
 data = torch.einsum('tixyz->txyzi', inp)
-output = model(data, trans = False)
+output = model(data)
 output = torch.einsum('txyzi->tixyz', output)
 print("Output dimension -->",output.size())
 
