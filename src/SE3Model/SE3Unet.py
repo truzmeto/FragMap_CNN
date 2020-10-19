@@ -25,7 +25,7 @@ def conv_block_3d(Rs_in, Rs_out):
 
 def conv_trans_block_3d(Rs_in, Rs_out):
     return nn.Sequential(
-        Convolution(Rs_in, Rs_out, lmax = 0, size=3, stride=2, padding=1, output_padding=1, transpose=True, fuzzy_pixels = True),
+        Convolution(Rs_in, Rs_out, lmax=0, size=3, stride=2, padding=1, output_padding=1, transpose=True, fuzzy_pixels = True),
         #nn.BatchNorm3d(out_dim),
         NormActivation(Rs_out, tanh, normalization = 'componenet'),
     )

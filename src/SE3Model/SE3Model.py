@@ -17,12 +17,12 @@ from src.SE3Model.convolution import Convolution
 
 
 class E3nn(torch.nn.Module):
-    def __init__(self, num_input_channels=11, out_channels=6):
+    def __init__(self, num_input_channels=11, out_channels=6, lmax=0):
         super(E3nn, self).__init__()
 
         size = 7
         pad = size // 2
-        lmax = 2
+        #lmax = 2
         Rs = list(range(lmax + 1)) # [0,1,2]
         m = 4 #multiplier
         fuzzy_pixels = True

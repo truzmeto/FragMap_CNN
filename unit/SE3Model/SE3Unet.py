@@ -10,7 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from src.SE3Model.SE3Unet import UNet
 from unit.Util.Shapes3D import get3D_rod
 ########---------- Simple test with 1 forward pass -----------########
-
+model_name = "SE(3) U-net"
 b, c, d, h, w = 2, 11, 96, 96, 96
 dim = (b, c, d, h, w)
 inp =  get3D_rod(dim).cuda()
@@ -33,10 +33,10 @@ print("Output dimension -->",output.size())
 #plot output density map
 chan_id = 2 # can be 0,1,2,3
 channel = inp[0,chan_id,:,:,:].cpu().detach().numpy()
-fs = 16; cmap = 'gist_ncar'#'rainbow'
+fs = 15; cmap = 'gist_ncar'#'rainbow'
 p = pv.Plotter(point_smoothing = True, shape=(1, 2))
 p.subplot(0, 0)
-p.add_text("Input", position = 'upper_left', font_size = fs)
+p.add_text(model_name + "  Input", position = 'upper_left', font_size = fs)
 p.add_volume(np.abs(channel), cmap = cmap, opacity = "linear")
 
 channel = output[0,chan_id,:,:,:].cpu().detach().numpy()

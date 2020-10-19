@@ -32,16 +32,16 @@ print("Output dimension -->",output.size())
 
 #plot output density maps
 chan_id = 0 # can be 0,1,2,3
-channel = inp[0,chan_id,:,:,:].cpu().detach().numpy()
+chan1 = inp[0,chan_id,:,:,:].cpu().detach().numpy()
 fs = 16; cmap = 'gist_ncar'#'rainbow'
 p = pv.Plotter(point_smoothing = True, shape=(1, 2))
 p.subplot(0, 0)
 p.add_text("Input", position = 'upper_left', font_size = fs)
-p.add_volume(np.abs(channel), cmap = cmap, opacity = "linear")
+p.add_volume(np.abs(chan1), cmap = cmap, opacity = "linear")
 
-channel = output[0,chan_id,:,:,:].cpu().detach().numpy()
+chan2 = output[0,chan_id,:,:,:].cpu().detach().numpy()
 p.subplot(0, 1)
 p.add_text("Output", position = 'upper_left', font_size = fs)
-p.add_volume(np.abs(channel), cmap = cmap, opacity = "linear")
+p.add_volume(np.abs(chan2), cmap = cmap, opacity = "linear")
 
 p.show()
