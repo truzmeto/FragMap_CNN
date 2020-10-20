@@ -12,9 +12,8 @@ import pyvista as pv
 from scipy import ndimage
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
-from src.SE3Model.convolution import Convolution
 from unit.Util.Shapes3D import get3D_rod
-from src.Util.rot24 import Rot90Seq
+from src.Model.cnn import CnnModel
 
 def rotate_ligand(ligand, rotation_angle):    
     
@@ -32,23 +31,16 @@ def rotate_ligand(ligand, rotation_angle):
 
 ########---------- Simple test with 1 forward pass -----------########
 
-b, c, d, h, w = 2, 2, 32, 32, 32
+b, c, d, h, w = 1, 11, 32, 32, 32
 dim = (b, c, d, h, w)
 torch.manual_seed(1000)
 
-
-
-Rs_in = [(c, 0)]  
-Rs_out = [(c, 0)]  # number of inp and out channels should be same for TransConv
-k_size = 5; pad = k_size//2
 
 #plot output density maps
 chan_id = 0 # can be 0,1,2,3
 fs = 16; cmap = 'gist_ncar'#'rainbow'
 
-#model = Convolution(Rs_in, Rs_out, size = k_size, padding = pad).cuda()
-model = Convolution(Rs_in, Rs_out, size=k_size, stride=2, padding=1,
-                    fuzzy_pixels=True, transpose=True, output_padding=1).cuda()
+model = CnnModel().cuda()
 inp =  get3D_rod(dim).cuda()
 
 # Open a movie file
@@ -57,9 +49,7 @@ p.open_movie('my_movie.mp4')
 
 
 #calc conv for original
-data = torch.einsum('tixyz->txyzi', inp)
-output = model(data)
-output = torch.einsum('txyzi->tixyz', output)
+output = model(inp)
 norm =  output.max() - output.min()
 
 for i in range(180):
@@ -67,12 +57,11 @@ for i in range(180):
     inpR = rotate_ligand(inp.cpu().detach().numpy(), rotation_angle= i*2.0)
     inpR = torch.from_numpy(inpR).float().to('cuda')
     
-    dataR = torch.einsum('tixyz->txyzi', inpR)
-    outputR = model(dataR)
-    outputR = torch.einsum('txyzi->tixyz', outputR)
+    outputR = model(inpR)
 
     outputUR = rotate_ligand(outputR.cpu().detach().numpy(), rotation_angle= -i*2.0)
     outputUR = torch.from_numpy(outputUR).float().to('cuda')
+
     err = (output - outputUR).pow(2).mean().sqrt() / norm
     err = err.item()
     

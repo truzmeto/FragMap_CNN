@@ -43,7 +43,7 @@ Rs_out = [(c, 0)]  # number of inp and out channels should be same for TransConv
 chan_id = 0 # can be 0,1,2,3
 fs = 16; cmap = 'gist_ncar'#'rainbow'
 
-model = E3nn(num_input_channels=1, lmax=0).cuda()
+model = E3nn(num_input_channels=1, lmax=2).cuda()
 inp =  get3D_rod(dim).cuda()
 
 # Open a movie file
@@ -55,6 +55,7 @@ p.open_movie('my_movie.mp4')
 data = torch.einsum('tixyz->txyzi', inp)
 output = model(data)
 output = torch.einsum('txyzi->tixyz', output)
+norm =  output.max() - output.min()
 
 for i in range(180):
 
@@ -67,13 +68,13 @@ for i in range(180):
 
     outputUR = rotate_ligand(outputR.cpu().detach().numpy(), rotation_angle= -i*2.0)
     outputUR = torch.from_numpy(outputUR).float().to('cuda')
-    err = (output - outputUR).pow(2).mean().sqrt()
+    err = (output - outputUR).pow(2).mean().sqrt() / norm
     err = err.item()
     
     p.subplot(0, 0)
     chan1 = inpR[0,chan_id,:,:,:].cpu().detach().numpy()
     p.add_text("Input ", position = 'lower_left', font_size = fs)
-    p.add_text("RMS(out - out_unrot) =  " + str(round(err,5)), position = 'upper_left', font_size = fs-2)
+    p.add_text("RMSE =  " + str(round(err,5)), position = 'upper_left', font_size = fs-2)
     p.add_volume(np.abs(chan1), cmap = cmap, opacity = "linear", show_scalar_bar=False)
     
     p.subplot(0, 1)

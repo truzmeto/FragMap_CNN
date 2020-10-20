@@ -17,26 +17,21 @@ from unit.Util.Shapes3D import get3D_rod
 from src.Util.rot24 import Rot90Seq
 
 def rotate_ligand(ligand, rotation_angle):    
-    
+
     ligand = ndimage.interpolation.rotate(ligand,
                                           angle = rotation_angle,
                                           axes=(2,3),
                                           reshape=False,
-                                          order=1,
+                                          order = 1,
                                           mode= 'nearest',#'constant',
                                           cval=0.0)
     
     return ligand
 
-
-
 ########---------- Simple test with 1 forward pass -----------########
-
 b, c, d, h, w = 2, 2, 32, 32, 32
 dim = (b, c, d, h, w)
 torch.manual_seed(1000)
-
-
 
 Rs_in = [(c, 0)]  
 Rs_out = [(c, 0)]  # number of inp and out channels should be same for TransConv
@@ -58,6 +53,7 @@ p.open_movie('my_movie.mp4')
 data = torch.einsum('tixyz->txyzi', inp)
 output = model(data)
 output = torch.einsum('txyzi->tixyz', output)
+norm = inp.max() - inp.min()
 
 for i in range(180):
 
@@ -70,18 +66,19 @@ for i in range(180):
 
     outputUR = rotate_ligand(outputR.cpu().detach().numpy(), rotation_angle= -i*2.0)
     outputUR = torch.from_numpy(outputUR).float().to('cuda')
-    err = (output - outputUR).pow(2).mean().sqrt()
+    err = (output - outputUR).pow(2).mean().sqrt() / norm 
+    #err = (output - outputUR).abs().max()
     err = err.item()
     
     p.subplot(0, 0)
     chan1 = inpR[0,chan_id,:,:,:].cpu().detach().numpy()
-    p.add_text("Input ", position = 'upper_left', font_size = fs)
-    p.add_text("RMS(out - out_unrot) =  " + str(round(err,5)), position = 'lower_left', font_size = fs-2)
+    p.add_text("Input ", position = 'lower_left', font_size = fs)
+    p.add_text("RMS =  " + str(round(err,5)), position = 'upper_left', font_size = fs-2)
     p.add_volume(np.abs(chan1), cmap = cmap, opacity = "linear", show_scalar_bar=False)
     
     p.subplot(0, 1)
     chan2 = outputR[0,chan_id,:,:,:].cpu().detach().numpy()
-    p.add_text("Output", position = 'upper_left', font_size = fs)
+    p.add_text("Output", position = 'lower_left', font_size = fs)
     p.add_volume(np.abs(chan2), cmap = cmap, opacity = "linear", show_scalar_bar=False)
 
     if i == 0 :
