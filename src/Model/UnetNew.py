@@ -9,19 +9,13 @@ def ConvBlock1(in_dim, out_dim, size, act):
         act,
     )
 
-def ConvBlock2(in_dim, out_dim, size, act):
+def ConvBlock2(in_dim, out_dim, size, act, stride):
     return nn.Sequential(
         ConvBlock1(in_dim, out_dim, size, act),
-        nn.Conv3d(out_dim, out_dim, kernel_size=size, stride=2, padding=size//2),
+        nn.Conv3d(out_dim, out_dim, kernel_size=size, stride=stride, padding=size//2), 
         nn.BatchNorm3d(out_dim),
     )
 
-def ConvBlock3(in_dim, out_dim, size, act):
-    return nn.Sequential(
-        ConvBlock1(in_dim, out_dim, size, act),
-        nn.Conv3d(out_dim, out_dim, kernel_size=size, stride=1, padding=size//2),
-        nn.BatchNorm3d(out_dim),
-    )
 
 def ConvTransBlock(in_dim, out_dim, size, act):
     return nn.Sequential(
@@ -41,26 +35,33 @@ class UNet(nn.Module):
         act = nn.LeakyReLU(0.2, inplace=True)
         
         # Down sampling
-        self.down_1 = ConvBlock2(in_dim, m, size, act)
-        self.down_2 = ConvBlock2(m, m * 2, size, act)
-        self.down_3 = ConvBlock2(m * 2, m * 4, size, act)
-        self.down_4 = ConvBlock2(m * 4, m * 8, size, act)
-        self.down_5 = ConvBlock2(m * 8, m * 16, size, act)
+        self.down_1 = ConvBlock2(in_dim, m, size, act, stride=2)
+        self.down_2 = ConvBlock2(m, m * 2, size, act, stride=2)
+        self.down_3 = ConvBlock2(m * 2, m * 4, size, act, stride=2)
+        self.down_4 = ConvBlock2(m * 4, m * 8, size, act, stride=2)
+        self.down_5 = ConvBlock2(m * 8, m * 16, size, act, stride=2)
+
         
         # Bridge
-        self.bridge = ConvBlock3(m * 16, m * 32, size, act)
+        self.bridge = ConvBlock2(m * 16, m * 32, size, act, stride=1)
+
         
         # Up sampling
         self.trans_1 = ConvTransBlock(m * 32, m * 32, size, act)
-        self.up_1 = ConvBlock3(m * 48, m * 16, size, act) 
+        self.up_1 = ConvBlock2(m * 48, m * 16, size, act, stride=1)
+        
         self.trans_2 = ConvTransBlock(m * 16, m * 16, size, act)
-        self.up_2 = ConvBlock3(m * 24, m * 8, size, act)
+        self.up_2 = ConvBlock2(m * 24, m * 8, size, act, stride=1)
+
         self.trans_3 = ConvTransBlock(m * 8, m * 8, size, act)
-        self.up_3 = ConvBlock3(m * 12, m * 4, size, act)
+        self.up_3 = ConvBlock2(m * 12, m * 4, size, act, stride=1)
+
         self.trans_4 = ConvTransBlock(m * 4, m * 4, size, act)
-        self.up_4 = ConvBlock3(m * 6, m * 2, size, act)
+        self.up_4 = ConvBlock2(m * 6, m * 2, size, act, stride=1)
+
         self.trans_5 = ConvTransBlock(m * 2, m * 2, size, act)
-        self.up_5 = ConvBlock3(m * 3, m * 1, size, act)
+        self.up_5 = ConvBlock2(m * 3, m * 1, size, act, stride=1)
+
         
         # Output
         self.out = ConvBlock1(m, out_dim, size, act)

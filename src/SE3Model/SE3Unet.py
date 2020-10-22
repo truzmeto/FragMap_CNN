@@ -1,6 +1,7 @@
 """
 SE(3) Unet model by T. Ruzmetov
 """
+
 import sys
 import os
 
@@ -11,89 +12,71 @@ import torch.nn.functional as F
 from e3nn.non_linearities.rescaled_act import sigmoid, swish, tanh
 from e3nn.non_linearities.norm_activation import NormActivation
 
-
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from src.SE3Model.convolution import Convolution
 
-def conv_block_3d(Rs_in, Rs_out):
+
+def ConvBlock1(Rs_in, Rs_out, lmax, size, fpix):
     return nn.Sequential(
-        Convolution(Rs_in, Rs_out, lmax=0,  size = 3, stride = 1, padding = 1, fuzzy_pixels = True),
+        Convolution(Rs_in, Rs_out, lmax=lmax, size = size, stride = 1, padding = size//2, fuzzy_pixels = fpix),
         #nn.BatchNorm3d(out_dim),
-        NormActivation(Rs_out, tanh, normalization = 'component'),
+        NormActivation(Rs_out, swish, normalization = 'component'),
+    )
+
+   
+def ConvBlock2(Rs_in, Rs_out, lmax, size, fpix, stride):
+    return nn.Sequential(
+        ConvBlock1(Rs_in, Rs_out, lmax, size, fpix),
+        Convolution(Rs_out, Rs_out, lmax=lmax,  size=size, stride=stride, padding = size//2, fuzzy_pixels = fpix),
+        #nn.BatchNorm3d(out_dim),
     )
 
 
-def conv_trans_block_3d(Rs_in, Rs_out):
+def ConvTransBlock(Rs_in, Rs_out, lmax, size, fpix):
     return nn.Sequential(
-        Convolution(Rs_in, Rs_out, lmax=0, size=3, stride=2, padding=1, output_padding=1, transpose=True, fuzzy_pixels = True),
+        Convolution(Rs_in, Rs_out, lmax=lmax, size=size, stride=2, padding=size//2, output_padding=1, transpose=True, fuzzy_pixels = fpix),
         #nn.BatchNorm3d(out_dim),
-        NormActivation(Rs_out, tanh, normalization = 'componenet'),
-    )
-
-
-class MPool3D(nn.MaxPool3d):
-    """
-    This performes max-poling
-    """
-    def forward(self, input):
-        input = torch.einsum('txyzi->tixyz', input)
-        output = F.max_pool3d(input, self.kernel_size, self.stride, self.padding,
-                              self.dilation, self.ceil_mode, self.return_indices)
-        output = torch.einsum('tixyz->txyzi', output)
-        return output
-
-    
-def max_pooling_3d():
-    return MPool3D(kernel_size=2, stride=2, padding=0)
-
-
-    
-def conv_block_2_3d(Rs_in, Rs_out):
-    return nn.Sequential(
-        conv_block_3d(Rs_in, Rs_out),
-        Convolution(Rs_out, Rs_out, lmax=0,  size = 3, stride = 1, padding = 1, fuzzy_pixels = True),
-        #nn.BatchNorm3d(out_dim),
+        NormActivation(Rs_out, swish, normalization = 'componenet'),
     )
 
 
 
 class UNet(nn.Module):
-    def __init__(self, Rs, inp_channels=11, out_channels=6):
+    def __init__(self, size, mult, lmax, inp_channels=11, out_channels=6):
         super(UNet, self).__init__()
         
         Rs_in = [(inp_channels,0)]
         Rs_out =  [(out_channels,0)]
-        m = 4 #multiplier
+        m = mult #multiplier
+        Rs = list(range(lmax + 1)) #base Rs
+        fp = False  #option to add noise to conv kernels
+        st = 2     #downlampling stride
         
         # Down sampling
-        self.down_1 = conv_block_2_3d(Rs_in, m * Rs)
-        self.pool_1 = max_pooling_3d()
-        self.down_2 = conv_block_2_3d(m * Rs, m * 2 * Rs)
-        self.pool_2 = max_pooling_3d()
-        self.down_3 = conv_block_2_3d(m * 2 * Rs, m * 4 * Rs)
-        self.pool_3 = max_pooling_3d()
-        self.down_4 = conv_block_2_3d(m * 4 * Rs, m * 8 * Rs) 
-        self.pool_4 = max_pooling_3d()
-        self.down_5 = conv_block_2_3d(m * 8 * Rs, m * 16 * Rs)
-        self.pool_5 = max_pooling_3d()
+        self.down_1 = ConvBlock2(Rs_in,      m *      Rs, lmax=lmax, size=size, fpix=fp, stride=st)
+        self.down_2 = ConvBlock2(m *     Rs, m * 2  * Rs, lmax=lmax, size=size, fpix=fp, stride=st)
+        self.down_3 = ConvBlock2(m * 2 * Rs, m * 4  * Rs, lmax=lmax, size=size, fpix=fp, stride=st)
+        self.down_4 = ConvBlock2(m * 4 * Rs, m * 8  * Rs, lmax=lmax, size=size, fpix=fp, stride=st) 
+        self.down_5 = ConvBlock2(m * 8 * Rs, m * 16 * Rs, lmax=lmax, size=size, fpix=fp, stride=st)
         
         # Bridge
-        self.bridge = conv_block_2_3d(m * 16 * Rs, m * 32 * Rs)
-        
+        self.bridge = ConvBlock2(m *16 * Rs, m * 32 * Rs, lmax=lmax, size=size, fpix=fp, stride=1)        
+                
         # Up sampling
-        self.trans_1 = conv_trans_block_3d(m * 32 * Rs, m * 32 * Rs)
-        self.up_1 = conv_block_2_3d(m * 48 * Rs, m * 16 * Rs)
-        self.trans_2 = conv_trans_block_3d(m * 16 * Rs, m * 16 * Rs)
-        self.up_2 = conv_block_2_3d(m * 24 * Rs, m * 8 * Rs)
-        self.trans_3 = conv_trans_block_3d(m * 8 * Rs, m * 8 * Rs)
-        self.up_3 = conv_block_2_3d(m * 12 * Rs, m * 4 * Rs)
-        self.trans_4 = conv_trans_block_3d(m * 4 * Rs, m * 4 * Rs)
-        self.up_4 = conv_block_2_3d(m * 6 * Rs, m * 2 * Rs)
-        self.trans_5 = conv_trans_block_3d(m * 2 * Rs, m * 2 * Rs)
-        self.up_5 = conv_block_2_3d(m * 3 * Rs, m * 1 * Rs)
+        self.trans_1 = ConvTransBlock(m * 32 * Rs, m * 32 * Rs, lmax=lmax, size=size, fpix=fp)
+        self.up_1    = ConvBlock2(    m * 48 * Rs, m * 16 * Rs, lmax=lmax, size=size, fpix=fp, stride=1)
+        self.trans_2 = ConvTransBlock(m * 16 * Rs, m * 16 * Rs, lmax=lmax, size=size, fpix=fp )
+        self.up_2    = ConvBlock2(    m * 24 * Rs, m * 8  * Rs, lmax=lmax, size=size, fpix=fp, stride=1)
+        self.trans_3 = ConvTransBlock(m * 8  * Rs, m * 8  * Rs, lmax=lmax, size=size, fpix=fp)
+        self.up_3    = ConvBlock2(    m * 12 * Rs, m * 4  * Rs, lmax=lmax, size=size, fpix=fp, stride=1)
+        self.trans_4 = ConvTransBlock(m * 4  * Rs, m * 4  * Rs, lmax=lmax, size=size, fpix=fp)
+        self.up_4    = ConvBlock2(    m * 6  * Rs, m * 2  * Rs, lmax=lmax, size=size, fpix=fp, stride=1)
+        self.trans_5 = ConvTransBlock(m * 2  * Rs, m * 2  * Rs, lmax=lmax, size=size, fpix=fp)
+        self.up_5    = ConvBlock2(    m * 3  * Rs, m * 1  * Rs, lmax=lmax, size=size, fpix=fp, stride=1)
         
         # Output
-        self.out = conv_block_3d(m * Rs, Rs_out)
+        self.out = ConvBlock1(m * Rs, Rs_out, lmax=lmax, size=size, fpix=fp)
+        #self.out = ConvBlock1(m * Rs, Rs_out, lmax=lmax, size=size, fpix=fp)
 
     
     def skip(self, uped, bypass):
@@ -124,42 +107,31 @@ class UNet(nn.Module):
         # Down sampling
         down_1 = self.down_1(x) 
         #print("down1", down_1.shape)
-        pool_1 = self.pool_1(down_1) 
-        #print("pool1", pool_1.shape)
         
-        down_2 = self.down_2(pool_1) 
+        down_2 = self.down_2(down_1) 
         #print("down2", down_2.shape)
-        pool_2 = self.pool_2(down_2) 
-        #print("pool2", pool_2.shape)
         
-        down_3 = self.down_3(pool_2) 
-        pool_3 = self.pool_3(down_3) 
+        down_3 = self.down_3(down_2) 
         #print("down3", down_3.shape) 
-        #print("pool3", pool_3.shape)
-
-        down_4 = self.down_4(pool_3) 
-        pool_4 = self.pool_4(down_4)  
+       
+        down_4 = self.down_4(down_3) 
         #print("down4", down_4.shape)
-        #print("pool4", pool_4.shape)
         
-        down_5 = self.down_5(pool_4) 
-        pool_5 = self.pool_5(down_5) 
+        down_5 = self.down_5(down_4) 
         #print("down5", down_5.shape)
-        #print("pool5", pool_5.shape)
-
+       
         #print('----------------------------')
         
         # Bridge
-        bridge = self.bridge(pool_5) 
-        #print(bridge.shape)
+        bridge = self.bridge(down_5) 
 
         #print("----------------------------")
         
         # Up sampling
         trans_1 = self.trans_1(bridge) 
-        #print("trans1", trans_1.shape) 
         concat_1 = self.skip(trans_1, down_5)
         up_1 = self.up_1(concat_1) 
+        #print("trans1", trans_1.shape) 
         #print("concat1", concat_1.shape)
         #print('up1', up_1.shape)         
                        
@@ -196,26 +168,26 @@ class UNet(nn.Module):
         
         # Output
         out = self.out(up_5)
+        
         return out
 
     
 if __name__ == "__main__":
   device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-  inp_size = 96
-  in_channels = 11
-  out_channels = 6
+  inp_size = 64
+  inp_channels = 1
+  out_channels = 1
 
   lmax = 0
-  Rs = list(range(lmax + 1)) 
-  num_filters = 4 #multiplier
-  fuzzy_pixels = True
+  k_size = 3
+  m = 2 #multiplier
   
-  x = torch.Tensor(1, inp_size, inp_size, inp_size, in_channels)
+  x = torch.Tensor(1, inp_size, inp_size, inp_size, inp_channels)
   x.to(device)
   print("x size: {}".format(x.size()))
   
-  model = UNet(Rs, inp_channels = 11, out_channels = 6)
+  model = UNet(size = k_size, mult = m, lmax = lmax, inp_channels = inp_channels, out_channels = out_channels)
   
   out = model(x)
   print("out size: {}".format(out.size()))

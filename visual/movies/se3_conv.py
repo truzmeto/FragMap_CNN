@@ -35,13 +35,13 @@ torch.manual_seed(1000)
 
 Rs_in = [(c, 0)]  
 Rs_out = [(c, 0)]  # number of inp and out channels should be same for TransConv
-k_size = 5; pad = k_size//2
+k_size = 3; pad = k_size//2
 
 #plot output density maps
 chan_id = 0 # can be 0,1,2,3
 fs = 16; cmap = 'gist_ncar'#'rainbow'
 
-model = Convolution(Rs_in, Rs_out, size = k_size, padding = pad).cuda()
+model = Convolution(Rs_in, Rs_out, size = k_size, padding = pad, stride=1).cuda()
 inp =  get3D_rod(dim).cuda()
 
 # Open a movie file
