@@ -43,7 +43,7 @@ Rs_out = [(c, 0)]  # number of inp and out channels should be same for TransConv
 chan_id = 0 # can be 0,1,2,3
 fs = 16; cmap = 'gist_ncar'#'rainbow'
 
-model = E3nn(num_input_channels=1, lmax=2).cuda()
+model = E3nn(num_input_channels=1, lmax=3).cuda()
 inp =  get3D_rod(dim).cuda()
 
 # Open a movie file

@@ -11,6 +11,7 @@ import torch.nn.functional as F
 
 from e3nn.non_linearities.rescaled_act import sigmoid, swish, tanh
 from e3nn.non_linearities.norm_activation import NormActivation
+from e3nn.batchnorm import BatchNorm
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from src.SE3Model.convolution import Convolution
@@ -19,7 +20,7 @@ from src.SE3Model.convolution import Convolution
 def ConvBlock1(Rs_in, Rs_out, lmax, size, fpix):
     return nn.Sequential(
         Convolution(Rs_in, Rs_out, lmax=lmax, size = size, stride = 1, padding = size//2, fuzzy_pixels = fpix),
-        #nn.BatchNorm3d(out_dim),
+        #BatchNorm(Rs_out, normalization='component'),
         NormActivation(Rs_out, swish, normalization = 'component'),
     )
 
@@ -28,14 +29,14 @@ def ConvBlock2(Rs_in, Rs_out, lmax, size, fpix, stride):
     return nn.Sequential(
         ConvBlock1(Rs_in, Rs_out, lmax, size, fpix),
         Convolution(Rs_out, Rs_out, lmax=lmax,  size=size, stride=stride, padding = size//2, fuzzy_pixels = fpix),
-        #nn.BatchNorm3d(out_dim),
+        #BatchNorm(Rs_out, normalization='component'), 
     )
 
 
 def ConvTransBlock(Rs_in, Rs_out, lmax, size, fpix):
     return nn.Sequential(
         Convolution(Rs_in, Rs_out, lmax=lmax, size=size, stride=2, padding=size//2, output_padding=1, transpose=True, fuzzy_pixels = fpix),
-        #nn.BatchNorm3d(out_dim),
+        #BatchNorm(Rs_out, normalization='component'), 
         NormActivation(Rs_out, swish, normalization = 'componenet'),
     )
 
@@ -179,7 +180,7 @@ if __name__ == "__main__":
   inp_channels = 1
   out_channels = 1
 
-  lmax = 0
+  lmax = 1
   k_size = 3
   m = 2 #multiplier
   
