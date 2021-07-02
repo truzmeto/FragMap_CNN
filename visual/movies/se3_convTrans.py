@@ -73,7 +73,7 @@ for i in range(180):
 
     outputUR = rotate_ligand(outputR.cpu().detach().numpy(), rotation_angle= -i*2.0)
     outputUR = torch.from_numpy(outputUR).float().to('cuda')
-    err = (output - outputUR).pow(2).mean().sqrt() / norm
+    err = (output - outputUR).pow(2).mean().sqrt() #/ norm
     err = err.item()
     
     p.subplot(0, 0)
