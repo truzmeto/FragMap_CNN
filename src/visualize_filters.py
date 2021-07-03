@@ -1,4 +1,4 @@
-from util import pad_mapc, vec2grid, get_bin_frequency, grid2vec, pad_mapc, unpad_mapc, load_model
+from util import pad_mapc, vec2grid, grid2vec, pad_mapc, unpad_mapc, load_model
 import torch.nn.functional as F
 from loss_fns import PenLoss
 import torch.optim as optim
@@ -19,14 +19,49 @@ lrt = 0.0001
 # lrd = 0.0001
 wd = 0.00001
 
-# Cooridinate of the min spot 
+# Cooridinate of the min spot x
 # Specifc protein tool 
 # Multi hotspot competitive 
 # Try a different protein
 # 2 hotspot for  different 
-# protein - protein interaction using FRagmaps
+# protein - protein interaction using Fragmaps
 # Multi layer Grad-Cam - weighted combination of layers
 # contrastive hotspots
+
+
+# relu at intermediate level gives protein structure ???
+
+
+def get_hotspot(vol):
+    # Assumes that user has converted the negative GFE values to positive
+    # Returns tensor of location of hotspot
+
+
+    hotspot_location = (vol == torch.max(vol)).nonzero()
+    hotspot_location = hotspot_location.squeeze()
+
+    return hotspot_location
+
+def get_hotspot_list(vol, n_hotspots=5, write_map=False, start_scale=10, step = 5):
+
+    # Create a void volume of shape like input
+    hotspot_volume = torch.zeros(size=vol.shape)
+
+    hotspot_locations =[]
+
+    scale = n_hotspots * start_scale
+    for i in range(n_hotspots):
+
+        hotspot_location = get_hotspot(vol)
+        hotspot_locations.append(hotspot_location)
+
+        hotspot_volume[hotspot_location[0], hotspot_location[1], hotspot_location[2], hotspot_location[3], hotspot_location[4]] += scale
+
+        vol[hotspot_location[0],hotspot_location[1], hotspot_location[2], hotspot_location[3], hotspot_location[4]] = 0
+
+        scale -= step
+
+    return hotspot_volume, hotspot_locations
 
 
 class CNN_Viz(nn.Module):
@@ -48,11 +83,13 @@ class CNN_Viz(nn.Module):
             else:
                 vol = layer(vol)
             if index == self.selected_layer:
-                if self.hotspots:
-                    vol = F.relu(-vol)
-                else:
-                    vol = F.relu(vol)
                 h = vol.register_hook(self.activations_hook)
+
+        if self.hotspots:
+            vol = F.relu(-vol)
+            print(vol.max())
+        else:
+            vol = F.relu(vol)
                 
         return vol
 
@@ -132,9 +169,10 @@ if __name__ == '__main__':
                                             map_norm = map_norm)
 
     # #convert target maps to torch.cuda
-    # test_map = torch.from_numpy(test_map).float().cuda()
+    test_map = torch.from_numpy(test_map).float().cuda()
+    # print((test_map == torch.min(test_map)).nonzero())
 
-    selected_layer = 8
+    selected_layer = 0
 
     torch.cuda.set_device(0)
     model = load_model(out_path, params_file_name)
@@ -150,6 +188,22 @@ if __name__ == '__main__':
     cnn_viz = CNN_Viz(model, selected_layer= selected_layer ,hotspots=True)
 
     pred = cnn_viz(volume)
+
+    # Hotspot location information
+    # hotspot_volume, hotspot_location = get_hotspot(pred)
+
+    # pred[hotspot_location[0],hotspot_location[1], hotspot_location[2], hotspot_location[3], hotspot_location[4]] = 0
+
+    # hotspot_volume, hotspot_location = get_hotspot(pred)
+
+    n_hotspots = 15
+    hotspot_volume, hotspot_locations = get_hotspot_list(pred, n_hotspots=n_hotspots)
+
+    for i in range(n_hotspots):
+        print("Hotspot location: ",hotspot_locations[i])
+
+
+
     max_t = torch.max(pred)
     max_t.backward()
 
@@ -163,7 +217,7 @@ if __name__ == '__main__':
 
     activations, out_channels = cnn_viz.get_activations_channels(volume)
 
-    print("Activations Shape:",activations.shape)
+    print("Activations Shape: ",activations.shape)
 
     # weight the channels by corresponding gradients
     for i in range(out_channels):
@@ -180,6 +234,7 @@ if __name__ == '__main__':
     heatmap = heatmap / torch.max(heatmap)
 
 
+    # Heatmap to GFE file
     grid = heatmap[:,:,:].cpu().detach().numpy()
     grid = unpad_mapc(grid, pad = pad[0,:])
 
@@ -187,14 +242,27 @@ if __name__ == '__main__':
     vec = grid2vec([nx,ny,nz], grid)     #flatten
 
     out_name = "1ycr" + "."+ str(selected_layer) + ".heatmap"
+    # write_map(vec, out_path + "../data/maps/", out_name, center[0,:],
+    #       res = resolution, n = [nx,ny,nz])
+
+    # Hotspot to GFE file
+    grid = hotspot_volume[0,hotspot_locations[0][1],:,:,:].cpu().detach().numpy()
+    grid = unpad_mapc(grid, pad = pad[0,:])
+
+    nx, ny, nz = grid.shape              #get new dims
+    vec = grid2vec([nx,ny,nz], grid)     #flatten
+
+    out_name = "1ycr" + "."+ str(selected_layer) + "."+str(n_hotspots)+".hotspots"
     write_map(vec, out_path + "../data/maps/", out_name, center[0,:],
           res = resolution, n = [nx,ny,nz])
+
 
     volume_sum= np.sum(volume.cpu().numpy(), axis=1)[0]
 
 
     p = pv.Plotter(point_smoothing = True, shape=(2, 1))
     p.subplot(0,0)
+    # p.add_volume(hotspot_volume.detach().cpu().numpy()[0,,:,:,:])
     p.add_volume(heatmap.detach().cpu().numpy(), cmap = "hot", opacity = "linear")
     p.add_text("Grad-CAM"+ " layer:"+str(selected_layer)+ \
         " filters:"+str(out_channels), position = 'upper_left', font_size = 16)
@@ -202,7 +270,7 @@ if __name__ == '__main__':
     p.add_volume(volume_sum, cmap = "viridis", opacity = "linear")
     p.add_text("Summed-Volume", position = 'upper_left', font_size = 16)
     p.link_views()
-    p.show()
+    # p.show()
 
 
 
